@@ -152,6 +152,11 @@
             border-radius: 12px;
             text-align: center;
         }
+        
+        /* New Styles for Additions */
+        .timer { color: #ffda44; font-weight: bold; font-size: 14px; margin-bottom: 5px; }
+        .reg-names { font-size: 12px; color: #aaa; background: #222; padding: 5px; border-radius: 5px; margin-top: 5px; max-height: 50px; overflow-y: auto; }
+        .history-card { background: #333; padding: 10px; margin-top: 10px; border-radius: 5px; border-left: 3px solid #38ef7d; text-align: left;}
     </style>
 </head>
 <body>
@@ -183,58 +188,70 @@
     <div id="home" class="section active">
         <div class="match-card">
             <div class="match-title">🔥 Solo Bermuda Match 🏆</div>
+            <div class="timer" id="timer-SoloBermuda">Starts In: --:--</div>
             <p>Entry Fee: 10 Taka | <span class="per-kill">Per Kill: 5 Taka (Max 6 Kill Bonus)</span></p>
-            <button class="btn details-btn" onclick="showMatchDetails('Room ID: 12345', 'Pass: 999')">Match Details</button>
+            <button class="btn details-btn" onclick="showMatchDetails('Solo Bermuda Match')">Match Details</button>
             <table class="prize-table">
                 <tr><td>1st: 50tk</td><td>2nd: 40tk</td><td>3rd: 30tk</td></tr>
                 <tr><td>4th: 20tk</td><td>5th: 10tk</td><td>Slots: 48/48</td></tr>
             </table>
-            <button class="btn" onclick="openRegister('Solo Bermuda', 10, 'solo')">Register Now</button>
+            <button class="btn" onclick="openRegister('Solo Bermuda Match', 10, 'solo')">Register Now</button>
+            <div class="reg-names" id="list-SoloBermuda">Registered: Loading...</div>
         </div>
 
         <div class="match-card">
             <div class="match-title">⚔️ Duo Match (1) 🥇</div>
+            <div class="timer" id="timer-DuoMatch1">Starts In: --:--</div>
             <p>Entry Fee: 20 Taka | <span class="per-kill">Per Kill: 10 Taka (Max 6 Kill Bonus)</span></p>
-            <button class="btn details-btn" onclick="showMatchDetails('Room ID: 5678', 'Pass: 888')">Match Details</button>
+            <button class="btn details-btn" onclick="showMatchDetails('Duo Match 1')">Match Details</button>
             <table class="prize-table">
                 <tr><td>1st: 100tk (50/50 Separated)</td><td>2nd: 80tk</td><td>3rd: 60tk</td></tr>
                 <tr><td>4th: 40tk</td><td>5th: 20tk</td><td>Total: 300tk</td></tr>
             </table>
             <button class="btn" onclick="openRegister('Duo Match 1', 20, 'duo_option')">Register Now</button>
+            <div class="reg-names" id="list-DuoMatch1">Registered: Loading...</div>
         </div>
 
         <div class="match-card">
             <div class="match-title">⚔️ Duo Match (2) 🥈</div>
+            <div class="timer" id="timer-DuoMatch2">Starts In: --:--</div>
             <p>Entry Fee: 40 Taka | <span class="per-kill">Per Kill: 20 Taka (Max 6 Kill Bonus)</span></p>
-            <button class="btn details-btn" onclick="showMatchDetails('Room ID: 4321', 'Pass: 777')">Match Details</button>
+            <button class="btn details-btn" onclick="showMatchDetails('Duo Match 2')">Match Details</button>
             <table class="prize-table">
                 <tr><td>1st: 200tk (100/100 Separated)</td><td>2nd: 160tk</td><td>3rd: 120tk</td></tr>
                 <tr><td>4th: 80tk</td><td>5th: 40tk</td><td>Total: 600tk</td></tr>
             </table>
             <button class="btn" onclick="openRegister('Duo Match 2', 40, 'duo_option')">Register Now</button>
+            <div class="reg-names" id="list-DuoMatch2">Registered: Loading...</div>
         </div>
 
         <div class="match-card">
             <div class="match-title">🛡️ Clash Squad 4vs4 🔫</div>
+            <div class="timer" id="timer-CS4vs4">Starts In: --:--</div>
             <p>Entry Fee: 50tk/Person | Win Prize: 340tk</p>
             <p>Winner: 85 Taka Each</p>
-            <button class="btn details-btn" onclick="showMatchDetails('ID: CS1', 'Pass: 111')">Match Details</button>
+            <button class="btn details-btn" onclick="showMatchDetails('CS 4vs4')">Match Details</button>
             <button class="btn" onclick="openRegister('CS 4vs4', 50, 'squad_full')">Register Now</button>
+            <div class="reg-names" id="list-CS4vs4">Registered: Loading...</div>
         </div>
 
         <div class="match-card">
             <div class="match-title">🛡️ Clash Squad 2vs2 🔫</div>
+            <div class="timer" id="timer-CS2vs2">Starts In: --:--</div>
             <p>Entry Fee: 100tk/Person | Win Prize: 350tk</p>
             <p>Winner: 175 Taka Each</p>
-            <button class="btn details-btn" onclick="showMatchDetails('ID: CS2', 'Pass: 222')">Match Details</button>
+            <button class="btn details-btn" onclick="showMatchDetails('CS 2vs2')">Match Details</button>
             <button class="btn" onclick="openRegister('CS 2vs2', 100, 'duo_option')">Register Now</button>
+            <div class="reg-names" id="list-CS2vs2">Registered: Loading...</div>
         </div>
 
         <div class="match-card">
             <div class="match-title">🛡️ Clash Squad 1vs1 🔫</div>
+            <div class="timer" id="timer-CS1vs1">Starts In: --:--</div>
             <p>Entry Fee: 200tk | Win Prize: 360tk</p>
-            <button class="btn details-btn" onclick="showMatchDetails('ID: CS3', 'Pass: 333')">Match Details</button>
+            <button class="btn details-btn" onclick="showMatchDetails('CS 1vs1')">Match Details</button>
             <button class="btn" onclick="openRegister('CS 1vs1', 200, 'solo')">Register Now</button>
+            <div class="reg-names" id="list-CS1vs1">Registered: Loading...</div>
         </div>
     </div>
 
@@ -246,6 +263,10 @@
             <p id="prof-phone">01xxxxxxxxx</p>
             <div style="background: #444; padding: 10px; border-radius: 8px;">
                 <span>Balance: </span><span id="prof-balance" style="color:#38ef7d; font-weight:bold;">0</span><span> Taka</span>
+            </div>
+            <div id="match-history" style="margin-top:20px;">
+                <h3>📜 Match History & Winnings</h3>
+                <div id="history-list">No history yet.</div>
             </div>
             <button class="btn" onclick="logout()" style="background: #ff4b2b; margin-top: 20px;">Logout</button>
         </div>
@@ -282,11 +303,9 @@
 
     <div id="leaderboard" class="section">
         <h2>🏆 Top Players</h2>
-        <table class="prize-table">
+        <table class="prize-table" id="leaderboard-table">
             <tr style="background:#444"><td>Rank</td><td>Name</td><td>Winnings</td></tr>
-            <tr><td>#1</td><td>Masud</td><td>1500tk</td></tr>
-            <tr><td>#2</td><td>Riyad</td><td>1200tk</td></tr>
-        </table>
+            </table>
     </div>
 
     <div id="deposit" class="section">
@@ -349,7 +368,73 @@
             document.getElementById('auth-page').style.display = 'none';
             document.getElementById('main-app').style.display = 'block';
             updateProfileUI();
+            startAllTimers();
+            loadRegistrationStatus();
+            loadLeaderboard();
+            loadHistory();
         }
+    }
+
+    // --- Time & Status Functions ---
+    function startAllTimers() {
+        const matches = ['SoloBermuda', 'DuoMatch1', 'DuoMatch2', 'CS4vs4', 'CS2vs2', 'CS1vs1'];
+        matches.forEach(m => {
+            db.ref('match_times/' + m).on('value', (s) => {
+                let endTime = s.val() || 0;
+                let x = setInterval(function() {
+                    let now = new Date().getTime();
+                    let distance = endTime - now;
+                    if (distance < 0) {
+                        clearInterval(x);
+                        document.getElementById('timer-' + m).innerHTML = "Started!";
+                    } else {
+                        let mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        let secs = Math.floor((distance % (1000 * 60)) / 1000);
+                        document.getElementById('timer-' + m).innerHTML = "Starts In: " + mins + "m " + secs + "s";
+                    }
+                }, 1000);
+            });
+        });
+    }
+
+    function loadRegistrationStatus() {
+        db.ref('registrations').on('value', s => {
+            const matches = { 'Solo Bermuda Match': 'SoloBermuda', 'Duo Match 1': 'DuoMatch1', 'Duo Match 2': 'DuoMatch2', 'CS 4vs4': 'CS4vs4', 'CS 2vs2': 'CS2vs2', 'CS 1vs1': 'CS1vs1' };
+            let listObj = {};
+            s.forEach(c => {
+                let d = c.val();
+                if(matches[d.match]) {
+                    if(!listObj[matches[d.match]]) listObj[matches[d.match]] = [];
+                    listObj[matches[d.match]].push(d.players[0].name);
+                }
+            });
+            for (let m in listObj) {
+                document.getElementById('list-' + m).innerText = "Players: " + listObj[m].join(", ");
+            }
+        });
+    }
+
+    function loadLeaderboard() {
+        db.ref('ranks').on('value', s => {
+            let h = '<tr style="background:#444"><td>Rank</td><td>Name</td><td>Winnings</td></tr>';
+            let i = 1;
+            s.forEach(c => {
+                let d = c.val();
+                h += `<tr><td>#${i++ }</td><td>${d.name}</td><td>${d.won}tk</td></tr>`;
+            });
+            document.getElementById('leaderboard-table').innerHTML = h;
+        });
+    }
+
+    function loadHistory() {
+        db.ref('history/' + currentUser.phone).on('value', s => {
+            let h = '';
+            s.forEach(c => {
+                let d = c.val();
+                h += `<div class="history-card"><b>${d.match}</b><br>Prize: <span style="color:#38ef7d">${d.prize} TK</span></div>`;
+            });
+            document.getElementById('history-list').innerHTML = h || 'No history found.';
+        });
     }
 
     function toggleAuth() {
@@ -416,8 +501,12 @@
         if(id === 'support') items[5].classList.add('active');
     }
 
-    function showMatchDetails(id, pass) {
-        alert("Match Details:\n" + id + "\n" + pass);
+    function showMatchDetails(matchName) {
+        db.ref('room_details/' + matchName).once('value', s => {
+            const d = s.val();
+            if(d) alert("Details: " + d.msg);
+            else alert("Wait for details.");
+        });
     }
 
     function openRegister(title, fee, option) {
@@ -473,7 +562,6 @@
         });
     }
 
-    // --- নতুন যোগ করা ডিপোজিট ফাংশন ---
     function submitDeposit() {
         const amount = document.getElementById('dep-amount').value;
         const trxID = document.getElementById('dep-trx').value;
@@ -491,7 +579,6 @@
         } else { alert("Please fill all fields!"); }
     }
 
-    // --- নতুন যোগ করা উইথড্র ফাংশন ---
     function submitWithdraw() {
         const amount = document.getElementById('wit-amount').value;
         const number = document.getElementById('wit-phone').value;
