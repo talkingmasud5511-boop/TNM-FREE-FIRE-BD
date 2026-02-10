@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TNM RIYAD - FINAL ADMIN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: #121212; color: white; font-family: sans-serif; padding: 15px; }
+        .card { background: #1e1e1e; padding: 15px; margin-bottom: 20px; border-radius: 12px; border-left: 5px solid #ff4b2b; }
+        h1 { text-align: center; color: #38ef7d; font-size: 20px; }
+        h2 { color: #ff4b2b; font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: white; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .btn-update { background: #00d2ff; color: black; }
+        .btn-room { background: #ffda44; color: black; }
+        .btn-del { background: #ff4b2b; color: white; padding: 5px; font-size: 11px; margin-top: 5px; cursor: pointer; border-radius: 4px; border:none; }
+        .box { background: #252525; padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid #444; position: relative; }
+        #login-lock { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10000; }
+    </style>
+</head>
+<body>
+
+    <div id="login-lock">
+        <h2>🔒 TNM Admin Login</h2>
+        <input type="password" id="admin-pass" placeholder="Password" style="width: 200px; text-align: center;">
+        <button class="btn" style="width: 200px; background: #38ef7d;" onclick="checkPassword()">UNLOCK</button>
+    </div>
+
+    <div id="admin-content" style="display: none;">
+        <h1>🎮 TNM CONTROL PANEL</h1>
+
+        <div class="card" style="border-left-color: #00d2ff;">
+            <h2>💰 User Wallet Control</h2>
+            <input type="text" id="target-phone" placeholder="User Phone (e.g. 017...)">
+            <input type="number" id="balance-amount" placeholder="Amount (50 to add, -50 to cut)">
+            <button class="btn btn-update" onclick="updateBalance()">Update Balance</button>
+            <button class="btn" style="background: #38ef7d;" onclick="checkBalance()">Check Current Balance</button>
+            <p id="bal-show" style="text-align:center; color: #ffda44; margin-top: 10px;"></p>
+        </div>
+
+        <div class="card" style="border-left-color: #ffda44;">
+            <h2>📢 Send Room ID & Pass</h2>
+            <select id="match-name">
+                <option value="Solo Bermuda Match">Solo Bermuda Match</option>
+                <option value="Duo Match 1">Duo Match 1</option>
+                <option value="Duo Match 2">Duo Match 2</option>
+                <option value="CS 4vs4">CS 4vs4</option>
+                <option value="CS 2vs2">CS 2vs2</option>
+                <option value="CS 1vs1">CS 1vs1</option>
+            </select>
+            <input type="text" id="room-info" placeholder="Room ID: 1234, Pass: 555">
+            <button class="btn btn-room" onclick="sendRoom()">Send Details</button>
+        </div>
+
+        <h2>🛡️ Match Registrations</h2>
+        <div id="reg-list">Loading...</div>
+
+        <h2>📥 Deposit Requests</h2>
+        <div id="deposit-list">Loading...</div>
+
+        <h2>📤 Withdraw Requests</h2>
+        <div id="withdraw-list">Loading...</div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        // আপনার সঠিক সিঙ্গাপুর সার্ভার কনফিগারেশন
+        const firebaseConfig = {
+            apiKey: "AIzaSyB2WdXJJNYqmos9Sl_D2wCUyMzMFujE57c",
+            authDomain: "tnm-a2840.firebaseapp.com",
+            databaseURL: "https://tnm-a2840-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "tnm-a2840",
+            appId: "1:396157832456:web:1e127ace39524f4ca130bd"
+        };
+        
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
+        // এডমিন পাসওয়ার্ড (আপনি চাইলে পরিবর্তন করতে পারেন)
+        const SECRET_PASS = "riyad123"; 
+
+        function checkPassword() {
+            const passInput = document.getElementById('admin-pass').value;
+            if(passInput === SECRET_PASS) {
+                document.getElementById('login-lock').style.display = 'none';
+                document.getElementById('admin-content').style.display = 'block';
+                loadData();
+            } else { 
+                alert("Wrong Password!"); 
+            }
+        }
+
+        // ব্যালেন্স আপডেট ফাংশন
+        function updateBalance() {
+            const phone = document.getElementById('target-phone').value.trim();
+            const amt = parseInt(document.getElementById('balance-amount').value);
+            if(phone && !isNaN(amt)) {
+                db.ref('users/' + phone + '/balance').transaction(c => (c || 0) + amt)
+                .then(() => {
+                    alert('Balance Updated Successfully!');
+                    checkBalance();
+                }).catch(e => alert("Error: " + e.message));
+            } else { alert("Input Phone and Amount!"); }
+        }
+
+        // ব্যালেন্স চেক ফাংশন
+        function checkBalance() {
+            const phone = document.getElementById('target-phone').value.trim();
+            if(phone) {
+                db.ref('users/' + phone + '/balance').once('value', s => {
+                    document.getElementById('bal-show').innerText = "Current Balance: ৳" + (s.val() || 0);
+                });
+            }
+        }
+
+        // রুম আইডি পাঠানো
+        function sendRoom() {
+            const match = document.getElementById('match-name').value;
+            const info = document.getElementById('room-info').value;
+            if(info) {
+                db.ref('room_details/' + match).set({ 
+                    msg: info, 
+                    time: new Date().toLocaleString() 
+                }).then(() => alert('Room Details Sent!'));
+            }
+        }
+
+        // ডাটা লোড করার মেইন ফাংশন
+        function loadData() {
+            // ১. রেজিস্ট্রেশন লিস্ট
+            db.ref('registrations').on('value', s => {
+                let h = ''; 
+                s.forEach(c => { 
+                    const d = c.val();
+                    h += `<div class="box">
+                        <p style="color:#ffda44">🏆 <b>${d.match}</b></p>
+                        <p>📱 Phone: ${d.userPhone || d.phone}</p>
+                        <button class="btn-del" onclick="if(confirm('Delete?')) db.ref('registrations/${c.key}').remove()">Remove</button>
+                    </div>`;
+                });
+                document.getElementById('reg-list').innerHTML = h || 'No Registrations';
+            });
+
+            // ২. ডিপোজিট রিকোয়েস্ট লিস্ট
+            db.ref('deposits').on('value', s => {
+                let h = ''; 
+                s.forEach(c => { 
+                    const d = c.val();
+                    h += `<div class="box">
+                        <p>📱 <b>${d.phone}</b></p>
+                        <p>💵 ${d.amount} TK (TrxID: ${d.trxID})</p>
+                        <button class="btn-del" style="background:#38ef7d;color:black" onclick="if(confirm('Delete?')) db.ref('deposits/${c.key}').remove()">Done/Delete</button>
+                    </div>`;
+                });
+                document.getElementById('deposit-list').innerHTML = h || 'No Deposit Requests';
+            });
+
+            // ৩. উইথড্র রিকোয়েস্ট লিস্ট
+            db.ref('withdraws').on('value', s => {
+                let h = ''; 
+                s.forEach(c => { 
+                    const d = c.val();
+                    h += `<div class="box">
+                        <p>📱 <b>${d.number}</b></p>
+                        <p>💵 ${d.amount} TK</p>
+                        <button class="btn-del" onclick="if(confirm('Paid?')) db.ref('withdraws/${c.key}').remove()">Paid/Delete</button>
+                    </div>`;
+                });
+                document.getElementById('withdraw-list').innerHTML = h || 'No Withdraw Requests';
+            });
+        }
+    </script>
+</body>
+</html>
