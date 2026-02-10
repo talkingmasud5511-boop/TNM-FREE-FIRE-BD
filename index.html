@@ -296,7 +296,7 @@
         <input type="number" id="dep-amount" placeholder="Amount (50-3000)">
         <input type="text" id="dep-phone" placeholder="Your Phone Number">
         <input type="text" id="dep-trx" placeholder="Transaction ID">
-        <button class="btn" onclick="alert('Successful!')">Done</button>
+        <button class="btn" onclick="submitDeposit()">Done</button>
     </div>
 
     <div id="withdraw" class="section">
@@ -304,7 +304,7 @@
         <p>Limit: 50 - 2000 Taka</p>
         <input type="text" id="wit-phone" placeholder="Receiver Number">
         <input type="number" id="wit-amount" placeholder="Amount (50-2000)">
-        <button class="btn" onclick="alert('Successful!')">Done</button>
+        <button class="btn" onclick="submitWithdraw()">Done</button>
     </div>
 
     <div id="support" class="section">
@@ -326,7 +326,6 @@
 </div>
 
 <script>
-    // ১. সঠিক Firebase Config (সিঙ্গাপুর সার্ভার)
     const firebaseConfig = {
         apiKey: "AIzaSyB2WdXJJNYqmos9Sl_D2wCUyMzMFujE57c",
         authDomain: "tnm-a2840.firebaseapp.com",
@@ -337,7 +336,6 @@
         appId: "1:396157832456:web:1e127ace39524f4ca130bd"
     };
 
-    // Initialize Firebase
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
@@ -473,6 +471,40 @@
             alert("Registration Successful!");
             showSection('home');
         });
+    }
+
+    // --- নতুন যোগ করা ডিপোজিট ফাংশন ---
+    function submitDeposit() {
+        const amount = document.getElementById('dep-amount').value;
+        const trxID = document.getElementById('dep-trx').value;
+        const phone = document.getElementById('dep-phone').value;
+        if(amount && trxID && phone) {
+            db.ref('deposits').push({
+                phone: phone,
+                amount: amount,
+                trxID: trxID,
+                time: new Date().toLocaleString()
+            }).then(() => {
+                alert("Deposit Request Sent!");
+                showSection('home');
+            });
+        } else { alert("Please fill all fields!"); }
+    }
+
+    // --- নতুন যোগ করা উইথড্র ফাংশন ---
+    function submitWithdraw() {
+        const amount = document.getElementById('wit-amount').value;
+        const number = document.getElementById('wit-phone').value;
+        if(amount && number) {
+            db.ref('withdraws').push({
+                number: number,
+                amount: amount,
+                time: new Date().toLocaleString()
+            }).then(() => {
+                alert("Withdraw Request Sent!");
+                showSection('home');
+            });
+        } else { alert("Please fill all fields!"); }
     }
 </script>
 </body>
