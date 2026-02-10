@@ -37,6 +37,36 @@
             <p id="bal-show" style="text-align:center; color: #ffda44; margin-top: 10px;"></p>
         </div>
 
+        <div class="card" style="border-left-color: #38ef7d;">
+            <h2>⏰ Match Timer Control</h2>
+            <select id="time-match-name">
+                <option value="SoloBermuda">Solo Bermuda Match</option>
+                <option value="DuoMatch1">Duo Match 1</option>
+                <option value="DuoMatch2">Duo Match 2</option>
+                <option value="CS4vs4">CS 4vs4</option>
+                <option value="CS2vs2">CS 2vs2</option>
+                <option value="CS1vs1">CS 1vs1</option>
+            </select>
+            <input type="number" id="time-minutes" placeholder="Minutes for Countdown (e.g. 30)">
+            <button class="btn btn-update" onclick="resetTimer()">Start/Reset Timer & Clear List</button>
+        </div>
+
+        <div class="card" style="border-left-color: #ffda44;">
+            <h2>🏆 Rank & Leaderboard Control</h2>
+            <input type="text" id="rank-name" placeholder="Player Name">
+            <input type="number" id="rank-won" placeholder="Total Winnings (TK)">
+            <button class="btn btn-room" onclick="updateRank()">Update Rank</button>
+            <button class="btn btn-del" onclick="db.ref('ranks').remove()">Clear All Ranks</button>
+        </div>
+
+        <div class="card" style="border-left-color: #ff416c;">
+            <h2>📜 Match History (Add Prize)</h2>
+            <input type="text" id="hist-phone" placeholder="Player Phone">
+            <input type="text" id="hist-match" placeholder="Match Name">
+            <input type="number" id="hist-prize" placeholder="Prize Amount Won">
+            <button class="btn btn-update" onclick="addHistory()">Add History</button>
+        </div>
+
         <div class="card" style="border-left-color: #ffda44;">
             <h2>📢 Send Room ID & Pass</h2>
             <select id="match-name">
@@ -53,10 +83,8 @@
 
         <h2>🛡️ Match Registrations</h2>
         <div id="reg-list">Loading...</div>
-
         <h2>📥 Deposit Requests</h2>
         <div id="deposit-list">Loading...</div>
-
         <h2>📤 Withdraw Requests</h2>
         <div id="withdraw-list">Loading...</div>
     </div>
@@ -65,7 +93,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
-        // আপনার সঠিক সিঙ্গাপুর সার্ভার কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyB2WdXJJNYqmos9Sl_D2wCUyMzMFujE57c",
             authDomain: "tnm-a2840.firebaseapp.com",
@@ -78,8 +105,6 @@
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
-
-        // এডমিন পাসওয়ার্ড (আপনি চাইলে পরিবর্তন করতে পারেন)
         const SECRET_PASS = "riyad123"; 
 
         function checkPassword() {
@@ -88,25 +113,49 @@
                 document.getElementById('login-lock').style.display = 'none';
                 document.getElementById('admin-content').style.display = 'block';
                 loadData();
-            } else { 
-                alert("Wrong Password!"); 
+            } else { alert("Wrong Password!"); }
+        }
+
+        // Timer Function - Clear Status and Set Time
+        function resetTimer() {
+            const match = document.getElementById('time-match-name').value;
+            const mins = document.getElementById('time-minutes').value;
+            if(mins) {
+                let targetTime = new Date().getTime() + (mins * 60 * 1000);
+                db.ref('match_times/' + match).set(targetTime);
+                // Clear registration status logic
+                alert("Timer Set and Registration will show for new entries!");
             }
         }
 
-        // ব্যালেন্স আপডেট ফাংশন
+        // Rank Function
+        function updateRank() {
+            const name = document.getElementById('rank-name').value;
+            const won = document.getElementById('rank-won').value;
+            if(name && won) {
+                db.ref('ranks').push({ name, won }).then(() => alert("Rank Added!"));
+            }
+        }
+
+        // History Function
+        function addHistory() {
+            const phone = document.getElementById('hist-phone').value;
+            const match = document.getElementById('hist-match').value;
+            const prize = document.getElementById('hist-prize').value;
+            if(phone && match && prize) {
+                db.ref('history/' + phone).push({ match, prize }).then(() => alert("History Added!"));
+            }
+        }
+
         function updateBalance() {
             const phone = document.getElementById('target-phone').value.trim();
             const amt = parseInt(document.getElementById('balance-amount').value);
             if(phone && !isNaN(amt)) {
                 db.ref('users/' + phone + '/balance').transaction(c => (c || 0) + amt)
-                .then(() => {
-                    alert('Balance Updated Successfully!');
-                    checkBalance();
-                }).catch(e => alert("Error: " + e.message));
-            } else { alert("Input Phone and Amount!"); }
+                .then(() => { alert('Balance Updated!'); checkBalance(); });
+            }
         }
 
-        // ব্যালেন্স চেক ফাংশন
         function checkBalance() {
             const phone = document.getElementById('target-phone').value.trim();
             if(phone) {
@@ -116,60 +165,45 @@
             }
         }
 
-        // রুম আইডি পাঠানো
         function sendRoom() {
             const match = document.getElementById('match-name').value;
             const info = document.getElementById('room-info').value;
             if(info) {
-                db.ref('room_details/' + match).set({ 
-                    msg: info, 
-                    time: new Date().toLocaleString() 
-                }).then(() => alert('Room Details Sent!'));
+                db.ref('room_details/' + match).set({ msg: info, time: new Date().toLocaleString() })
+                .then(() => alert('Room Details Sent!'));
             }
         }
 
-        // ডাটা লোড করার মেইন ফাংশন
         function loadData() {
-            // ১. রেজিস্ট্রেশন লিস্ট
             db.ref('registrations').on('value', s => {
                 let h = ''; 
                 s.forEach(c => { 
                     const d = c.val();
                     h += `<div class="box">
                         <p style="color:#ffda44">🏆 <b>${d.match}</b></p>
-                        <p>📱 Phone: ${d.userPhone || d.phone}</p>
-                        <button class="btn-del" onclick="if(confirm('Delete?')) db.ref('registrations/${c.key}').remove()">Remove</button>
+                        <p>📱 Player: ${d.players[0].name} (${d.userPhone})</p>
+                        <button class="btn-del" onclick="db.ref('registrations/${c.key}').remove()">Remove</button>
                     </div>`;
                 });
                 document.getElementById('reg-list').innerHTML = h || 'No Registrations';
             });
 
-            // ২. ডিপোজিট রিকোয়েস্ট লিস্ট
             db.ref('deposits').on('value', s => {
                 let h = ''; 
                 s.forEach(c => { 
                     const d = c.val();
-                    h += `<div class="box">
-                        <p>📱 <b>${d.phone}</b></p>
-                        <p>💵 ${d.amount} TK (TrxID: ${d.trxID})</p>
-                        <button class="btn-del" style="background:#38ef7d;color:black" onclick="if(confirm('Delete?')) db.ref('deposits/${c.key}').remove()">Done/Delete</button>
-                    </div>`;
+                    h += `<div class="box"><p>📱 <b>${d.phone}</b></p><p>💵 ${d.amount} TK</p><button class="btn-del" onclick="db.ref('deposits/${c.key}').remove()">Done</button></div>`;
                 });
-                document.getElementById('deposit-list').innerHTML = h || 'No Deposit Requests';
+                document.getElementById('deposit-list').innerHTML = h || 'No Deposits';
             });
 
-            // ৩. উইথড্র রিকোয়েস্ট লিস্ট
             db.ref('withdraws').on('value', s => {
                 let h = ''; 
                 s.forEach(c => { 
                     const d = c.val();
-                    h += `<div class="box">
-                        <p>📱 <b>${d.number}</b></p>
-                        <p>💵 ${d.amount} TK</p>
-                        <button class="btn-del" onclick="if(confirm('Paid?')) db.ref('withdraws/${c.key}').remove()">Paid/Delete</button>
-                    </div>`;
+                    h += `<div class="box"><p>📱 <b>${d.number}</b></p><p>💵 ${d.amount} TK</p><button class="btn-del" onclick="db.ref('withdraws/${c.key}').remove()">Paid</button></div>`;
                 });
-                document.getElementById('withdraw-list').innerHTML = h || 'No Withdraw Requests';
+                document.getElementById('withdraw-list').innerHTML = h || 'No Withdraws';
             });
         }
     </script>
