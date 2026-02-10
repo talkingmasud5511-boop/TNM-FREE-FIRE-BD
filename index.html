@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNM RIYAD TOURNAMENT</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <style>
+        :root {
+            --primary: #ff4b2b;
+            --secondary: #ff416c;
+            --dark: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --text: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark);
+            color: var(--text);
+            margin: 0;
+            padding-bottom: 70px;
+        }
+
+        .header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .section {
+            display: none;
+            padding: 15px;
+            animation: fadeIn 0.5s;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .match-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--primary);
+            position: relative;
+        }
+
+        .match-title {
+            font-size: 20px;
+            color: #ffda44;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .prize-table {
+            width: 100%;
+            font-size: 14px;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        .prize-table td {
+            padding: 5px;
+            border-bottom: 1px solid #444;
+        }
+
+        .btn {
+            background: linear-gradient(to right, #11998e, #38ef7d);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .details-btn {
+            background: #555;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: #333;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #111;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #333;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .notice {
+            background: #442222;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            border: 1px solid red;
+        }
+
+        .per-kill {
+            color: #38ef7d;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .profile-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div id="auth-page" style="display: block;">
+    <div class="header">LOGIN / SIGN UP</div>
+    <div style="padding: 20px;">
+        <div id="login-box">
+            <h2>Login</h2>
+            <input type="text" id="login-phone" placeholder="Phone Number">
+            <input type="password" id="login-pass" placeholder="Password">
+            <button class="btn" onclick="login()">Sign In</button>
+            <p onclick="toggleAuth()" style="text-align:center; color: var(--secondary); cursor: pointer;">New here? Create Account</p>
+        </div>
+        <div id="signup-box" style="display: none;">
+            <h2>Create Account</h2>
+            <input type="text" id="reg-user-name" placeholder="Full Name">
+            <input type="text" id="reg-user-phone" placeholder="Phone Number">
+            <input type="password" id="reg-user-pass" placeholder="Create Password">
+            <button class="btn" onclick="signup()">Sign Up</button>
+            <p onclick="toggleAuth()" style="text-align:center; color: var(--secondary); cursor: pointer;">Already have account? Login</p>
+        </div>
+    </div>
+</div>
+
+<div id="main-app" style="display: none;">
+    <div class="header">🎮 TNM RIYAD TOURNAMENT 🎮</div>
+
+    <div id="home" class="section active">
+        <div class="match-card">
+            <div class="match-title">🔥 Solo Bermuda Match 🏆</div>
+            <p>Entry Fee: 10 Taka | <span class="per-kill">Per Kill: 5 Taka (Max 6 Kill Bonus)</span></p>
+            <button class="btn details-btn" onclick="showMatchDetails('Room ID: 12345', 'Pass: 999')">Match Details</button>
+            <table class="prize-table">
+                <tr><td>1st: 50tk</td><td>2nd: 40tk</td><td>3rd: 30tk</td></tr>
+                <tr><td>4th: 20tk</td><td>5th: 10tk</td><td>Slots: 48/48</td></tr>
+            </table>
+            <button class="btn" onclick="openRegister('Solo Bermuda', 10, 'solo')">Register Now</button>
+        </div>
+
+        <div class="match-card">
+            <div class="match-title">⚔️ Duo Match (1) 🥇</div>
+            <p>Entry Fee: 20 Taka | <span class="per-kill">Per Kill: 10 Taka (Max 6 Kill Bonus)</span></p>
+            <button class="btn details-btn" onclick="showMatchDetails('Room ID: 5678', 'Pass: 888')">Match Details</button>
+            <table class="prize-table">
+                <tr><td>1st: 100tk (50/50 Separated)</td><td>2nd: 80tk</td><td>3rd: 60tk</td></tr>
+                <tr><td>4th: 40tk</td><td>5th: 20tk</td><td>Total: 300tk</td></tr>
+            </table>
+            <button class="btn" onclick="openRegister('Duo Match 1', 20, 'duo_option')">Register Now</button>
+        </div>
+
+        <div class="match-card">
+            <div class="match-title">⚔️ Duo Match (2) 🥈</div>
+            <p>Entry Fee: 40 Taka | <span class="per-kill">Per Kill: 20 Taka (Max 6 Kill Bonus)</span></p>
+            <button class="btn details-btn" onclick="showMatchDetails('Room ID: 4321', 'Pass: 777')">Match Details</button>
+            <table class="prize-table">
+                <tr><td>1st: 200tk (100/100 Separated)</td><td>2nd: 160tk</td><td>3rd: 120tk</td></tr>
+                <tr><td>4th: 80tk</td><td>5th: 40tk</td><td>Total: 600tk</td></tr>
+            </table>
+            <button class="btn" onclick="openRegister('Duo Match 2', 40, 'duo_option')">Register Now</button>
+        </div>
+
+        <div class="match-card">
+            <div class="match-title">🛡️ Clash Squad 4vs4 🔫</div>
+            <p>Entry Fee: 50tk/Person | Win Prize: 340tk</p>
+            <p>Winner: 85 Taka Each</p>
+            <button class="btn details-btn" onclick="showMatchDetails('ID: CS1', 'Pass: 111')">Match Details</button>
+            <button class="btn" onclick="openRegister('CS 4vs4', 50, 'squad_full')">Register Now</button>
+        </div>
+
+        <div class="match-card">
+            <div class="match-title">🛡️ Clash Squad 2vs2 🔫</div>
+            <p>Entry Fee: 100tk/Person | Win Prize: 350tk</p>
+            <p>Winner: 175 Taka Each</p>
+            <button class="btn details-btn" onclick="showMatchDetails('ID: CS2', 'Pass: 222')">Match Details</button>
+            <button class="btn" onclick="openRegister('CS 2vs2', 100, 'duo_option')">Register Now</button>
+        </div>
+
+        <div class="match-card">
+            <div class="match-title">🛡️ Clash Squad 1vs1 🔫</div>
+            <p>Entry Fee: 200tk | Win Prize: 360tk</p>
+            <button class="btn details-btn" onclick="showMatchDetails('ID: CS3', 'Pass: 333')">Match Details</button>
+            <button class="btn" onclick="openRegister('CS 1vs1', 200, 'solo')">Register Now</button>
+        </div>
+    </div>
+
+    <div id="profile" class="section">
+        <h2>My Profile</h2>
+        <div class="profile-card">
+            <div style="font-size: 50px;">👤</div>
+            <h3 id="prof-name">User Name</h3>
+            <p id="prof-phone">01xxxxxxxxx</p>
+            <div style="background: #444; padding: 10px; border-radius: 8px;">
+                <span>Balance: </span><span id="prof-balance" style="color:#38ef7d; font-weight:bold;">0</span><span> Taka</span>
+            </div>
+            <button class="btn" onclick="logout()" style="background: #ff4b2b; margin-top: 20px;">Logout</button>
+        </div>
+    </div>
+
+    <div id="register-page" class="section">
+        <button class="btn details-btn" onclick="showSection('home')">⬅ Back</button>
+        <h2 id="reg-title">Registration</h2>
+        <div class="notice">
+            ⚠️ কাস্টম এ অবৈধ কোনো আইটেম ব্যবহার করা নিষেধ। বিস্তারিত জানতে ইউটিউব চ্যানেল ভিজিট করুন। <br>
+            <a href="https://youtube.com/@tnmriyad?si=MomGy8I0esH6Cgs1l" style="color: yellow;">Join YouTube</a>
+        </div>
+        
+        <label>Select Mode:</label>
+        <select id="reg-mode" onchange="updateRegFee()">
+            <option value="solo">Solo Join</option>
+            <option value="duo" id="opt-duo">Duo (Team)</option>
+            <option value="squad" id="opt-squad">Squad (4 Members)</option>
+        </select>
+
+        <p>Fee to Pay: <span id="fee-display">0</span> Taka</p>
+        
+        <div id="dynamic-inputs">
+            <input type="text" placeholder="Your Name" id="reg-name">
+            <input type="text" placeholder="In-Game UID" id="reg-uid">
+        </div>
+
+        <button class="btn" onclick="submitRegistration()">Confirm Register</button>
+        
+        <div id="status-box" style="margin-top:20px; border:1px dashed #777; padding:10px;">
+            <p>Status: <span id="reg-status">Waiting for data...</span></p>
+        </div>
+    </div>
+
+    <div id="leaderboard" class="section">
+        <h2>🏆 Top Players</h2>
+        <table class="prize-table">
+            <tr style="background:#444"><td>Rank</td><td>Name</td><td>Winnings</td></tr>
+            <tr><td>#1</td><td>Masud</td><td>1500tk</td></tr>
+            <tr><td>#2</td><td>Riyad</td><td>1200tk</td></tr>
+        </table>
+    </div>
+
+    <div id="deposit" class="section">
+        <h2>💰 Deposit Money</h2>
+        <p>Personal Bkash/Nagad: <b>01910658737</b></p>
+        <p>Limit: 50 - 3000 Taka</p>
+        <input type="number" id="dep-amount" placeholder="Amount (50-3000)">
+        <input type="text" id="dep-phone" placeholder="Your Phone Number">
+        <input type="text" id="dep-trx" placeholder="Transaction ID">
+        <button class="btn" onclick="alert('Successful!')">Done</button>
+    </div>
+
+    <div id="withdraw" class="section">
+        <h2>💸 Withdraw Money</h2>
+        <p>Limit: 50 - 2000 Taka</p>
+        <input type="text" id="wit-phone" placeholder="Receiver Number">
+        <input type="number" id="wit-amount" placeholder="Amount (50-2000)">
+        <button class="btn" onclick="alert('Successful!')">Done</button>
+    </div>
+
+    <div id="support" class="section">
+        <h2>📞 Support & Contact</h2>
+        <p>📧 Email: talkingmasud5511@gmail.com</p>
+        <p>💬 WhatsApp: 01910658737</p>
+        <p>📺 <a href="https://youtube.com/@tnmriyad?si=MomGy8I0esH6Cgs1" style="color:white">YouTube Channel</a></p>
+        <p>✈️ <a href="https://t.me/+XF_oEofeAeEwMDI9" style="color:white">Telegram Channel</a></p>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="showSection('home')">🏠<br>Home</div>
+        <div class="nav-item" onclick="showSection('leaderboard')">🏆<br>Rank</div>
+        <div class="nav-item" onclick="showSection('deposit')">💰<br>Deposit</div>
+        <div class="nav-item" onclick="showSection('withdraw')">💸<br>Withdraw</div>
+        <div class="nav-item" onclick="showSection('profile')">👤<br>Profile</div>
+        <div class="nav-item" onclick="showSection('support')">📞<br>Support</div>
+    </nav>
+</div>
+
+<script>
+    // ১. সঠিক Firebase Config (সিঙ্গাপুর সার্ভার)
+    const firebaseConfig = {
+        apiKey: "AIzaSyB2WdXJJNYqmos9Sl_D2wCUyMzMFujE57c",
+        authDomain: "tnm-a2840.firebaseapp.com",
+        databaseURL: "https://tnm-a2840-default-rtdb.asia-southeast1.firebasedatabase.app/",
+        projectId: "tnm-a2840",
+        storageBucket: "tnm-a2840.appspot.com",
+        messagingSenderId: "396157832456",
+        appId: "1:396157832456:web:1e127ace39524f4ca130bd"
+    };
+
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+
+    let baseFee = 0;
+    let currentUser = JSON.parse(localStorage.getItem('user'));
+
+    window.onload = function() {
+        if(currentUser) {
+            document.getElementById('auth-page').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            updateProfileUI();
+        }
+    }
+
+    function toggleAuth() {
+        const lBox = document.getElementById('login-box');
+        const sBox = document.getElementById('signup-box');
+        if(lBox.style.display === 'none') {
+            lBox.style.display = 'block';
+            sBox.style.display = 'none';
+        } else {
+            lBox.style.display = 'none';
+            sBox.style.display = 'block';
+        }
+    }
+
+    function signup() {
+        const name = document.getElementById('reg-user-name').value;
+        const phone = document.getElementById('reg-user-phone').value;
+        const pass = document.getElementById('reg-user-pass').value;
+        if(name && phone && pass) {
+            const userObj = { name, phone, pass, balance: 0 };
+            db.ref('users/' + phone).set(userObj).then(() => {
+                localStorage.setItem('user', JSON.stringify(userObj));
+                location.reload();
+            });
+        } else { alert("Fill all fields"); }
+    }
+
+    function login() {
+        const phone = document.getElementById('login-phone').value;
+        const pass = document.getElementById('login-pass').value;
+        db.ref('users/' + phone).once('value', (snapshot) => {
+            const user = snapshot.val();
+            if(user && user.pass === pass) {
+                localStorage.setItem('user', JSON.stringify(user));
+                location.reload();
+            } else { alert("Wrong Phone or Password!"); }
+        });
+    }
+
+    function logout() {
+        localStorage.removeItem('user');
+        location.reload();
+    }
+
+    function updateProfileUI() {
+        if(!currentUser) return;
+        document.getElementById('prof-name').innerText = currentUser.name;
+        document.getElementById('prof-phone').innerText = currentUser.phone;
+        db.ref('users/' + currentUser.phone + '/balance').on('value', (snapshot) => {
+            document.getElementById('prof-balance').innerText = snapshot.val() || 0;
+        });
+    }
+
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        const items = document.querySelectorAll('.nav-item');
+        if(id === 'home') items[0].classList.add('active');
+        if(id === 'leaderboard') items[1].classList.add('active');
+        if(id === 'deposit') items[2].classList.add('active');
+        if(id === 'withdraw') items[3].classList.add('active');
+        if(id === 'profile') items[4].classList.add('active');
+        if(id === 'support') items[5].classList.add('active');
+    }
+
+    function showMatchDetails(id, pass) {
+        alert("Match Details:\n" + id + "\n" + pass);
+    }
+
+    function openRegister(title, fee, option) {
+        showSection('register-page');
+        document.getElementById('reg-title').innerText = title;
+        baseFee = fee;
+        const modeSelect = document.getElementById('reg-mode');
+        document.getElementById('opt-duo').style.display = (option === 'solo') ? 'none' : 'block';
+        document.getElementById('opt-squad').style.display = (option === 'squad_full') ? 'block' : 'none';
+        modeSelect.value = 'solo';
+        updateRegFee();
+    }
+
+    function updateRegFee() {
+        const mode = document.getElementById('reg-mode').value;
+        const inputArea = document.getElementById('dynamic-inputs');
+        inputArea.innerHTML = ""; 
+        let playerCount = 1;
+        if(mode === 'duo') playerCount = 2;
+        else if(mode === 'squad') playerCount = 4;
+        document.getElementById('fee-display').innerText = baseFee * playerCount;
+        for(let i = 1; i <= playerCount; i++) {
+            inputArea.innerHTML += `
+                <div style="margin-top:10px; border-bottom:1px solid #444; padding-bottom:10px;">
+                    <p style="margin:5px 0; color:var(--primary); font-size:12px;">Player ${i}</p>
+                    <input type="text" placeholder="Player ${i} Name" id="p${i}-name">
+                    <input type="text" placeholder="Player ${i} In-Game UID" id="p${i}-uid">
+                </div>
+            `;
+        }
+    }
+
+    function submitRegistration() {
+        const mode = document.getElementById('reg-mode').value;
+        const matchName = document.getElementById('reg-title').innerText;
+        let playerCount = (mode === 'solo') ? 1 : (mode === 'duo' ? 2 : 4);
+        let players = [];
+        for(let i = 1; i <= playerCount; i++) {
+            players.push({
+                name: document.getElementById(`p${i}-name`).value,
+                uid: document.getElementById(`p${i}-uid`).value
+            });
+        }
+        db.ref('registrations').push({
+            match: matchName,
+            mode: mode,
+            players: players,
+            userPhone: currentUser.phone,
+            time: new Date().toLocaleString()
+        }).then(() => {
+            alert("Registration Successful!");
+            showSection('home');
+        });
+    }
+</script>
+</body>
+</html>
