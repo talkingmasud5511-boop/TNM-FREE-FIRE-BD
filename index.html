@@ -1,598 +1,1657 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TNM RIYAD TOURNAMENT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>FREE FIRE TOURNAMENT 2026 - TNM RIYAD</title>
     
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --primary: #ff4b2b;
-            --secondary: #ff416c;
-            --dark: #1a1a1a;
-            --card-bg: #2d2d2d;
-            --text: #ffffff;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--dark);
-            color: var(--text);
+        * {
             margin: 0;
-            padding-bottom: 70px;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
         }
-
-        .header {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            padding: 20px;
-            text-align: center;
-            font-size: 24px;
+        
+        body {
+            background: radial-gradient(circle at 20% 30%, #1a0f1f, #0a0612);
+            color: #fff;
+            padding: 0;
+            padding-bottom: 80px;
+            position: relative;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        /* গেমিং ব্যাকগ্রাউন্ড */
+        .gaming-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255,75,43,0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: pulseGlow 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* বৃষ্টি এনিমেশন */
+        .rain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            overflow: hidden;
+        }
+        
+        .rain-drop {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(to bottom, rgba(255,215,0,0.8), rgba(255,140,0,0.3));
+            border-radius: 0 0 5px 5px;
+            animation: fall linear infinite;
+            box-shadow: 0 0 10px #FFD700;
+        }
+        
+        @keyframes fall {
+            to { transform: translateY(100vh); }
+        }
+        
+        /* শুটিং স্টার */
+        .shooting-star {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255,255,255,0.8);
+            animation: shoot 1.5s ease-out forwards;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        
+        @keyframes shoot {
+            0% { opacity: 1; transform: translate(0,0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--moveX), var(--moveY)) scale(0.2); }
+        }
+        
+        /* টাচ স্টার */
+        .touch-star {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            background: transparent;
+            pointer-events: none;
+            z-index: 10000;
+            animation: touchSpark 0.8s ease-out forwards;
+        }
+        
+        .touch-star::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+        }
+        
+        @keyframes touchSpark {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
+        }
+        
+        /* ভিডিও বাটন */
+        .video-btn {
+            background: linear-gradient(45deg, #FF416C, #FF4B2B);
+            border: none;
+            color: white;
+            padding: 16px 30px;
+            border-radius: 50px;
             font-weight: bold;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(255,75,43,0.4);
+            border: 2px solid rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 1;
         }
-
+        
+        .video-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: btnShine 3s infinite;
+            z-index: -1;
+        }
+        
+        @keyframes btnShine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+        
+        .video-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255,75,43,0.6);
+        }
+        
+        /* কপি বাটন */
+        .copy-btn {
+            background: rgba(255,215,0,0.2);
+            border: 1px solid #FFD700;
+            color: #FFD700;
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: #FFD700;
+            color: black;
+        }
+        
+        /* অথ পেইজ */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+            background: radial-gradient(circle at 50% 50%, #1a0f2a, #0a0612);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .auth-card {
+            background: rgba(30, 35, 50, 0.95);
+            backdrop-filter: blur(20px);
+            border: 3px solid #FFD700;
+            border-radius: 40px;
+            padding: 40px 30px;
+            max-width: 450px;
+            margin: 0 auto;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+        
+        /* ট্যাব মেনু */
+        .tabs {
+            display: flex;
+            overflow-x: auto;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 60px;
+            padding: 10px;
+            margin: 20px 15px;
+            gap: 10px;
+            border: 2px solid rgba(255,215,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 20;
+        }
+        
+        .tab {
+            padding: 14px 20px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 50px;
+            white-space: nowrap;
+            transition: all 0.3s;
+            font-size: 14px;
+            flex: 1;
+            cursor: pointer;
+        }
+        
+        .tab.active {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: black;
+            box-shadow: 0 5px 25px rgba(255,215,0,0.5);
+        }
+        
+        /* সেকশন */
         .section {
             display: none;
             padding: 15px;
             animation: fadeIn 0.5s;
+            position: relative;
+            z-index: 10;
         }
-
+        
         .section.active {
             display: block;
         }
-
+        
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
+        
+        /* ম্যাচ কার্ড */
         .match-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-left: 5px solid var(--primary);
+            background: rgba(25, 30, 45, 0.85);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            border-radius: 35px;
+            padding: 25px;
+            margin-bottom: 30px;
             position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            transition: all 0.4s;
         }
-
+        
+        .match-card:hover {
+            transform: translateY(-5px);
+            border-color: #FFD700;
+        }
+        
         .match-title {
-            font-size: 20px;
-            color: #ffda44;
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
-
+        
+        /* টাইমার */
+        .timer {
+            background: rgba(0, 255, 204, 0.1);
+            border: 2px solid #00ffcc;
+            border-radius: 50px;
+            padding: 12px 20px;
+            color: #00ffcc;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: inline-block;
+            box-shadow: 0 0 20px rgba(0,255,204,0.3);
+            animation: timerPulse 2s infinite;
+        }
+        
+        @keyframes timerPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(0,255,204,0.3); }
+            50% { box-shadow: 0 0 40px rgba(0,255,204,0.6); }
+        }
+        
+        /* লাইভ ব্যাজ - অ্যাডমিন কন্ট্রোল */
+        .live-badge {
+            background: #ff4444;
+            color: white;
+            padding: 6px 20px;
+            border-radius: 50px;
+            font-size: 12px;
+            display: inline-block;
+            box-shadow: 0 0 20px rgba(255,68,68,0.5);
+            animation: livePulse 1s infinite;
+            cursor: pointer;
+        }
+        
+        .live-badge.offline {
+            background: #888;
+            animation: none;
+            box-shadow: none;
+        }
+        
+        @keyframes livePulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .per-kill {
+            background: rgba(76, 175, 80, 0.15);
+            border: 2px solid #4CAF50;
+            border-radius: 50px;
+            padding: 8px 18px;
+            color: #4CAF50;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
         .prize-table {
             width: 100%;
-            font-size: 14px;
             border-collapse: collapse;
-            margin: 10px 0;
+            margin: 20px 0;
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,215,0,0.2);
         }
-
+        
         .prize-table td {
-            padding: 5px;
-            border-bottom: 1px solid #444;
-        }
-
-        .btn {
-            background: linear-gradient(to right, #11998e, #38ef7d);
-            border: none;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
+        }
+        
+        .reg-names {
+            font-size: 14px;
+            color: #00ffcc;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 20px;
+            margin-top: 15px;
+            max-height: 100px;
+            overflow-y: auto;
+            border: 1px solid #FFD700;
+        }
+        
+        /* প্রোফাইল */
+        .profile-card {
+            background: rgba(25, 30, 45, 0.85);
+            backdrop-filter: blur(20px);
+            border: 2px solid #FFD700;
+            border-radius: 35px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid #FFD700;
+            margin: 0 auto 20px;
+            object-fit: cover;
+            box-shadow: 0 0 50px rgba(255,215,0,0.5);
             cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            margin-top: 10px;
+            transition: all 0.3s;
         }
-
-        .details-btn {
-            background: #555;
-            margin-bottom: 5px;
+        
+        .profile-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 70px rgba(255,215,0,0.8);
         }
-
-        input, select {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #444;
-            background: #333;
+        
+        /* গুগল ফটোস / অ্যালবাম থেকে ছবি তোলার অপশন */
+        .photo-upload {
+            margin-top: 15px;
+            padding: 15px;
+            background: linear-gradient(45deg, #4285F4, #34A853, #FBBC05, #EA4335);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
             color: white;
-            box-sizing: border-box;
+            font-weight: 600;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
-
+        
+        .photo-upload::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: btnShine 3s infinite;
+        }
+        
+        .photo-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(66,133,244,0.4);
+        }
+        
+        .photo-upload input {
+            display: none;
+        }
+        
+        /* ব্যালেন্স বক্স */
+        .balance-box {
+            background: linear-gradient(145deg, #1e1e2e, #2a2a3a);
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid #FFD700;
+        }
+        
+        /* স্ট্যাটাস ব্যাজ */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            background: #FF9800;
+            color: black;
+        }
+        
+        .status-paid {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .status-confirmed {
+            background: #2196F3;
+            color: white;
+        }
+        
+        /* সাপোর্ট লিংক */
+        .support-link {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .support-link:hover {
+            background: rgba(255,215,0,0.15);
+            transform: translateX(5px);
+        }
+        
+        /* রুম মডাল */
+        .room-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 450px;
+            background: rgba(20, 25, 40, 0.98);
+            backdrop-filter: blur(30px);
+            border: 4px solid #FFD700;
+            border-radius: 40px;
+            padding: 40px;
+            z-index: 10002;
+            display: none;
+            box-shadow: 0 0 100px rgba(255,215,0,0.5);
+        }
+        
+        .room-modal.active {
+            display: block;
+            animation: modalGlow 2s infinite;
+        }
+        
+        @keyframes modalGlow {
+            0%, 100% { box-shadow: 0 0 50px rgba(255,215,0,0.5); }
+            50% { box-shadow: 0 0 100px rgba(255,215,0,0.8); }
+        }
+        
+        /* ইতিহাস কার্ড */
+        .history-card {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            padding: 18px;
+            margin-top: 12px;
+            border-radius: 20px;
+            border-left: 8px solid;
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        
+        .history-card:hover {
+            transform: translateX(5px);
+            border-color: #FFD700;
+        }
+        
+        /* নিচের নেভিগেশন */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             width: 100%;
-            background: #111;
+            background: rgba(17, 17, 17, 0.95);
+            backdrop-filter: blur(20px);
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid #333;
+            padding: 15px 0;
+            border-top: 3px solid #FFD700;
             z-index: 1000;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
         }
-
+        
         .nav-item {
             color: #aaa;
             text-decoration: none;
-            font-size: 10px;
+            font-size: 12px;
             text-align: center;
             cursor: pointer;
+            transition: all 0.3s;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 600;
         }
-
+        
         .nav-item.active {
-            color: var(--primary);
+            color: #FFD700;
+            background: rgba(255,215,0,0.15);
+            transform: translateY(-5px);
         }
-
+        
+        /* ফর্ম ইনপুট */
+        input, select, textarea {
+            width: 100%;
+            padding: 18px;
+            margin: 12px 0;
+            border-radius: 50px;
+            border: 2px solid rgba(255,215,0,0.5);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #00ffcc;
+            box-shadow: 0 0 30px rgba(0,255,204,0.4);
+            outline: none;
+        }
+        
+        /* নোটিশ */
         .notice {
-            background: #442222;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-size: 13px;
-            border: 1px solid red;
-        }
-
-        .per-kill {
-            color: #38ef7d;
+            background: linear-gradient(145deg, #FF416C, #FF4B2B);
+            padding: 18px;
+            border-radius: 25px;
+            margin-bottom: 20px;
+            border: 2px solid white;
+            color: white;
             font-weight: bold;
-            font-size: 13px;
-        }
-
-        .profile-card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
             text-align: center;
         }
         
-        /* New Styles for Additions */
-        .timer { color: #ffda44; font-weight: bold; font-size: 14px; margin-bottom: 5px; }
-        .reg-names { font-size: 12px; color: #aaa; background: #222; padding: 5px; border-radius: 5px; margin-top: 5px; max-height: 50px; overflow-y: auto; }
-        .history-card { background: #333; padding: 10px; margin-top: 10px; border-radius: 5px; border-left: 3px solid #38ef7d; text-align: left;}
+        /* উইথড্র পিন সেটিংস */
+        .pin-settings {
+            background: rgba(255,215,0,0.1);
+            border: 2px solid #FFD700;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .match-title { font-size: 20px; }
+            .tab { padding: 12px 16px; font-size: 12px; }
+        }
     </style>
 </head>
 <body>
-
-<div id="auth-page" style="display: block;">
-    <div class="header">LOGIN / SIGN UP</div>
-    <div style="padding: 20px;">
-        <div id="login-box">
-            <h2>Login</h2>
-            <input type="text" id="login-phone" placeholder="Phone Number">
-            <input type="password" id="login-pass" placeholder="Password">
-            <button class="btn" onclick="login()">Sign In</button>
-            <p onclick="toggleAuth()" style="text-align:center; color: var(--secondary); cursor: pointer;">New here? Create Account</p>
-        </div>
-        <div id="signup-box" style="display: none;">
-            <h2>Create Account</h2>
-            <input type="text" id="reg-user-name" placeholder="Full Name">
-            <input type="text" id="reg-user-phone" placeholder="Phone Number">
-            <input type="password" id="reg-user-pass" placeholder="Create Password">
-            <button class="btn" onclick="signup()">Sign Up</button>
-            <p onclick="toggleAuth()" style="text-align:center; color: var(--secondary); cursor: pointer;">Already have account? Login</p>
-        </div>
-    </div>
-</div>
-
-<div id="main-app" style="display: none;">
-    <div class="header">🎮 TNM RIYAD TOURNAMENT 🎮</div>
-
-    <div id="home" class="section active">
-        <div class="match-card">
-            <div class="match-title">🔥 Solo Bermuda Match 🏆</div>
-            <div class="timer" id="timer-SoloBermuda">Starts In: --:--</div>
-            <p>Entry Fee: 10 Taka | <span class="per-kill">Per Kill: 5 Taka (Max 6 Kill Bonus)</span></p>
-            <button class="btn details-btn" onclick="showMatchDetails('Solo Bermuda Match')">Match Details</button>
-            <table class="prize-table">
-                <tr><td>1st: 50tk</td><td>2nd: 40tk</td><td>3rd: 30tk</td></tr>
-                <tr><td>4th: 20tk</td><td>5th: 10tk</td><td>Slots: 48/48</td></tr>
-            </table>
-            <button class="btn" onclick="openRegister('Solo Bermuda Match', 10, 'solo')">Register Now</button>
-            <div class="reg-names" id="list-SoloBermuda">Registered: Loading...</div>
-        </div>
-
-        <div class="match-card">
-            <div class="match-title">⚔️ Duo Match (1) 🥇</div>
-            <div class="timer" id="timer-DuoMatch1">Starts In: --:--</div>
-            <p>Entry Fee: 20 Taka | <span class="per-kill">Per Kill: 10 Taka (Max 6 Kill Bonus)</span></p>
-            <button class="btn details-btn" onclick="showMatchDetails('Duo Match 1')">Match Details</button>
-            <table class="prize-table">
-                <tr><td>1st: 100tk (50/50 Separated)</td><td>2nd: 80tk</td><td>3rd: 60tk</td></tr>
-                <tr><td>4th: 40tk</td><td>5th: 20tk</td><td>Total: 300tk</td></tr>
-            </table>
-            <button class="btn" onclick="openRegister('Duo Match 1', 20, 'duo_option')">Register Now</button>
-            <div class="reg-names" id="list-DuoMatch1">Registered: Loading...</div>
-        </div>
-
-        <div class="match-card">
-            <div class="match-title">⚔️ Duo Match (2) 🥈</div>
-            <div class="timer" id="timer-DuoMatch2">Starts In: --:--</div>
-            <p>Entry Fee: 40 Taka | <span class="per-kill">Per Kill: 20 Taka (Max 6 Kill Bonus)</span></p>
-            <button class="btn details-btn" onclick="showMatchDetails('Duo Match 2')">Match Details</button>
-            <table class="prize-table">
-                <tr><td>1st: 200tk (100/100 Separated)</td><td>2nd: 160tk</td><td>3rd: 120tk</td></tr>
-                <tr><td>4th: 80tk</td><td>5th: 40tk</td><td>Total: 600tk</td></tr>
-            </table>
-            <button class="btn" onclick="openRegister('Duo Match 2', 40, 'duo_option')">Register Now</button>
-            <div class="reg-names" id="list-DuoMatch2">Registered: Loading...</div>
-        </div>
-
-        <div class="match-card">
-            <div class="match-title">🛡️ Clash Squad 4vs4 🔫</div>
-            <div class="timer" id="timer-CS4vs4">Starts In: --:--</div>
-            <p>Entry Fee: 50tk/Person | Win Prize: 340tk</p>
-            <p>Winner: 85 Taka Each</p>
-            <button class="btn details-btn" onclick="showMatchDetails('CS 4vs4')">Match Details</button>
-            <button class="btn" onclick="openRegister('CS 4vs4', 50, 'squad_full')">Register Now</button>
-            <div class="reg-names" id="list-CS4vs4">Registered: Loading...</div>
-        </div>
-
-        <div class="match-card">
-            <div class="match-title">🛡️ Clash Squad 2vs2 🔫</div>
-            <div class="timer" id="timer-CS2vs2">Starts In: --:--</div>
-            <p>Entry Fee: 100tk/Person | Win Prize: 350tk</p>
-            <p>Winner: 175 Taka Each</p>
-            <button class="btn details-btn" onclick="showMatchDetails('CS 2vs2')">Match Details</button>
-            <button class="btn" onclick="openRegister('CS 2vs2', 100, 'duo_option')">Register Now</button>
-            <div class="reg-names" id="list-CS2vs2">Registered: Loading...</div>
-        </div>
-
-        <div class="match-card">
-            <div class="match-title">🛡️ Clash Squad 1vs1 🔫</div>
-            <div class="timer" id="timer-CS1vs1">Starts In: --:--</div>
-            <p>Entry Fee: 200tk | Win Prize: 360tk</p>
-            <button class="btn details-btn" onclick="showMatchDetails('CS 1vs1')">Match Details</button>
-            <button class="btn" onclick="openRegister('CS 1vs1', 200, 'solo')">Register Now</button>
-            <div class="reg-names" id="list-CS1vs1">Registered: Loading...</div>
-        </div>
-    </div>
-
-    <div id="profile" class="section">
-        <h2>My Profile</h2>
-        <div class="profile-card">
-            <div style="font-size: 50px;">👤</div>
-            <h3 id="prof-name">User Name</h3>
-            <p id="prof-phone">01xxxxxxxxx</p>
-            <div style="background: #444; padding: 10px; border-radius: 8px;">
-                <span>Balance: </span><span id="prof-balance" style="color:#38ef7d; font-weight:bold;">0</span><span> Taka</span>
+    <!-- এনিমেশন -->
+    <div class="gaming-bg"></div>
+    <div class="rain-container" id="rainContainer"></div>
+    
+    <!-- ========== অথ পেইজ ========== -->
+    <div id="auth-page" style="display: block;">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div style="color: #FFD700; font-size: 32px; font-weight: 800; text-align: center; margin-bottom: 10px;">🎮 TNM RIYAD</div>
+                <div style="color: #FFD700; text-align: center; margin-bottom: 30px; font-size: 18px;">TOURNAMENT 2026</div>
+                
+                <!-- লগইন -->
+                <div id="login-box">
+                    <h2 style="color: #FFD700; margin-bottom: 25px; text-align: center;">🔐 লগইন</h2>
+                    <input type="text" id="login-phone" placeholder="📱 মোবাইল নম্বর">
+                    <input type="password" id="login-pass" placeholder="🔑 পাসওয়ার্ড">
+                    <button class="video-btn" onclick="loginUser()">লগইন করুন</button>
+                    <p onclick="toggleAuth()" style="text-align:center; color: #FFD700; cursor: pointer; margin-top: 25px;">নতুন একাউন্ট? সাইন আপ করুন</p>
+                </div>
+                
+                <!-- সাইনআপ -->
+                <div id="signup-box" style="display: none;">
+                    <h2 style="color: #FFD700; margin-bottom: 25px; text-align: center;">📝 সাইন আপ</h2>
+                    <input type="text" id="reg-user-name" placeholder="👤 আপনার নাম">
+                    <input type="text" id="reg-user-phone" placeholder="📱 মোবাইল নম্বর">
+                    <input type="password" id="reg-user-pass" placeholder="🔑 পাসওয়ার্ড">
+                    <button class="video-btn" onclick="signupUser()">সাইন আপ করুন</button>
+                    <p onclick="toggleAuth()" style="text-align:center; color: #FFD700; cursor: pointer; margin-top: 25px;">একাউন্ট আছে? লগইন করুন</p>
+                </div>
             </div>
-            <div id="match-history" style="margin-top:20px;">
-                <h3>📜 Match History & Winnings</h3>
-                <div id="history-list">No history yet.</div>
+        </div>
+    </div>
+    
+    <!-- ========== মেইন অ্যাপ ========== -->
+    <div id="main-app" style="display: none;">
+        <!-- হেডার -->
+        <div style="background: linear-gradient(135deg, rgba(255,65,108,0.95), rgba(255,75,43,0.95)); padding: 25px 20px; text-align: center; border-bottom: 3px solid #FFD700;">
+            <div style="font-size: 28px; font-weight: 800; color: white; text-shadow: 0 0 20px rgba(255,215,0,0.8);">🎮 TNM RIYAD 2026</div>
+            <div style="font-size: 16px; color: #FFD700; margin-top: 5px;">🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট</div>
+        </div>
+        
+        <!-- নোটিশ (অ্যাডমিন কন্ট্রোল) -->
+        <div style="margin: 15px;">
+            <div class="notice" id="noticeContent">📢 স্বাগতম! সব ম্যাচ চালু আছে। নিয়ম মেনে খেলুন।</div>
+        </div>
+        
+        <!-- ট্যাব মেনু -->
+        <div class="tabs">
+            <div class="tab active" onclick="showSection('home')">🏠 হোম</div>
+            <div class="tab" onclick="showSection('leaderboard')">🏆 র‍্যাঙ্ক</div>
+            <div class="tab" onclick="showSection('deposit')">💰 ডিপোজিট</div>
+            <div class="tab" onclick="showSection('withdraw')">💳 উইথড্র</div>
+            <div class="tab" onclick="showSection('profile')">👤 প্রোফাইল</div>
+            <div class="tab" onclick="showSection('support')">📞 সাপোর্ট</div>
+        </div>
+        
+        <!-- ========== হোম ========== -->
+        <div id="home" class="section active">
+            <!-- ম্যাচ 1: সোলো বারমুডা -->
+            <div class="match-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span style="font-size: 50px;">🎯</span>
+                        <div>
+                            <div class="match-title">সোলো বারমুডা #<span id="match1Number">01</span></div>
+                            <span class="live-badge" id="live-SoloBermuda">🔴 লাইভ</span>
+                        </div>
+                    </div>
+                    <span class="timer" id="timer-SoloBermuda">⏰ --:--</span>
+                </div>
+                
+                <span class="per-kill">🔫 প্রতি কিল: ৫ টাকা (সর্বোচ্চ ৬ কিল)</span>
+                <p style="color: #FFD700; margin-top: 15px;">💰 এন্ট্রি: ১০ টাকা | প্রাইজ: ১৫০ টাকা</p>
+                
+                <table class="prize-table">
+                    <tr><td>🥇 ১ম</td><td>৫০ টাকা</td></tr>
+                    <tr><td>🥈 ২য়</td><td>৪০ টাকা</td></tr>
+                    <tr><td>🥉 ৩য়</td><td>৩০ টাকা</td></tr>
+                    <tr><td>🏅 ৪র্থ</td><td>২০ টাকা</td></tr>
+                    <tr><td>🎯 ৫ম</td><td>১০ টাকা</td></tr>
+                    <tr><td style="color: #00ffcc;">🎮 স্লট</td><td id="slot-SoloBermuda">০/৪৮</td></tr>
+                </table>
+                
+                <button class="video-btn" style="background: #555;" onclick="showMatchDetails('সোলো বারমুডা')">📋 ম্যাচ ডিটেইলস</button>
+                <button class="video-btn" onclick="openRegistration('সোলো বারমুডা', 10, 'solo')">✅ সোলো জয়েন করুন</button>
+                <div class="reg-names" id="list-SoloBermuda">👥 নিবন্ধিত: লোড হচ্ছে...</div>
             </div>
-            <button class="btn" onclick="logout()" style="background: #ff4b2b; margin-top: 20px;">Logout</button>
-        </div>
-    </div>
-
-    <div id="register-page" class="section">
-        <button class="btn details-btn" onclick="showSection('home')">⬅ Back</button>
-        <h2 id="reg-title">Registration</h2>
-        <div class="notice">
-            ⚠️ কাস্টম এ অবৈধ কোনো আইটেম ব্যবহার করা নিষেধ। বিস্তারিত জানতে ইউটিউব চ্যানেল ভিজিট করুন। <br>
-            <a href="https://youtube.com/@tnmriyad?si=MomGy8I0esH6Cgs1l" style="color: yellow;">Join YouTube</a>
+            
+            <!-- ম্যাচ 2: ডুও ১ (২০ টাকা) -->
+            <div class="match-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span style="font-size: 50px;">👥</span>
+                        <div>
+                            <div class="match-title">ডুও ১ #<span id="match2Number">01</span></div>
+                            <span class="live-badge" id="live-DuoMatch1">🔴 লাইভ</span>
+                        </div>
+                    </div>
+                    <span class="timer" id="timer-DuoMatch1">⏰ --:--</span>
+                </div>
+                
+                <span class="per-kill">🔫 প্রতি কিল: ১০ টাকা (সর্বোচ্চ ৬ কিল)</span>
+                <p style="color: #FFD700; margin-top: 15px;">💰 এন্ট্রি: ২০ টাকা/জন | প্রাইজ: ৩০০ টাকা</p>
+                
+                <table class="prize-table">
+                    <tr><td>🥇 ১ম</td><td>১০০ টাকা (৫০/জন)</td></tr>
+                    <tr><td>🥈 ২য়</td><td>৮০ টাকা (৪০/জন)</td></tr>
+                    <tr><td>🥉 ৩য়</td><td>৬০ টাকা (৩০/জন)</td></tr>
+                    <tr><td>🏅 ৪র্থ</td><td>৪০ টাকা (২০/জন)</td></tr>
+                    <tr><td>🎯 ৫ম</td><td>২০ টাকা (১০/জন)</td></tr>
+                    <tr><td style="color: #00ffcc;">🎮 স্লট</td><td id="slot-DuoMatch1">০/৪৮</td></tr>
+                </table>
+                
+                <button class="video-btn" style="background: #555;" onclick="showMatchDetails('ডুও বারমুডা ১')">📋 ম্যাচ ডিটেইলস</button>
+                <button class="video-btn" onclick="openRegistration('ডুও বারমুডা ১', 20, 'duo')">👥 ডুও জয়েন করুন</button>
+                <div class="reg-names" id="list-DuoMatch1">👥 নিবন্ধিত: লোড হচ্ছে...</div>
+            </div>
+            
+            <!-- ম্যাচ 3: ডুও ২ (৪০ টাকা) -->
+            <div class="match-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span style="font-size: 50px;">👑</span>
+                        <div>
+                            <div class="match-title">ডুও ২ #<span id="match3Number">01</span></div>
+                            <span class="live-badge" id="live-DuoMatch2">🔴 লাইভ</span>
+                        </div>
+                    </div>
+                    <span class="timer" id="timer-DuoMatch2">⏰ --:--</span>
+                </div>
+                
+                <span class="per-kill">🔫 প্রতি কিল: ২০ টাকা (সর্বোচ্চ ৬ কিল)</span>
+                <p style="color: #FFD700; margin-top: 15px;">💰 এন্ট্রি: ৪০ টাকা/জন | প্রাইজ: ৬০০ টাকা</p>
+                
+                <table class="prize-table">
+                    <tr><td>🥇 ১ম</td><td>২০০ টাকা (১০০/জন)</td></tr>
+                    <tr><td>🥈 ২য়</td><td>১৬০ টাকা (৮০/জন)</td></tr>
+                    <tr><td>🥉 ৩য়</td><td>১২০ টাকা (৬০/জন)</td></tr>
+                    <tr><td>🏅 ৪র্থ</td><td>৮০ টাকা (৪০/জন)</td></tr>
+                    <tr><td>🎯 ৫ম</td><td>৪০ টাকা (২০/জন)</td></tr>
+                    <tr><td style="color: #00ffcc;">🎮 স্লট</td><td id="slot-DuoMatch2">০/৪৮</td></tr>
+                </table>
+                
+                <button class="video-btn" style="background: #555;" onclick="showMatchDetails('ডুও বারমুডা ২')">📋 ম্যাচ ডিটেইলস</button>
+                <button class="video-btn" onclick="openRegistration('ডুও বারমুডা ২', 40, 'duo')">👥 ডুও জয়েন করুন</button>
+                <div class="reg-names" id="list-DuoMatch2">👥 নিবন্ধিত: লোড হচ্ছে...</div>
+            </div>
+            
+            <!-- ম্যাচ 4: ৪vs৪ ক্ল্যাশ -->
+            <div class="match-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span style="font-size: 50px;">⚔️</span>
+                        <div>
+                            <div class="match-title">৪vs৪ ক্ল্যাশ #<span id="match4Number">01</span></div>
+                            <span class="live-badge" id="live-CS4vs4">🔴 লাইভ</span>
+                        </div>
+                    </div>
+                    <span class="timer" id="timer-CS4vs4">⏰ --:--</span>
+                </div>
+                
+                <span class="per-kill">🏆 জয়ী: ৩৪০ টাকা (৮৫/জন)</span>
+                <p style="color: #FFD700;">💰 এন্ট্রি: ৫০ টাকা/জন</p>
+                
+                <table class="prize-table">
+                    <tr><td>স্কোয়াড এন্ট্রি</td><td>২০০ টাকা</td></tr>
+                    <tr><td>জয়ী প্রাইজ</td><td>৩৪০ টাকা</td></tr>
+                    <tr><td style="color: #00ffcc;">🎮 স্লট</td><td id="slot-CS4vs4">০/৮ টিম</td></tr>
+                </table>
+                
+                <button class="video-btn" style="background: #555;" onclick="showMatchDetails('৪vs৪ ক্ল্যাশ')">📋 ম্যাচ ডিটেইলস</button>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button class="video-btn" style="background: #2196F3;" onclick="openRegistration('৪vs৪ ক্ল্যাশ', 50, 'solo')">🎮 সোলো</button>
+                    <button class="video-btn" style="background: #9C27B0;" onclick="openRegistration('৪vs৪ ক্ল্যাশ', 50, 'duo')">👥 ডুও</button>
+                    <button class="video-btn" style="background: #FF9800;" onclick="openRegistration('৪vs৪ ক্ল্যাশ', 50, 'squad')">👥 স্কোয়াড</button>
+                </div>
+                <div class="reg-names" id="list-CS4vs4">👥 নিবন্ধিত: লোড হচ্ছে...</div>
+            </div>
+            
+            <!-- ম্যাচ 5: ২vs২ কাস্টম -->
+            <div class="match-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span style="font-size: 50px;">⚡</span>
+                        <div>
+                            <div class="match-title">২vs২ কাস্টম #<span id="match5Number">01</span></div>
+                            <span class="live-badge" id="live-CS2vs2">🔴 লাইভ</span>
+                        </div>
+                    </div>
+                    <span class="timer" id="timer-CS2vs2">⏰ --:--</span>
+                </div>
+                
+                <span class="per-kill">🏆 জয়ী: ৩৫০ টাকা</span>
+                <p style="color: #FFD700;">💰 এন্ট্রি: ১০০ টাকা/জন</p>
+                
+                <table class="prize-table">
+                    <tr><td>🥇 ১ম (আলাদা)</td><td>১৭৫ টাকা/জন</td></tr>
+                    <tr><td>🥇 ১ম (একাউন্ট)</td><td>৩৫০ টাকা</td></tr>
+                    <tr><td style="color: #00ffcc;">🎮 স্লট</td><td id="slot-CS2vs2">০/৪ টিম</td></tr>
+                </table>
+                
+                <button class="video-btn" style="background: #555;" onclick="showMatchDetails('২vs২ কাস্টম')">📋 ম্যাচ ডিটেইলস</button>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button class="video-btn" style="background: #2196F3;" onclick="openRegistration('২vs২ কাস্টম', 100, 'solo')">🎮 সোলো</button>
+                    <button class="video-btn" style="background: #9C27B0;" onclick="openRegistration('২vs২ কাস্টম', 100, 'duo')">👥 ডুও</button>
+                </div>
+                <div class="reg-names" id="list-CS2vs2">👥 নিবন্ধিত: লোড হচ্ছে...</div>
+            </div>
+            
+            <!-- ম্যাচ 6: ১vs১ কাস্টম -->
+            <div class="match-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span style="font-size: 50px;">🥊</span>
+                        <div>
+                            <div class="match-title">১ VS ১ নকআউট</div>
+                            <span style="color: #ff4444; font-size: 14px;">IT'S TIME TO KNOCKOUT</span>
+                        </div>
+                    </div>
+                    <span class="timer" id="timer-CS1vs1">⏰ --:--</span>
+                </div>
+                
+                <span class="per-kill">🏆 জয়ী: ৩৬০ টাকা</span>
+                <p style="color: #FFD700;">💰 এন্ট্রি: ২০০ টাকা</p>
+                
+                <table class="prize-table">
+                    <tr><td>🥇 ১ম স্থান</td><td>৩৬০ টাকা</td></tr>
+                    <tr><td style="color: #00ffcc;">🎮 স্লট</td><td id="slot-CS1vs1">০/২</td></tr>
+                </table>
+                
+                <button class="video-btn" style="background: #555;" onclick="showMatchDetails('১vs১ কাস্টম')">📋 ম্যাচ ডিটেইলস</button>
+                <button class="video-btn" onclick="openRegistration('১vs১ কাস্টম', 200, 'solo')">⚔️ ১vs১ জয়েন করুন</button>
+                <div class="reg-names" id="list-CS1vs1">👥 নিবন্ধিত: লোড হচ্ছে...</div>
+            </div>
+            
+            <!-- ম্যাচ 7: ফ্রি সোলো -->
+            <div class="match-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <span style="font-size: 50px;">🎁</span>
+                        <div>
+                            <div class="match-title">ফ্রি সোলো #<span id="match7Number">01</span></div>
+                            <span class="live-badge" style="background: #4CAF50;" id="live-FreeSolo">🟢 ফ্রি</span>
+                        </div>
+                    </div>
+                    <span class="timer" id="timer-FreeSolo">⏰ রাত ১০:০০</span>
+                </div>
+                
+                <p style="color: #FFD700;">💰 প্রাইজ পুল: ১২৫ টাকা</p>
+                
+                <table class="prize-table">
+                    <tr><td>🥇 ১ম</td><td>৪০ টাকা</td></tr>
+                    <tr><td>🥈 ২য়</td><td>২৫ টাকা</td></tr>
+                    <tr><td>🥉 ৩য়</td><td>২০ টাকা</td></tr>
+                    <tr><td>🏅 ৪র্থ</td><td>১৫ টাকা</td></tr>
+                    <tr><td>🎯 ৫ম</td><td>১০ টাকা</td></tr>
+                    <tr><td>⭐ ৬ষ্ঠ-১০ম</td><td>৫ টাকা/জন</td></tr>
+                    <tr><td style="color: #00ffcc;">🎮 স্লট</td><td id="slot-FreeSolo">০/৪৮</td></tr>
+                </table>
+                
+                <button class="video-btn" style="background: #555;" onclick="showMatchDetails('ফ্রি সোলো')">📋 ম্যাচ ডিটেইলস</button>
+                <button class="video-btn" style="background: linear-gradient(45deg, #FFD700, #FFA500); color: black;" onclick="openRegistration('ফ্রি সোলো', 0, 'solo')">🎁 ফ্রি জয়েন করুন</button>
+                <div class="reg-names" id="list-FreeSolo">👥 নিবন্ধিত: লোড হচ্ছে...</div>
+            </div>
         </div>
         
-        <label>Select Mode:</label>
-        <select id="reg-mode" onchange="updateRegFee()">
-            <option value="solo">Solo Join</option>
-            <option value="duo" id="opt-duo">Duo (Team)</option>
-            <option value="squad" id="opt-squad">Squad (4 Members)</option>
-        </select>
-
-        <p>Fee to Pay: <span id="fee-display">0</span> Taka</p>
-        
-        <div id="dynamic-inputs">
-            <input type="text" placeholder="Your Name" id="reg-name">
-            <input type="text" placeholder="In-Game UID" id="reg-uid">
+        <!-- ========== রেজিস্ট্রেশন ========== -->
+        <div id="register-page" class="section">
+            <button class="video-btn" style="background: #555;" onclick="showSection('home')">⬅ ব্যাক</button>
+            <h2 id="reg-title" style="color: #FFD700; margin: 25px 0; text-align: center;">📝 রেজিস্ট্রেশন</h2>
+            
+            <div class="notice">⚠️ কাস্টম ম্যাচে অবৈধ আইটেম ব্যবহার নিষেধ</div>
+            
+            <select id="reg-mode" class="video-btn" style="background: rgba(0,0,0,0.8);" onchange="updateRegForm()">
+                <option value="solo">🎮 সোলো (১ জন)</option>
+                <option value="duo">👥 ডুও (২ জন)</option>
+                <option value="squad">👥 স্কোয়াড (৪ জন)</option>
+            </select>
+            
+            <div style="background: rgba(0,0,0,0.6); padding: 25px; border-radius: 25px; margin: 25px 0; border: 2px solid #FFD700; text-align: center;">
+                <p style="color: #FFD700;">💰 পরিশোধ করতে হবে</p>
+                <p style="color: #00ffcc; font-size: 48px; font-weight: 800;" id="fee-display">0</p>
+                <p style="color: #aaa;">টাকা</p>
+            </div>
+            
+            <div id="dynamic-inputs" style="margin: 25px 0;"></div>
+            <button class="video-btn" onclick="submitRegistration()">✅ কনফার্ম জয়েন</button>
         </div>
-
-        <button class="btn" onclick="submitRegistration()">Confirm Register</button>
         
-        <div id="status-box" style="margin-top:20px; border:1px dashed #777; padding:10px;">
-            <p>Status: <span id="reg-status">Waiting for data...</span></p>
+        <!-- ========== র‍্যাঙ্ক ========== -->
+        <div id="leaderboard" class="section">
+            <div style="background: rgba(25,30,45,0.85); border: 2px solid #FFD700; border-radius: 35px; padding: 25px;">
+                <h2 style="color: #FFD700; margin-bottom: 25px; text-align: center;">🏆 টপ প্লেয়ার</h2>
+                <table class="prize-table" id="leaderboard-table">
+                    <tr style="background: rgba(255,215,0,0.2);"><td>র‍্যাঙ্ক</td><td>নাম</td><td>জয়</td></tr>
+                </table>
+            </div>
         </div>
+        
+        <!-- ========== ডিপোজিট ========== -->
+        <div id="deposit" class="section">
+            <div style="background: rgba(25,30,45,0.85); border: 2px solid #2196F3; border-radius: 35px; padding: 25px;">
+                <h2 style="color: #2196F3; margin-bottom: 25px; text-align: center;">💰 ডিপোজিট</h2>
+                
+                <div style="background: rgba(33,150,243,0.1); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 2px solid #2196F3;">
+                    <p style="color: #FFD700;">🏦 ব্যক্তিগত অ্যাকাউন্ট (Send Money)</p>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin: 15px 0;">
+                        <span style="font-size: 20px;">📱 বিকাশ:</span>
+                        <span style="color: #00ffcc; font-size: 20px; font-weight: bold;" id="bkashDisplay">01910658737</span>
+                        <button class="copy-btn" onclick="copyText('bkashDisplay')">📋 কপি</button>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin: 15px 0;">
+                        <span style="font-size: 20px;">📲 নগদ:</span>
+                        <span style="color: #00ffcc; font-size: 20px; font-weight: bold;" id="nagadDisplay">01910658737</span>
+                        <button class="copy-btn" onclick="copyText('nagadDisplay')">📋 কপি</button>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin: 15px 0;">
+                        <span style="font-size: 20px;">💎 USDT (TRC20):</span>
+                        <span style="color: #00ffcc; font-size: 14px; font-weight: bold; word-break: break-all;" id="usdtDisplay">0x75435FFD8C71423Bff36224bF656e4E137Ca90ea</span>
+                        <button class="copy-btn" onclick="copyText('usdtDisplay')">📋 কপি</button>
+                    </div>
+                    <p style="color: #FF9800; margin-top: 10px;">⚠️ Send Money করে ট্রানজেকশন আইডি দিন। বিকাশ/নগদে ৫ টাকা চার্জ প্রযোজ্য।</p>
+                </div>
+                
+                <select id="depositMethod" class="video-btn" style="background: rgba(0,0,0,0.8);">
+                    <option value="bkash">💳 বিকাশ</option>
+                    <option value="nagad">📲 নগদ</option>
+                    <option value="usdt">💎 USDT</option>
+                </select>
+                
+                <input type="number" id="dep-amount" placeholder="💰 পরিমাণ (ন্যূনতম ৫০ টাকা)">
+                <input type="text" id="dep-phone" placeholder="📱 আপনার মোবাইল নম্বর">
+                <input type="text" id="dep-trx" placeholder="🔢 ট্রানজেকশন আইডি">
+                
+                <button class="video-btn" onclick="submitDeposit()">✅ ডিপোজিট রিকোয়েস্ট</button>
+                <p style="color: #aaa; text-align: center; margin-top: 15px;">⏰ ৩০ মিনিটের মধ্যে কনফার্ম</p>
+            </div>
+        </div>
+        
+        <!-- ========== উইথড্র ========== -->
+        <div id="withdraw" class="section">
+            <div style="background: rgba(25,30,45,0.85); border: 2px solid #4CAF50; border-radius: 35px; padding: 25px;">
+                <h2 style="color: #4CAF50; margin-bottom: 25px; text-align: center;">💳 উইথড্র</h2>
+                
+                <div style="background: rgba(76,175,80,0.1); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 2px solid #4CAF50;">
+                    <p style="color: #FFD700;">📌 উত্তোলন লিমিট ও চার্জ</p>
+                    <p style="font-size: 18px; margin: 12px 0;">💳 বিকাশ/নগদ: ৫০-১০০০ টাকা</p>
+                    <p style="font-size: 18px; margin: 12px 0;">💎 USDT: ১৫০-১০০০ টাকা</p>
+                    <p style="font-size: 18px; margin: 12px 0; color: #FF9800;">⚡ উইথড্র চার্জ: ৫ টাকা (Send Money ফি)</p>
+                    <p style="font-size: 14px; color: #aaa;">নোট: প্রতিটি উইথড্র রিকোয়েস্টে ৫ টাকা চার্জ কাটা হবে</p>
+                </div>
+                
+                <!-- উইথড্র পিন সেটিংস -->
+                <div class="pin-settings">
+                    <p style="color: #FFD700; margin-bottom: 15px;">🔐 উইথড্র পিন সেটিংস</p>
+                    <input type="password" id="current-pin" placeholder="বর্তমান পিন (ডিফল্ট: 1234)">
+                    <input type="password" id="new-pin" placeholder="নতুন পিন (৪ ডিজিট)">
+                    <input type="password" id="confirm-pin" placeholder="নতুন পিন আবার দিন">
+                    <button class="video-btn" style="background: #FF9800;" onclick="changeWithdrawPin()">🔄 পিন পরিবর্তন করুন</button>
+                    <p style="color: #aaa; font-size: 12px; margin-top: 10px;">নতুন পিন মনে রাখবেন। পিন ভুলে গেলে অ্যাডমিনের সাথে যোগাযোগ করুন।</p>
+                </div>
+                
+                <select id="withdrawMethod" class="video-btn" style="background: rgba(0,0,0,0.8);">
+                    <option value="bkash">💳 বিকাশ</option>
+                    <option value="nagad">📲 নগদ</option>
+                    <option value="usdt">💎 USDT</option>
+                </select>
+                
+                <input type="number" id="wit-amount" placeholder="💰 পরিমাণ">
+                <input type="text" id="wit-phone" placeholder="📱 রিসিভার নম্বর/ওয়ালেট">
+                <input type="password" id="wit-pin" placeholder="🔑 উইথড্র পিন">
+                
+                <button class="video-btn" onclick="submitWithdraw()">💳 উইথড্র রিকোয়েস্ট</button>
+            </div>
+        </div>
+        
+        <!-- ========== প্রোফাইল ========== -->
+        <div id="profile" class="section">
+            <div class="profile-card">
+                <div style="position: relative; display: inline-block;">
+                    <img id="profileAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23FFD700'/%3E%3Ctext x='50' y='70' font-size='50' text-anchor='middle' fill='black'%3E👤%3C/text%3E%3C/svg%3E" class="profile-avatar">
+                    <div style="position: absolute; bottom: 0; right: 0; background: #FFD700; color: black; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; border: 3px solid white;" onclick="document.getElementById('photoInput').click()">✏️</div>
+                </div>
+                
+                <!-- গুগল ফটোস / অ্যালবাম থেকে ছবি তোলার অপশন - ১০০% ওয়ার্কিং -->
+                <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
+                    <input type="file" id="photoInput" accept="image/*" capture="environment" onchange="changeProfilePhoto(event)">
+                    📸 গুগল ফটোস / ক্যামেরা / গ্যালারি থেকে ছবি নির্বাচন করুন
+                    <p style="font-size: 12px; margin-top: 5px; color: rgba(255,255,255,0.8);">ক্লিক করলে গ্যালারি ওপেন হবে</p>
+                </div>
+                
+                <h3 id="prof-name" style="color: #FFD700; font-size: 26px; margin: 20px 0;">User Name</h3>
+                <p id="prof-phone" style="color: #aaa; font-size: 18px;">📱 01xxxxxxxxx</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; margin: 30px 0;">
+                    <div class="balance-box">
+                        <p style="color: #00ffcc; font-size: 32px; font-weight: 800;" id="prof-balance">0</p>
+                        <p>💰 ব্যালেন্স</p>
+                    </div>
+                    <div class="balance-box">
+                        <p style="color: #00ffcc; font-size: 32px; font-weight: 800;" id="prof-wins">0</p>
+                        <p>🏆 জয়</p>
+                    </div>
+                </div>
+                
+                <h3 style="color: #FFD700; font-size: 22px; margin-bottom: 20px;">📜 লেনদেন হিস্ট্রি</h3>
+                <div id="transaction-history" style="max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.5); border-radius: 20px; padding: 15px;"></div>
+                
+                <h3 style="color: #FFD700; font-size: 22px; margin: 30px 0 20px;">🏆 ম্যাচ হিস্ট্রি</h3>
+                <div id="match-winnings" style="max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.5); border-radius: 20px; padding: 15px;"></div>
+                
+                <button class="video-btn" onclick="logoutUser()" style="background: linear-gradient(45deg, #ff4444, #ff2222);">🚪 লগআউট</button>
+            </div>
+        </div>
+        
+        <!-- ========== সাপোর্ট ========== -->
+        <div id="support" class="section">
+            <div style="background: rgba(25,30,45,0.85); border: 2px solid #FFD700; border-radius: 35px; padding: 25px;">
+                <h2 style="color: #FFD700; margin-bottom: 25px; text-align: center;">📞 সাপোর্ট</h2>
+                
+                <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,152,0,0.1); border-radius: 20px; border: 1px solid #FF9800;">
+                    <p style="color: #FF9800; font-weight: bold;">⚠️ গুরুত্বপূর্ণ নোটিশ</p>
+                    <p style="color: white;">উইথড্র চার্জ: ৫ টাকা (Send Money ফি)। প্রতিটি উইথড্র রিকোয়েস্টে ৫ টাকা চার্জ কাটা হবে।</p>
+                </div>
+                
+                <a href="mailto:talkingmasud5511@gmail.com" class="support-link">
+                    <div style="background: #EA4335; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">📧</div>
+                    <div><p style="color: #FFD700;">ইমেইল</p><p style="color: #00ffcc;">talkingmasud5511@gmail.com</p></div>
+                </a>
+                
+                <a href="https://wa.me/8801910658737" class="support-link">
+                    <div style="background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">📱</div>
+                    <div><p style="color: #FFD700;">WhatsApp</p><p style="color: #00ffcc;">01910658737</p></div>
+                </a>
+                
+                <a href="https://chat.whatsapp.com/JvfihxThqMoLVFHLv9TVME" class="support-link">
+                    <div style="background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">👥</div>
+                    <div><p style="color: #FFD700;">WhatsApp গ্রুপ</p><p style="color: #00ffcc;">জয়েন করুন</p></div>
+                </a>
+                
+                <a href="https://t.me/+XF_oEofeAeEwMDI9" class="support-link">
+                    <div style="background: #0088cc; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">✈️</div>
+                    <div><p style="color: #FFD700;">Telegram</p><p style="color: #00ffcc;">জয়েন করুন</p></div>
+                </a>
+                
+                <a href="https://youtube.com/@tnmriyad" class="support-link">
+                    <div style="background: #FF0000; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">▶️</div>
+                    <div><p style="color: #FFD700;">YouTube</p><p style="color: #00ffcc;">সাবস্ক্রাইব</p></div>
+                </a>
+                
+                <div style="margin-top: 30px;">
+                    <h3 style="color: #FFD700; margin-bottom: 20px;">🔫 কিল বোনাস</h3>
+                    <div style="display: grid; grid-template-columns: repeat(2,1fr); gap: 15px;">
+                        <div style="background: rgba(76,175,80,0.1); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #4CAF50;">
+                            <p style="color: #4CAF50; font-size: 24px; font-weight: bold;">৫ টাকা</p>
+                            <p>সোলো</p>
+                        </div>
+                        <div style="background: rgba(33,150,243,0.1); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #2196F3;">
+                            <p style="color: #2196F3; font-size: 24px; font-weight: bold;">১০ টাকা</p>
+                            <p>ডুও ১</p>
+                        </div>
+                        <div style="background: rgba(255,193,7,0.1); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #FFC107;">
+                            <p style="color: #FFC107; font-size: 24px; font-weight: bold;">২০ টাকা</p>
+                            <p>ডুও ২</p>
+                        </div>
+                        <div style="background: rgba(244,67,54,0.1); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #ff4444;">
+                            <p style="color: #ff4444; font-size: 20px; font-weight: bold;">সর্বোচ্চ</p>
+                            <p>৬ কিল</p>
+                        </div>
+                    </div>
+                    <p style="color: #ff4444; text-align: center; margin-top: 20px;">⚠️ ৭ম কিল থেকে বোনাস নেই</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ========== রুম মডাল ========== -->
+        <div id="roomModal" class="room-modal">
+            <h3 style="color: #FFD700; font-size: 28px; margin-bottom: 25px; text-align: center;">🎮 রুম ইনফরমেশন</h3>
+            <div style="background: rgba(255,215,0,0.2); padding: 30px; border-radius: 25px; margin: 20px 0; border: 2px solid #FFD700;">
+                <p style="color: #00ffcc; font-size: 30px; text-align: center; font-weight: 800;">🆔 <span id="roomIdDisplay">123456</span></p>
+                <p style="color: #00ffcc; font-size: 30px; text-align: center; font-weight: 800;">🔑 <span id="roomPassDisplay">123456</span></p>
+            </div>
+            <button onclick="closeRoomModal()" class="video-btn" style="background: linear-gradient(45deg, #FFD700, #FFA500); color: black;">✅ ঠিক আছে</button>
+        </div>
+        
+        <!-- নেভিগেশন -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="showSection('home')">🏠 হোম</div>
+            <div class="nav-item" onclick="showSection('leaderboard')">🏆 র‍্যাঙ্ক</div>
+            <div class="nav-item" onclick="showSection('deposit')">💰 ডিপোজিট</div>
+            <div class="nav-item" onclick="showSection('withdraw')">💳 উইথড্র</div>
+            <div class="nav-item" onclick="showSection('profile')">👤 প্রোফাইল</div>
+            <div class="nav-item" onclick="showSection('support')">📞 সাপোর্ট</div>
+        </nav>
     </div>
-
-    <div id="leaderboard" class="section">
-        <h2>🏆 Top Players</h2>
-        <table class="prize-table" id="leaderboard-table">
-            <tr style="background:#444"><td>Rank</td><td>Name</td><td>Winnings</td></tr>
-            </table>
-    </div>
-
-    <div id="deposit" class="section">
-        <h2>💰 Deposit Money</h2>
-        <p>Personal Bkash/Nagad: <b>01910658737</b></p>
-        <p>Limit: 50 - 3000 Taka</p>
-        <input type="number" id="dep-amount" placeholder="Amount (50-3000)">
-        <input type="text" id="dep-phone" placeholder="Your Phone Number">
-        <input type="text" id="dep-trx" placeholder="Transaction ID">
-        <button class="btn" onclick="submitDeposit()">Done</button>
-    </div>
-
-    <div id="withdraw" class="section">
-        <h2>💸 Withdraw Money</h2>
-        <p>Limit: 50 - 2000 Taka</p>
-        <input type="text" id="wit-phone" placeholder="Receiver Number">
-        <input type="number" id="wit-amount" placeholder="Amount (50-2000)">
-        <button class="btn" onclick="submitWithdraw()">Done</button>
-    </div>
-
-    <div id="support" class="section">
-        <h2>📞 Support & Contact</h2>
-        <p>📧 Email: talkingmasud5511@gmail.com</p>
-        <p>💬 WhatsApp: 01910658737</p>
-        <p>📺 <a href="https://youtube.com/@tnmriyad?si=MomGy8I0esH6Cgs1" style="color:white">YouTube Channel</a></p>
-        <p>✈️ <a href="https://t.me/+XF_oEofeAeEwMDI9" style="color:white">Telegram Channel</a></p>
-    </div>
-
-    <nav class="bottom-nav">
-        <div class="nav-item active" onclick="showSection('home')">🏠<br>Home</div>
-        <div class="nav-item" onclick="showSection('leaderboard')">🏆<br>Rank</div>
-        <div class="nav-item" onclick="showSection('deposit')">💰<br>Deposit</div>
-        <div class="nav-item" onclick="showSection('withdraw')">💸<br>Withdraw</div>
-        <div class="nav-item" onclick="showSection('profile')">👤<br>Profile</div>
-        <div class="nav-item" onclick="showSection('support')">📞<br>Support</div>
-    </nav>
-</div>
-
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyB2WdXJJNYqmos9Sl_D2wCUyMzMFujE57c",
-        authDomain: "tnm-a2840.firebaseapp.com",
-        databaseURL: "https://tnm-a2840-default-rtdb.asia-southeast1.firebasedatabase.app/",
-        projectId: "tnm-a2840",
-        storageBucket: "tnm-a2840.appspot.com",
-        messagingSenderId: "396157832456",
-        appId: "1:396157832456:web:1e127ace39524f4ca130bd"
-    };
-
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
-    const db = firebase.database();
-
-    let baseFee = 0;
-    let currentUser = JSON.parse(localStorage.getItem('user'));
-
-    window.onload = function() {
-        if(currentUser) {
-            document.getElementById('auth-page').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            updateProfileUI();
-            startAllTimers();
-            loadRegistrationStatus();
-            loadLeaderboard();
-            loadHistory();
+    
+    <script>
+        // ========== ফায়ারবেস কনফিগার ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyB2WdXJJNYqmos9Sl_D2wCUyMzMFujE57c",
+            authDomain: "tnm-a2840.firebaseapp.com",
+            databaseURL: "https://tnm-a2840-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "tnm-a2840",
+            appId: "1:396157832456:web:1e127ace39524f4ca130bd"
+        };
+        
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        
+        // ========== গ্লোবাল ==========
+        let currentUser = null;
+        let baseFee = 0;
+        let withdrawPin = localStorage.getItem('withdrawPin') || '1234'; // ডিফল্ট পিন
+        
+        // ========== এনিমেশন ==========
+        function createRain() {
+            const c = document.getElementById('rainContainer');
+            if(c) for(let i=0;i<30;i++) { 
+                let r = document.createElement('div'); 
+                r.className = 'rain-drop'; 
+                r.style.left = Math.random()*100+'%'; 
+                r.style.animationDuration = Math.random()*1+0.5+'s'; 
+                c.appendChild(r); 
+            }
         }
-    }
-
-    // --- Time & Status Functions ---
-    function startAllTimers() {
-        const matches = ['SoloBermuda', 'DuoMatch1', 'DuoMatch2', 'CS4vs4', 'CS2vs2', 'CS1vs1'];
-        matches.forEach(m => {
-            db.ref('match_times/' + m).on('value', (s) => {
-                let endTime = s.val() || 0;
-                let x = setInterval(function() {
-                    let now = new Date().getTime();
-                    let distance = endTime - now;
-                    if (distance < 0) {
-                        clearInterval(x);
-                        document.getElementById('timer-' + m).innerHTML = "Started!";
-                    } else {
-                        let mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                        let secs = Math.floor((distance % (1000 * 60)) / 1000);
-                        document.getElementById('timer-' + m).innerHTML = "Starts In: " + mins + "m " + secs + "s";
-                    }
-                }, 1000);
+        
+        function createShootingStars() {
+            setInterval(() => {
+                if(Math.random()>0.7) {
+                    let s = document.createElement('div');
+                    s.className = 'shooting-star';
+                    s.style.left = Math.random()*window.innerWidth+'px';
+                    s.style.top = Math.random()*window.innerHeight*0.3+'px';
+                    s.style.setProperty('--moveX', (Math.random()-0.5)*300+'px');
+                    s.style.setProperty('--moveY', Math.random()*300+100+'px');
+                    document.body.appendChild(s);
+                    setTimeout(()=>s.remove(),1500);
+                }
+            },500);
+        }
+        
+        document.addEventListener('touchstart', e => {
+            for(let i=0; i<Math.min(e.touches.length,3); i++) {
+                let t = e.touches[i], s = document.createElement('div');
+                s.className = 'touch-star'; s.style.left = t.clientX+'px'; s.style.top = t.clientY+'px';
+                document.body.appendChild(s); setTimeout(()=>s.remove(),800);
+            }
+        }, {passive:true});
+        
+        document.addEventListener('touchmove', e => {
+            for(let i=0; i<Math.min(e.touches.length,2); i++) {
+                let t = e.touches[i], s = document.createElement('div');
+                s.className = 'touch-star'; s.style.left = t.clientX+'px'; s.style.top = t.clientY+'px';
+                document.body.appendChild(s); setTimeout(()=>s.remove(),600);
+            }
+        }, {passive:true});
+        
+        // ========== কপি টেক্সট ফাংশন ==========
+        window.copyText = function(elementId) {
+            let text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ নম্বর কপি হয়েছে!');
+            }).catch(() => {
+                alert('❌ কপি করতে সমস্যা হয়েছে');
             });
-        });
-    }
-
-    function loadRegistrationStatus() {
-        db.ref('registrations').on('value', s => {
-            const matches = { 'Solo Bermuda Match': 'SoloBermuda', 'Duo Match 1': 'DuoMatch1', 'Duo Match 2': 'DuoMatch2', 'CS 4vs4': 'CS4vs4', 'CS 2vs2': 'CS2vs2', 'CS 1vs1': 'CS1vs1' };
-            let listObj = {};
-            s.forEach(c => {
-                let d = c.val();
-                if(matches[d.match]) {
-                    if(!listObj[matches[d.match]]) listObj[matches[d.match]] = [];
-                    listObj[matches[d.match]].push(d.players[0].name);
+        };
+        
+        // ========== অথ ==========
+        window.toggleAuth = ()=>{
+            let l=document.getElementById('login-box'), s=document.getElementById('signup-box');
+            l.style.display = l.style.display==='none'?'block':'none';
+            s.style.display = s.style.display==='none'?'block':'none';
+        };
+        
+        window.signupUser = ()=>{
+            let n = document.getElementById('reg-user-name').value;
+            let p = document.getElementById('reg-user-phone').value;
+            let ps = document.getElementById('reg-user-pass').value;
+            if(!n||!p||!ps) return alert('❌ সব তথ্য দিন!');
+            if(p.length!==11||!p.startsWith('01')) return alert('❌ সঠিক নম্বর দিন!');
+            if(ps.length<4) return alert('❌ পাসওয়ার্ড কমপক্ষে ৪ অক্ষর!');
+            
+            db.ref('users/'+p).once('value', s=>{
+                if(s.val()) return alert('❌ এই নম্বর already registered!');
+                let u = {name:n, phone:p, pass:ps, balance:0, wins:0, matches:0, kills:0, joinDate:new Date().toLocaleString('bn-BD')};
+                db.ref('users/'+p).set(u).then(()=>{
+                    localStorage.setItem('user', JSON.stringify(u));
+                    currentUser = u;
+                    document.getElementById('auth-page').style.display='none';
+                    document.getElementById('main-app').style.display='block';
+                    updateProfileUI(); loadAllData();
+                    alert('✅ একাউন্ট তৈরি হয়েছে!');
+                });
+            });
+        };
+        
+        window.loginUser = ()=>{
+            let p = document.getElementById('login-phone').value;
+            let ps = document.getElementById('login-pass').value;
+            if(!p||!ps) return alert('❌ তথ্য দিন!');
+            db.ref('users/'+p).once('value', s=>{
+                let u = s.val();
+                if(u && u.pass===ps) {
+                    localStorage.setItem('user', JSON.stringify(u));
+                    currentUser = u;
+                    document.getElementById('auth-page').style.display='none';
+                    document.getElementById('main-app').style.display='block';
+                    updateProfileUI(); loadAllData();
+                    alert('✅ লগইন সফল!');
+                } else alert('❌ ভুল তথ্য!');
+            });
+        };
+        
+        window.logoutUser = ()=>{ localStorage.removeItem('user'); location.reload(); };
+        
+        // ========== উইথড্র পিন পরিবর্তন ==========
+        window.changeWithdrawPin = function() {
+            let current = document.getElementById('current-pin').value;
+            let newPin = document.getElementById('new-pin').value;
+            let confirm = document.getElementById('confirm-pin').value;
+            
+            if(!current || !newPin || !confirm) {
+                alert('❌ সব তথ্য দিন!');
+                return;
+            }
+            
+            if(current !== withdrawPin) {
+                alert('❌ বর্তমান পিন ভুল!');
+                return;
+            }
+            
+            if(newPin.length !== 4 || isNaN(newPin)) {
+                alert('❌ পিন ৪ ডিজিটের হতে হবে!');
+                return;
+            }
+            
+            if(newPin !== confirm) {
+                alert('❌ নতুন পিন মিলছে না!');
+                return;
+            }
+            
+            withdrawPin = newPin;
+            localStorage.setItem('withdrawPin', newPin);
+            alert('✅ উইথড্র পিন পরিবর্তন হয়েছে!');
+            
+            document.getElementById('current-pin').value = '';
+            document.getElementById('new-pin').value = '';
+            document.getElementById('confirm-pin').value = '';
+        };
+        
+        // ========== ডাটা লোড ==========
+        function loadAllData() {
+            loadRegistrationStatus(); loadLeaderboard(); loadUserMatchHistory();
+            loadNotice(); loadPaymentMethods(); startAllTimers(); updateMatchNumbers();
+            loadLiveStatus(); loadMatchSettings();
+        }
+        
+        // ========== ম্যাচ সেটিংস লোড (অ্যাডমিন কন্ট্রোল) ==========
+        function loadMatchSettings() {
+            // লাইভ স্ট্যাটাস লোড
+            db.ref('match_settings').on('value', (snap) => {
+                let settings = snap.val() || {};
+                let matches = ['SoloBermuda', 'DuoMatch1', 'DuoMatch2', 'CS4vs4', 'CS2vs2', 'CS1vs1', 'FreeSolo'];
+                matches.forEach(m => {
+                    let el = document.getElementById('live-' + m);
+                    if(el) {
+                        if(settings[m] && settings[m].live === false) {
+                            el.classList.add('offline');
+                            el.innerHTML = '⚫ অফলাইন';
+                        } else {
+                            el.classList.remove('offline');
+                            el.innerHTML = m === 'FreeSolo' ? '🟢 ফ্রি' : '🔴 লাইভ';
+                        }
+                    }
+                });
+            });
+            
+            // স্লট সেটিংস লোড
+            db.ref('slot_settings').on('value', (snap) => {
+                let slots = snap.val() || {};
+                for(let key in slots) {
+                    let el = document.getElementById('slot-' + key);
+                    if(el) {
+                        let current = el.innerText.split('/')[0] || '0';
+                        el.innerText = current + '/' + slots[key];
+                    }
                 }
             });
-            for (let m in listObj) {
-                document.getElementById('list-' + m).innerText = "Players: " + listObj[m].join(", ");
+            
+            // ম্যাচ প্রাইজ সেটিংস লোড
+            db.ref('match_prices').on('value', (snap) => {
+                let prices = snap.val() || {};
+                // এখানে ম্যাচের প্রাইজ আপডেট করা যাবে
+            });
+        }
+        
+        function loadLiveStatus() {
+            db.ref('match_settings').on('value', (snap) => {
+                let settings = snap.val() || {};
+                let matches = ['SoloBermuda', 'DuoMatch1', 'DuoMatch2', 'CS4vs4', 'CS2vs2', 'CS1vs1', 'FreeSolo'];
+                matches.forEach(m => {
+                    let el = document.getElementById('live-' + m);
+                    if(el) {
+                        if(settings[m] && settings[m].live === false) {
+                            el.classList.add('offline');
+                            el.innerHTML = '⚫ অফলাইন';
+                        } else {
+                            el.classList.remove('offline');
+                            el.innerHTML = m === 'FreeSolo' ? '🟢 ফ্রি' : '🔴 লাইভ';
+                        }
+                    }
+                });
+            });
+        }
+        
+        function loadRegistrationStatus() {
+            let m = {'সোলো বারমুডা':'SoloBermuda','ডুও বারমুডা ১':'DuoMatch1','ডুও বারমুডা ২':'DuoMatch2','৪vs৪ ক্ল্যাশ':'CS4vs4','২vs২ কাস্টম':'CS2vs2','১vs১ কাস্টম':'CS1vs1','ফ্রি সোলো':'FreeSolo'};
+            db.ref('registrations').on('value', snap=>{
+                let lists = {}, slots = {};
+                snap.forEach(c=>{ let d=c.val(), k=m[d.match]; if(k) {
+                    if(!lists[k]) lists[k]=[];
+                    if(!slots[k]) slots[k]=0;
+                    d.players.forEach(p=>{if(p?.name) lists[k].push(p.name);});
+                    slots[k] += d.players.length;
+                }});
+                for(let k in lists) {
+                    let el = document.getElementById('list-'+k); if(el) el.innerText = '👥 '+(lists[k].join(', ')||'কেউ নেই');
+                    let sl = document.getElementById('slot-'+k); if(sl) {
+                        let current = sl.innerText.split('/')[0] || '0';
+                        let max = {SoloBermuda:48,DuoMatch1:48,DuoMatch2:48,CS4vs4:32,CS2vs2:8,CS1vs1:2,FreeSolo:48}[k]||48;
+                        db.ref('slot_settings/'+k).once('value', (s) => {
+                            let slotMax = s.val() || max;
+                            sl.innerText = (slots[k]||0) + '/' + slotMax;
+                        });
+                    }
+                }
+            });
+        }
+        
+        function loadLeaderboard() {
+            db.ref('users').orderByChild('wins').limitToLast(10).on('value', snap=>{
+                let l=[]; snap.forEach(c=>l.push(c.val())); l.reverse();
+                let h='<tr style="background:rgba(255,215,0,0.2);"><td>র‍্যাঙ্ক</td><td>নাম</td><td>জয়</td></tr>';
+                l.forEach((u,i)=>h+=`<tr><td>#${i+1}</td><td>${u.name}</td><td>${u.wins||0}</td></tr>`);
+                document.getElementById('leaderboard-table').innerHTML = h||'<tr><td colspan="3">কোনো ডাটা নেই</td></tr>';
+            });
+        }
+        
+        function loadUserMatchHistory() {
+            if(!currentUser) return;
+            db.ref('history/'+currentUser.phone).on('value', snap=>{
+                let mh='', th='', ma=[], ta=[];
+                snap.forEach(c=>{ let h=c.val(); if(h.type==='match') ma.push(h); if(h.type==='deposit'||h.type==='withdraw') ta.push(h); });
+                
+                ma.reverse().forEach(h=>{
+                    let statusClass = h.status === 'confirmed' ? 'status-paid' : 'status-pending';
+                    let statusText = h.status === 'confirmed' ? '✅ পেমেন্ট কনফার্ম' : '⏳ পেন্ডিং';
+                    mh+=`<div class="history-card" style="border-left-color:#4CAF50;">
+                        <div style="display:flex;justify-content:space-between;">
+                            <p style="color:#FFD700;">🏆 ${h.match}</p>
+                            <p style="color:#4CAF50;font-weight:bold;">+${h.prize} টাকা</p>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;margin-top:5px;">
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                            <p style="color:#aaa;">🕐 ${h.time||''}</p>
+                        </div>
+                    </div>`;
+                });
+                
+                ta.reverse().forEach(h=>{
+                    let statusClass = h.status === 'confirmed' ? 'status-paid' : (h.status === 'paid' ? 'status-paid' : 'status-pending');
+                    let statusText = h.status === 'confirmed' ? '✅ কনফার্ম' : (h.status === 'paid' ? '✅ পরিশোধিত' : '⏳ পেন্ডিং');
+                    th+=`<div class="history-card" style="border-left-color:${h.type==='deposit'?'#2196F3':'#ff4444'};">
+                        <div style="display:flex;justify-content:space-between;">
+                            <p style="color:${h.type==='deposit'?'#2196F3':'#ff4444'};">${h.type==='deposit'?'💰 ডিপোজিট':'💳 উইথড্র'}</p>
+                            <p style="color:white;font-weight:bold;">${h.amount} টাকা</p>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;margin-top:5px;">
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                            <p style="color:#aaa;">🕐 ${h.time||''}</p>
+                        </div>
+                        ${h.charge ? `<p style="color:#FF9800;font-size:12px;margin-top:5px;">চার্জ: ${h.charge} টাকা | প্রাপ্ত: ${h.netAmount} টাকা</p>` : ''}
+                    </div>`;
+                });
+                
+                document.getElementById('match-winnings').innerHTML = mh||'<p style="color:#888;text-align:center;padding:20px;">🎮 কোনো ম্যাচ খেলেননি</p>';
+                document.getElementById('transaction-history').innerHTML = th||'<p style="color:#888;text-align:center;padding:20px;">💰 কোনো লেনদেন নেই</p>';
+            });
+        }
+        
+        function loadNotice() {
+            db.ref('notices/Main').on('value', s=>{
+                document.getElementById('noticeContent').innerHTML = '📢 '+(s.val()||'স্বাগতম! সব ম্যাচ চালু আছে। নিয়ম মেনে খেলুন।');
+            });
+        }
+        
+        function loadPaymentMethods() {
+            db.ref('payment_methods').on('value', s=>{
+                let m = s.val()||{};
+                document.getElementById('bkashDisplay').innerText = m.bkash||'01910658737';
+                document.getElementById('nagadDisplay').innerText = m.nagad||'01910658737';
+                document.getElementById('usdtDisplay').innerText = m.usdt||'0x75435FFD8C71423Bff36224bF656e4E137Ca90ea';
+            });
+        }
+        
+        function startAllTimers() {
+            ['SoloBermuda','DuoMatch1','DuoMatch2','CS4vs4','CS2vs2','CS1vs1','FreeSolo'].forEach(m=>{
+                db.ref('match_times/'+m).on('value', s=>{
+                    let end = s.val()||0, el = document.getElementById('timer-'+m);
+                    if(!el) return;
+                    if(m==='FreeSolo') { el.innerHTML = '⏰ রাত ১০:০০'; return; }
+                    let x = setInterval(()=>{
+                        let dist = end - new Date().getTime();
+                        if(dist<0) { clearInterval(x); el.innerHTML = '🔴 শুরু!'; }
+                        else el.innerHTML = `⏰ ${Math.floor(dist/60000)}:${Math.floor((dist%60000)/1000).toString().padStart(2,'0')}`;
+                    },1000);
+                });
+            });
+        }
+        
+        function updateMatchNumbers() {
+            db.ref('match_numbers').on('value', s=>{
+                let n = s.val()||{};
+                for(let i=1;i<=7;i++) {
+                    let el = document.getElementById('match'+i+'Number');
+                    if(el) el.innerText = (n['match'+i]||1).toString().padStart(2,'0');
+                }
+            });
+        }
+        
+        // ========== সেকশন ==========
+        window.showSection = (id)=>{
+            document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+            let items = document.querySelectorAll('.nav-item');
+            if(id==='home') items[0].classList.add('active');
+            if(id==='leaderboard') items[1].classList.add('active');
+            if(id==='deposit') items[2].classList.add('active');
+            if(id==='withdraw') items[3].classList.add('active');
+            if(id==='profile') items[4].classList.add('active');
+            if(id==='support') items[5].classList.add('active');
+            if(id==='profile' && currentUser) updateProfileUI();
+        };
+        
+        // ========== রেজিস্ট্রেশন ==========
+        window.openRegistration = (match, fee, type)=>{
+            if(!currentUser) return alert('❌ আগে লগইন করুন!');
+            showSection('register-page');
+            document.getElementById('reg-title').innerText = match;
+            baseFee = fee;
+            let mode = document.getElementById('reg-mode');
+            mode.innerHTML = '';
+            if(type==='solo') mode.innerHTML = '<option value="solo">🎮 সোলো</option>';
+            else if(type==='duo') mode.innerHTML = '<option value="solo">🎮 সোলো</option><option value="duo">👥 ডুও</option>';
+            else if(type==='squad') mode.innerHTML = '<option value="solo">🎮 সোলো</option><option value="duo">👥 ডুও</option><option value="squad">👥 স্কোয়াড</option>';
+            updateRegForm();
+        };
+        
+        window.updateRegForm = ()=>{
+            let mode = document.getElementById('reg-mode').value;
+            let count = {solo:1, duo:2, squad:4}[mode]||1;
+            document.getElementById('fee-display').innerText = baseFee * count;
+            let html = '';
+            for(let i=1;i<=count;i++) html += `<div style="margin:20px 0; background:rgba(255,215,0,0.05); padding:20px; border-radius:20px;"><p style="color:#FFD700; margin-bottom:10px;">👤 প্লেয়ার ${i}</p><input type="text" id="p${i}-name" placeholder="নাম"><input type="text" id="p${i}-uid" placeholder="UID"></div>`;
+            html += `<input type="text" id="reg-phone" placeholder="📱 মোবাইল" value="${currentUser?.phone||''}">`;
+            document.getElementById('dynamic-inputs').innerHTML = html;
+        };
+        
+        window.submitRegistration = ()=>{
+            if(!currentUser) return alert('❌ লগইন করুন!');
+            let match = document.getElementById('reg-title').innerText;
+            let mode = document.getElementById('reg-mode').value;
+            let count = {solo:1, duo:2, squad:4}[mode]||1;
+            let fee = baseFee * count;
+            let phone = document.getElementById('reg-phone')?.value||currentUser.phone;
+            let players = [];
+            for(let i=1;i<=count;i++) {
+                let name = document.getElementById(`p${i}-name`)?.value;
+                let uid = document.getElementById(`p${i}-uid`)?.value;
+                if(!name||!uid) return alert(`❌ প্লেয়ার ${i} এর তথ্য দিন!`);
+                players.push({name, uid});
             }
-        });
-    }
-
-    function loadLeaderboard() {
-        db.ref('ranks').on('value', s => {
-            let h = '<tr style="background:#444"><td>Rank</td><td>Name</td><td>Winnings</td></tr>';
-            let i = 1;
-            s.forEach(c => {
-                let d = c.val();
-                h += `<tr><td>#${i++ }</td><td>${d.name}</td><td>${d.won}tk</td></tr>`;
+            
+            // চেক ম্যাচ লাইভ আছে কিনা
+            let matchKey = {'সোলো বারমুডา':'SoloBermuda','ডুও বারমুডা ১':'DuoMatch1','ডুও বারমুডা ২':'DuoMatch2','৪vs৪ ক্ল্যাশ':'CS4vs4','২vs২ কাস্টม':'CS2vs2','১vs১ কাস্টম':'CS1vs1','ফ্রি সোলো':'FreeSolo'}[match];
+            db.ref('match_settings/'+matchKey+'/live').once('value', (s) => {
+                if(s.val() === false) {
+                    alert('❌ এই ম্যাচটি বর্তমানে বন্ধ আছে!');
+                    return;
+                }
+                
+                if(baseFee>0) {
+                    db.ref('users/'+currentUser.phone+'/balance').once('value', s=>{
+                        let bal = s.val()||0;
+                        if(bal<fee) { alert('❌ ব্যালেন্স কম!'); showSection('deposit'); }
+                        else { db.ref('users/'+currentUser.phone+'/balance').set(bal-fee); saveReg(); }
+                    });
+                } else saveReg();
             });
-            document.getElementById('leaderboard-table').innerHTML = h;
-        });
-    }
-
-    function loadHistory() {
-        db.ref('history/' + currentUser.phone).on('value', s => {
-            let h = '';
-            s.forEach(c => {
-                let d = c.val();
-                h += `<div class="history-card"><b>${d.match}</b><br>Prize: <span style="color:#38ef7d">${d.prize} TK</span></div>`;
+            
+            function saveReg() {
+                db.ref('registrations').push({match, mode, players, userPhone:currentUser.phone, userName:currentUser.name, fee, time:new Date().toLocaleString('bn-BD')}).then(()=>{
+                    alert(`✅ ${match} এ রেজিস্ট্রেশন হয়েছে!`);
+                    if(baseFee>0) {
+                        db.ref('room_details/'+match).once('value', s=>{
+                            let r = s.val();
+                            if(r) {
+                                document.getElementById('roomIdDisplay').innerText = r.roomId||'123456';
+                                document.getElementById('roomPassDisplay').innerText = r.pass||'123456';
+                                document.getElementById('roomModal').classList.add('active');
+                            }
+                        });
+                    }
+                    showSection('home');
+                });
+            }
+        };
+        
+        // ========== ম্যাচ ডিটেইলস ==========
+        window.showMatchDetails = (match)=>{
+            if(!currentUser) return alert('❌ আগে লগইন করুন!');
+            db.ref('registrations').orderByChild('userPhone').equalTo(currentUser.phone).once('value', snap=>{
+                let reg = false;
+                snap.forEach(c=>{ if(c.val().match===match) reg=true; });
+                if(reg||match.includes('ফ্রি')) {
+                    db.ref('room_details/'+match).once('value', s=>{
+                        let r = s.val();
+                        if(r) {
+                            document.getElementById('roomIdDisplay').innerText = r.roomId||'123456';
+                            document.getElementById('roomPassDisplay').innerText = r.pass||'123456';
+                            document.getElementById('roomModal').classList.add('active');
+                        } else alert('📋 রুম ডিটেইলস আপডেট হবে...');
+                    });
+                } else alert('❌ শুধুমাত্র রেজিস্ট্রেশন করা প্লেয়াররা দেখতে পারবেন!');
             });
-            document.getElementById('history-list').innerHTML = h || 'No history found.';
-        });
-    }
-
-    function toggleAuth() {
-        const lBox = document.getElementById('login-box');
-        const sBox = document.getElementById('signup-box');
-        if(lBox.style.display === 'none') {
-            lBox.style.display = 'block';
-            sBox.style.display = 'none';
-        } else {
-            lBox.style.display = 'none';
-            sBox.style.display = 'block';
-        }
-    }
-
-    function signup() {
-        const name = document.getElementById('reg-user-name').value;
-        const phone = document.getElementById('reg-user-phone').value;
-        const pass = document.getElementById('reg-user-pass').value;
-        if(name && phone && pass) {
-            const userObj = { name, phone, pass, balance: 0 };
-            db.ref('users/' + phone).set(userObj).then(() => {
-                localStorage.setItem('user', JSON.stringify(userObj));
-                location.reload();
-            });
-        } else { alert("Fill all fields"); }
-    }
-
-    function login() {
-        const phone = document.getElementById('login-phone').value;
-        const pass = document.getElementById('login-pass').value;
-        db.ref('users/' + phone).once('value', (snapshot) => {
-            const user = snapshot.val();
-            if(user && user.pass === pass) {
-                localStorage.setItem('user', JSON.stringify(user));
-                location.reload();
-            } else { alert("Wrong Phone or Password!"); }
-        });
-    }
-
-    function logout() {
-        localStorage.removeItem('user');
-        location.reload();
-    }
-
-    function updateProfileUI() {
-        if(!currentUser) return;
-        document.getElementById('prof-name').innerText = currentUser.name;
-        document.getElementById('prof-phone').innerText = currentUser.phone;
-        db.ref('users/' + currentUser.phone + '/balance').on('value', (snapshot) => {
-            document.getElementById('prof-balance').innerText = snapshot.val() || 0;
-        });
-    }
-
-    function showSection(id) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        const items = document.querySelectorAll('.nav-item');
-        if(id === 'home') items[0].classList.add('active');
-        if(id === 'leaderboard') items[1].classList.add('active');
-        if(id === 'deposit') items[2].classList.add('active');
-        if(id === 'withdraw') items[3].classList.add('active');
-        if(id === 'profile') items[4].classList.add('active');
-        if(id === 'support') items[5].classList.add('active');
-    }
-
-    function showMatchDetails(matchName) {
-        db.ref('room_details/' + matchName).once('value', s => {
-            const d = s.val();
-            if(d) alert("Details: " + d.msg);
-            else alert("Wait for details.");
-        });
-    }
-
-    function openRegister(title, fee, option) {
-        showSection('register-page');
-        document.getElementById('reg-title').innerText = title;
-        baseFee = fee;
-        const modeSelect = document.getElementById('reg-mode');
-        document.getElementById('opt-duo').style.display = (option === 'solo') ? 'none' : 'block';
-        document.getElementById('opt-squad').style.display = (option === 'squad_full') ? 'block' : 'none';
-        modeSelect.value = 'solo';
-        updateRegFee();
-    }
-
-    function updateRegFee() {
-        const mode = document.getElementById('reg-mode').value;
-        const inputArea = document.getElementById('dynamic-inputs');
-        inputArea.innerHTML = ""; 
-        let playerCount = 1;
-        if(mode === 'duo') playerCount = 2;
-        else if(mode === 'squad') playerCount = 4;
-        document.getElementById('fee-display').innerText = baseFee * playerCount;
-        for(let i = 1; i <= playerCount; i++) {
-            inputArea.innerHTML += `
-                <div style="margin-top:10px; border-bottom:1px solid #444; padding-bottom:10px;">
-                    <p style="margin:5px 0; color:var(--primary); font-size:12px;">Player ${i}</p>
-                    <input type="text" placeholder="Player ${i} Name" id="p${i}-name">
-                    <input type="text" placeholder="Player ${i} In-Game UID" id="p${i}-uid">
-                </div>
-            `;
-        }
-    }
-
-    function submitRegistration() {
-        const mode = document.getElementById('reg-mode').value;
-        const matchName = document.getElementById('reg-title').innerText;
-        let playerCount = (mode === 'solo') ? 1 : (mode === 'duo' ? 2 : 4);
-        let players = [];
-        for(let i = 1; i <= playerCount; i++) {
-            players.push({
-                name: document.getElementById(`p${i}-name`).value,
-                uid: document.getElementById(`p${i}-uid`).value
+        };
+        
+        window.closeRoomModal = ()=> document.getElementById('roomModal').classList.remove('active');
+        
+        // ========== প্রোফাইল ==========
+        function updateProfileUI() {
+            if(!currentUser) return;
+            document.getElementById('prof-name').innerText = currentUser.name;
+            document.getElementById('prof-phone').innerText = '📱 '+currentUser.phone;
+            let saved = localStorage.getItem('profilePhoto_'+currentUser.phone);
+            if(saved) document.getElementById('profileAvatar').src = saved;
+            db.ref('users/'+currentUser.phone).on('value', s=>{
+                let u = s.val();
+                if(u) { currentUser = u; document.getElementById('prof-balance').innerText = u.balance||0; document.getElementById('prof-wins').innerText = u.wins||0; }
             });
         }
-        db.ref('registrations').push({
-            match: matchName,
-            mode: mode,
-            players: players,
-            userPhone: currentUser.phone,
-            time: new Date().toLocaleString()
-        }).then(() => {
-            alert("Registration Successful!");
-            showSection('home');
-        });
-    }
-
-    function submitDeposit() {
-        const amount = document.getElementById('dep-amount').value;
-        const trxID = document.getElementById('dep-trx').value;
-        const phone = document.getElementById('dep-phone').value;
-        if(amount && trxID && phone) {
+        
+        window.changeProfilePhoto = (e)=>{
+            let file = e.target.files[0];
+            if(file) {
+                let reader = new FileReader();
+                reader.onload = (ev)=>{
+                    document.getElementById('profileAvatar').src = ev.target.result;
+                    localStorage.setItem('profilePhoto_'+currentUser.phone, ev.target.result);
+                    alert('✅ প্রোফাইল ছবি পরিবর্তন হয়েছে!');
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        
+        // ========== ডিপোজিট ==========
+        window.submitDeposit = ()=>{
+            if(!currentUser) return alert('❌ লগইন করুন!');
+            let m = document.getElementById('depositMethod').value;
+            let a = document.getElementById('dep-amount').value;
+            let p = document.getElementById('dep-phone').value;
+            let t = document.getElementById('dep-trx').value;
+            if(!a||!p||!t) return alert('❌ সব তথ্য দিন!');
+            if(m==='usdt' && (a<1||a>20)) return alert('❌ USDT ১-২০$');
+            if(m!=='usdt' && (a<50||a>3000)) return alert('❌ টাকা ৫০-৩০০০');
+            
             db.ref('deposits').push({
-                phone: phone,
-                amount: amount,
-                trxID: trxID,
-                time: new Date().toLocaleString()
-            }).then(() => {
-                alert("Deposit Request Sent!");
+                method:m, 
+                amount:a, 
+                phone:p, 
+                trxid:t, 
+                userPhone:currentUser.phone, 
+                userName:currentUser.name, 
+                time:new Date().toLocaleString('bn-BD'), 
+                status:'pending'
+            }).then(()=>{
+                alert('✅ ডিপোজিট রিকোয়েস্ট পাঠানো হয়েছে! ৩০ মিনিটের মধ্যে কনফার্ম করা হবে।');
                 showSection('home');
             });
-        } else { alert("Please fill all fields!"); }
-    }
-
-    function submitWithdraw() {
-        const amount = document.getElementById('wit-amount').value;
-        const number = document.getElementById('wit-phone').value;
-        if(amount && number) {
-            db.ref('withdraws').push({
-                number: number,
-                amount: amount,
-                time: new Date().toLocaleString()
-            }).then(() => {
-                alert("Withdraw Request Sent!");
-                showSection('home');
+        };
+        
+        // ========== উইথড্র ==========
+        window.submitWithdraw = ()=>{
+            if(!currentUser) return alert('❌ লগইন করুন!');
+            let m = document.getElementById('withdrawMethod').value;
+            let a = parseInt(document.getElementById('wit-amount').value);
+            let p = document.getElementById('wit-phone').value;
+            let pin = document.getElementById('wit-pin').value;
+            if(!a||!p||!pin) return alert('❌ সব তথ্য দিন!');
+            
+            // পিন চেক
+            let savedPin = localStorage.getItem('withdrawPin') || '1234';
+            if(pin !== savedPin) return alert('❌ ভুল উইথড্র পিন!');
+            
+            if(m==='usdt' && (a<150||a>1000)) return alert('❌ USDT ১৫০-১০০০');
+            if(m!=='usdt' && (a<50||a>1000)) return alert('❌ টাকা ৫০-১০০০');
+            
+            // উইথড্র চার্জ ৫ টাকা
+            let charge = 5;
+            let netAmount = a - charge;
+            
+            if(netAmount < 0) return alert('❌ উইথড্র পরিমাণ ৫ টাকার বেশি হতে হবে!');
+            
+            db.ref('users/'+currentUser.phone+'/balance').once('value', s=>{
+                let bal = s.val()||0;
+                if(a > bal) return alert('❌ পর্যাপ্ত ব্যালেন্স নেই!');
+                
+                db.ref('users/'+currentUser.phone+'/balance').set(bal - a);
+                db.ref('withdraws').push({
+                    method:m, 
+                    amount:a, 
+                    netAmount:netAmount, 
+                    charge:charge, 
+                    phone:p, 
+                    userPhone:currentUser.phone, 
+                    userName:currentUser.name, 
+                    time:new Date().toLocaleString('bn-BD'), 
+                    status:'pending'
+                }).then(()=>{
+                    alert(`✅ উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!\nপরিমাণ: ${a} টাকা\nচার্জ: ${charge} টাকা\nপ্রাপ্ত: ${netAmount} টাকা\n৬ ঘন্টার মধ্যে কনফার্ম করা হবে।`);
+                    showSection('home');
+                });
             });
-        } else { alert("Please fill all fields!"); }
-    }
-</script>
+        };
+        
+        // ========== অটো লগইন ==========
+        window.onload = ()=>{
+            createRain(); createShootingStars();
+            let u = localStorage.getItem('user');
+            if(u) { currentUser = JSON.parse(u); document.getElementById('auth-page').style.display='none'; document.getElementById('main-app').style.display='block'; updateProfileUI(); loadAllData(); }
+        };
+    </script>
 </body>
 </html>
