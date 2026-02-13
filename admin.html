@@ -1,98 +1,1651 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>TNM RIYAD - FINAL ADMIN</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNM RIYAD - ULTIMATE CONTROL PANEL 2026</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
     <style>
-        body { background: #121212; color: white; font-family: sans-serif; padding: 15px; }
-        .card { background: #1e1e1e; padding: 15px; margin-bottom: 20px; border-radius: 12px; border-left: 5px solid #ff4b2b; }
-        h1 { text-align: center; color: #38ef7d; font-size: 20px; }
-        h2 { color: #ff4b2b; font-size: 16px; border-bottom: 1px solid #333; padding-bottom: 5px; }
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: white; box-sizing: border-box; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 5px; }
-        .btn-update { background: #00d2ff; color: black; }
-        .btn-room { background: #ffda44; color: black; }
-        .btn-del { background: #ff4b2b; color: white; padding: 5px; font-size: 11px; margin-top: 5px; cursor: pointer; border-radius: 4px; border:none; }
-        .box { background: #252525; padding: 10px; border-radius: 8px; margin-top: 10px; border: 1px solid #444; position: relative; }
-        #login-lock { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10000; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: #0a0f1e;
+            color: white;
+            padding: 20px;
+            margin: 0;
+            position: relative;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        /* বৃষ্টি এনিমেশন */
+        .rain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+        
+        .rain-drop {
+            position: absolute;
+            width: 2px;
+            height: 25px;
+            background: linear-gradient(to bottom, rgba(255,215,0,0.9), rgba(255,140,0,0.4));
+            border-radius: 0 0 5px 5px;
+            animation: fall linear infinite;
+            box-shadow: 0 0 15px #FFD700;
+        }
+        
+        @keyframes fall {
+            to { transform: translateY(100vh); }
+        }
+        
+        /* স্টার এনিমেশন */
+        .star-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9998;
+            overflow: hidden;
+        }
+        
+        .star {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #FFD700;
+            border-radius: 50%;
+            animation: starFall 5s linear infinite;
+            box-shadow: 0 0 30px #FFA500, 0 0 60px #FFD700;
+            opacity: 0;
+        }
+        
+        .star::before {
+            content: '★';
+            position: absolute;
+            font-size: 20px;
+            color: #FFD700;
+            text-shadow: 0 0 30px #FFA500, 0 0 60px #FFD700;
+            left: -4px;
+            top: -4px;
+        }
+        
+        @keyframes starFall {
+            0% { opacity: 1; transform: translateY(-100px) translateX(0) rotate(0deg); }
+            70% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(100vh) translateX(100px) rotate(360deg); }
+        }
+        
+        /* টাচ এনিমেশন */
+        .touch-star {
+            position: fixed;
+            width: 80px;
+            height: 80px;
+            background: transparent;
+            pointer-events: none;
+            z-index: 10000;
+            animation: touchSpark 1.2s ease-out forwards;
+        }
+        
+        .touch-star::before {
+            content: '★';
+            position: absolute;
+            font-size: 60px;
+            color: #FFD700;
+            text-shadow: 0 0 40px #FFA500, 0 0 80px #FFD700, 0 0 120px #FF8C00;
+            transform: translate(-50%, -50%);
+            left: 50%;
+            top: 50%;
+            animation: starPulse 0.3s ease-out infinite;
+        }
+        
+        @keyframes touchSpark {
+            0% { opacity: 1; transform: scale(0.3); }
+            100% { opacity: 0; transform: scale(2.5); }
+        }
+        
+        @keyframes starPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.3); }
+        }
+        
+        /* গ্লোইং বাটন ইফেক্ট */
+        .glow-on-hover {
+            width: 100%;
+            height: 50px;
+            border: none;
+            outline: none;
+            color: #fff;
+            background: #111;
+            cursor: pointer;
+            position: relative;
+            z-index: 0;
+            border-radius: 10px;
+            padding: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+            margin: 5px 0;
+            transition: all 0.3s;
+        }
+
+        .glow-on-hover:before {
+            content: '';
+            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            background-size: 400%;
+            z-index: -1;
+            filter: blur(5px);
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            animation: glowing 20s linear infinite;
+            opacity: 0;
+            transition: opacity .3s ease-in-out;
+            border-radius: 10px;
+        }
+
+        .glow-on-hover:active {
+            color: #000;
+            transform: translateY(2px);
+        }
+
+        .glow-on-hover:active:after {
+            background: transparent;
+        }
+
+        .glow-on-hover:hover:before {
+            opacity: 1;
+        }
+
+        .glow-on-hover:after {
+            z-index: -1;
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #111;
+            left: 0;
+            top: 0;
+            border-radius: 10px;
+        }
+
+        @keyframes glowing {
+            0% { background-position: 0 0; }
+            50% { background-position: 400% 0; }
+            100% { background-position: 0 0; }
+        }
+        
+        /* স্পেশাল কালার বাটন */
+        .glow-on-hover.btn-pink:after { background: #ff416c; }
+        .glow-on-hover.btn-blue:after { background: linear-gradient(145deg, #00d2ff, #0099cc); }
+        .glow-on-hover.btn-green:after { background: linear-gradient(145deg, #38ef7d, #00b894); }
+        .glow-on-hover.btn-yellow:after { background: linear-gradient(145deg, #ffda44, #ffb700); }
+        .glow-on-hover.btn-red:after { background: linear-gradient(145deg, #ff4b2b, #ff2222); }
+        .glow-on-hover.btn-purple:after { background: linear-gradient(145deg, #9C27B0, #673AB7); }
+        .glow-on-hover.btn-gold:after { background: linear-gradient(145deg, #FFD700, #FFA500); }
+        .glow-on-hover.btn-orange:after { background: linear-gradient(145deg, #FF9800, #F57C00); }
+        .glow-on-hover.btn-cyan:after { background: linear-gradient(145deg, #00FFFF, #00CED1); }
+        .glow-on-hover.btn-magenta:after { background: linear-gradient(145deg, #FF00FF, #C71585); }
+        
+        .glow-on-hover.btn-blue:active,
+        .glow-on-hover.btn-green:active,
+        .glow-on-hover.btn-yellow:active,
+        .glow-on-hover.btn-gold:active,
+        .glow-on-hover.btn-cyan:active { color: black; }
+        
+        /* গ্লাসমর্ফিজম ইফেক্ট */
+        .glass-card {
+            background: rgba(30, 35, 50, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        
+        .admin-header {
+            background: linear-gradient(145deg, #ff416c, #ff4b2b);
+            padding: 30px 20px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            border: 2px solid #ffda44;
+            position: relative;
+            overflow: hidden;
+            animation: headerGlow 3s infinite;
+        }
+        
+        @keyframes headerGlow {
+            0%, 100% { box-shadow: 0 0 30px rgba(255,75,43,0.3); }
+            50% { box-shadow: 0 0 60px rgba(255,218,68,0.5); }
+        }
+        
+        .admin-header h1 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px rgba(255,215,0,0.8);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .admin-header p {
+            color: #ffda44;
+            font-size: 14px;
+            text-shadow: 0 0 10px rgba(255,218,68,0.5);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: rgba(30, 35, 50, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #38ef7d;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,218,68,0.3);
+            animation: statPulse 3s infinite;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(56,239,125,0.3);
+            border-color: #38ef7d;
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #38ef7d;
+            text-shadow: 0 0 20px rgba(56,239,125,0.5);
+            animation: numberGlow 2s infinite;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 5px;
+        }
+        
+        .card {
+            background: rgba(30, 35, 50, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 15px;
+            border-left: 5px solid;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+            animation: cardGlow 4s infinite;
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255,218,68,0.2);
+            border-color: #ffda44;
+        }
+        
+        .border-pink { border-left-color: #ff416c; }
+        .border-orange { border-left-color: #ff4b2b; }
+        .border-blue { border-left-color: #00d2ff; }
+        .border-green { border-left-color: #38ef7d; }
+        .border-yellow { border-left-color: #ffda44; }
+        .border-purple { border-left-color: #9C27B0; }
+        .border-red { border-left-color: #ff4444; }
+        .border-gold { border-left-color: #FFD700; }
+        .border-cyan { border-left-color: #00FFFF; }
+        .border-magenta { border-left-color: #FF00FF; }
+        
+        h2 {
+            font-size: 18px;
+            margin: 0 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+        
+        h3 {
+            font-size: 16px;
+            margin: 20px 0 15px 0;
+            color: #ffda44;
+            text-shadow: 0 0 10px rgba(255,218,68,0.3);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0 15px 0;
+            border-radius: 10px;
+            border: 1px solid rgba(255,218,68,0.3);
+            background: rgba(42, 42, 42, 0.8);
+            backdrop-filter: blur(5px);
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #ffda44;
+            outline: none;
+            box-shadow: 0 0 25px rgba(255,218,68,0.4);
+            transform: scale(1.02);
+        }
+        
+        .small-btn {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            margin: 5px 3px;
+            font-weight: bold;
+            transition: all 0.3s;
+            background: #333;
+            color: white;
+        }
+        
+        .small-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .small-btn.btn-green { background: #38ef7d; color: black; }
+        .small-btn.btn-red { background: #ff4b2b; color: white; }
+        .small-btn.btn-yellow { background: #ffda44; color: black; }
+        .small-btn.btn-blue { background: #00d2ff; color: black; }
+        
+        .box {
+            background: rgba(37, 37, 37, 0.9);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,218,68,0.2);
+            position: relative;
+            transition: all 0.3s;
+            animation: boxFadeIn 0.5s;
+        }
+        
+        .box:hover {
+            border-color: #ffda44;
+            box-shadow: 0 5px 20px rgba(255,218,68,0.2);
+            transform: translateX(5px);
+        }
+        
+        .box-title {
+            color: #ffda44;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .col {
+            flex: 1;
+        }
+        
+        .login-container {
+            max-width: 450px;
+            margin: 50px auto;
+            background: rgba(30, 35, 50, 0.9);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 20px;
+            border-left: 5px solid #38ef7d;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,218,68,0.3);
+            animation: loginGlow 3s infinite;
+        }
+        
+        .login-title {
+            color: #38ef7d;
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(56,239,125,0.5);
+            animation: titlePulse 2s infinite;
+        }
+        
+        .admin-panel {
+            display: none;
+        }
+        
+        .admin-panel.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: auto;
+            height: auto;
+            padding: 12px 25px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: bold;
+            animation: badgePulse 2s infinite;
+        }
+        
+        .status-pending { background: #ff9800; color: black; }
+        .status-confirmed { background: #4CAF50; color: white; }
+        .status-paid { background: #2196F3; color: white; }
+        
+        .user-info-box {
+            background: rgba(42, 42, 42, 0.9);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 1px solid #ffda44;
+            animation: boxGlow 2s infinite;
+        }
+        
+        @keyframes boxGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255,218,68,0.2); }
+            50% { box-shadow: 0 0 20px rgba(255,218,68,0.4); }
+        }
+        
+        /* থিম সিলেক্টর কার্ড */
+        .theme-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .theme-card {
+            background: rgba(20, 25, 35, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .theme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255,215,0,0.3);
+        }
+        
+        .theme-card.active {
+            border-color: #FFD700;
+            box-shadow: 0 0 30px rgba(255,215,0,0.5);
+        }
+        
+        .theme-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        
+        .theme-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .theme-desc {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+        
+        /* কালার পিকার প্রিভিউ */
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 10px;
+            border: 2px solid white;
+            vertical-align: middle;
+        }
+        
+        /* এনিমেশন কন্ট্রোল সেকশন */
+        .animation-control-card {
+            background: rgba(20, 25, 40, 0.95);
+            border-left: 8px solid #00ffff;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 30px rgba(0,255,255,0.2);
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin-left: 10px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: #00ffcc;
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+        
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50px;
+            margin-bottom: 15px;
+        }
+        
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        /* এনিমেশন প্রিভিউ */
+        .animation-preview {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .preview-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .preview-icon {
+            font-size: 40px;
+        }
+        
+        .preview-name {
+            font-size: 12px;
+            color: #00ffff;
+        }
+        
+        @keyframes previewPulse {
+            0%, 100% { transform: scale(1); color: #FFD700; }
+            50% { transform: scale(1.5); color: #FFA500; }
+        }
+        
+        @keyframes previewFall {
+            0% { transform: translateY(-10px); }
+            100% { transform: translateY(10px); }
+        }
+        
+        @keyframes previewTouch {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+        
+        @keyframes previewSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes previewBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes previewShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        @keyframes previewGlow {
+            0%, 100% { text-shadow: 0 0 10px #FFD700; }
+            50% { text-shadow: 0 0 30px #FFD700, 0 0 60px #FFA500; }
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .row {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .admin-header h1 {
+                font-size: 20px;
+            }
+            
+            .theme-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
-
-    <div id="login-lock">
-        <h2>🔒 TNM Admin Login</h2>
-        <input type="password" id="admin-pass" placeholder="Password" style="width: 200px; text-align: center;">
-        <button class="btn" style="width: 200px; background: #38ef7d;" onclick="checkPassword()">UNLOCK</button>
+    <!-- বৃষ্টি এনিমেশন কন্টেইনার -->
+    <div class="rain-container" id="rainContainer"></div>
+    
+    <!-- স্টার ফিল্ড কন্টেইনার -->
+    <div class="star-field" id="starField"></div>
+    
+    <!-- লগইন পেইজ -->
+    <div id="login-page">
+        <div class="login-container">
+            <div class="login-title">👑 TNM ADMIN</div>
+            <div style="text-align: center; margin-bottom: 30px; color: #ffda44;">ওয়েবসাইট ডিজাইন ও এনিমেশন কন্ট্রোল প্যানেল ২০২৬</div>
+            
+            <input type="text" id="admin-username" placeholder="👤 ইউজারনেম" value="tnmbd511">
+            <input type="password" id="admin-password" placeholder="🔑 পাসওয়ার্ড" value="tnmbd511">
+            
+            <div id="login-error" style="color: #ff4444; text-align: center; margin: 15px 0; display: none;">
+                ❌ ভুল ইউজারনেম বা পাসওয়ার্ড!
+            </div>
+            
+            <button class="glow-on-hover btn-green" onclick="adminLogin()" style="font-size: 16px;">
+                🔐 অ্যাডমিন লগইন
+            </button>
+        </div>
     </div>
-
-    <div id="admin-content" style="display: none;">
-        <h1>🎮 TNM CONTROL PANEL</h1>
-
-        <div class="card" style="border-left-color: #00d2ff;">
-            <h2>💰 User Wallet Control</h2>
-            <input type="text" id="target-phone" placeholder="User Phone (e.g. 017...)">
-            <input type="number" id="balance-amount" placeholder="Amount (50 to add, -50 to cut)">
-            <button class="btn btn-update" onclick="updateBalance()">Update Balance</button>
-            <button class="btn" style="background: #38ef7d;" onclick="checkBalance()">Check Current Balance</button>
-            <p id="bal-show" style="text-align:center; color: #ffda44; margin-top: 10px;"></p>
+    
+    <!-- অ্যাডমিন প্যানেল -->
+    <div id="admin-panel" class="admin-panel">
+        <button class="glow-on-hover btn-red logout-btn" onclick="adminLogout()">🚪 লগআউট</button>
+        
+        <!-- হেডার -->
+        <div class="admin-header">
+            <h1 id="main-header-title">🎮 TNM RIYAD - ওয়েবসাইট ডিজাইন ও এনিমেশন কন্ট্রোল প্যানেল ২০২৬</h1>
+            <p>👑 অ্যাডমিন: <span id="admin-name">tnmbd511</span> | 🕐 <span id="current-time"></span></p>
         </div>
-
-        <div class="card" style="border-left-color: #38ef7d;">
-            <h2>⏰ Match Timer Control</h2>
-            <select id="time-match-name">
-                <option value="SoloBermuda">Solo Bermuda Match</option>
-                <option value="DuoMatch1">Duo Match 1</option>
-                <option value="DuoMatch2">Duo Match 2</option>
-                <option value="CS4vs4">CS 4vs4</option>
-                <option value="CS2vs2">CS 2vs2</option>
-                <option value="CS1vs1">CS 1vs1</option>
+        
+        <!-- স্ট্যাটস কার্ড -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="total-users">0</div>
+                <div class="stat-label">👥 মোট ইউজার</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="total-matches">0</div>
+                <div class="stat-label">🎮 মোট ম্যাচ</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pending-deposits">0</div>
+                <div class="stat-label">💰 পেন্ডিং ডিপোজিট</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pending-withdraws">0</div>
+                <div class="stat-label">💳 পেন্ডিং উইথড্র</div>
+            </div>
+        </div>
+        
+        <!-- ========== ওয়েবসাইট ডিজাইন কন্ট্রোল প্যানেল ========== -->
+        <div class="card border-gold" style="border-left-width: 8px; background: linear-gradient(145deg, rgba(20,25,40,0.95), rgba(10,15,30,0.98));">
+            <h2 style="color: #FFD700; font-size: 24px; text-shadow: 0 0 15px rgba(255,215,0,0.7);">
+                <span style="font-size: 32px;">🎨</span> ওয়েবসাইট ডিজাইন কন্ট্রোল প্যানেল
+            </h2>
+            <p style="color: #aaa; margin-bottom: 20px; font-size: 13px;">এখান থেকে ওয়েবসাইটের সম্পূর্ণ ডিজাইন কন্ট্রোল করুন</p>
+            
+            <!-- থিম সিলেক্টর -->
+            <div style="background: rgba(255,215,0,0.08); padding: 20px; border-radius: 20px; margin-bottom: 25px; border: 1px solid rgba(255,215,0,0.3);">
+                <h3 style="color: #FFD700; margin-bottom: 20px; font-size: 20px;">🎯 ওয়েবসাইট থিম সিলেক্ট করুন</h3>
+                
+                <div class="theme-selector">
+                    <div class="theme-card" onclick="selectTheme('default')" id="theme-default" style="background: linear-gradient(145deg, #FF416C, #FF4B2B);">
+                        <div class="theme-icon">🎮</div>
+                        <div class="theme-name">ডিফল্ট থিম</div>
+                        <div class="theme-desc">লাল-কমলা গ্রেডিয়েন্ট</div>
+                    </div>
+                    <div class="theme-card" onclick="selectTheme('dark')" id="theme-dark" style="background: linear-gradient(145deg, #1a1e2c, #0a0f1a);">
+                        <div class="theme-icon">🌙</div>
+                        <div class="theme-name">ডার্ক থিম</div>
+                        <div class="theme-desc">কালো-নেভি ব্লু</div>
+                    </div>
+                    <div class="theme-card" onclick="selectTheme('neon')" id="theme-neon" style="background: linear-gradient(145deg, #00ff9d, #00b8ff); color: black;">
+                        <div class="theme-icon">💎</div>
+                        <div class="theme-name">নিয়ন থিম</div>
+                        <div class="theme-desc">সবুজ-নীল নিয়ন</div>
+                    </div>
+                    <div class="theme-card" onclick="selectTheme('royal')" id="theme-royal" style="background: linear-gradient(145deg, #8E2DE2, #4A00E0);">
+                        <div class="theme-icon">👑</div>
+                        <div class="theme-name">রয়্যাল থিম</div>
+                        <div class="theme-desc">বেগুনি-নীল</div>
+                    </div>
+                    <div class="theme-card" onclick="selectTheme('sunset')" id="theme-sunset" style="background: linear-gradient(145deg, #ff9a9e, #fad0c4); color: black;">
+                        <div class="theme-icon">🌅</div>
+                        <div class="theme-name">সানসেট থিম</div>
+                        <div class="theme-desc">গোলাপী-পীচ</div>
+                    </div>
+                    <div class="theme-card" onclick="selectTheme('ocean')" id="theme-ocean" style="background: linear-gradient(145deg, #00c6fb, #005bea);">
+                        <div class="theme-icon">🌊</div>
+                        <div class="theme-name">ওশান থিম</div>
+                        <div class="theme-desc">নীল-আকাশী</div>
+                    </div>
+                    <div class="theme-card" onclick="selectTheme('forest')" id="theme-forest" style="background: linear-gradient(145deg, #11998e, #38ef7d); color: black;">
+                        <div class="theme-icon">🌲</div>
+                        <div class="theme-name">ফরেস্ট থিম</div>
+                        <div class="theme-desc">সবুজ-পান্না</div>
+                    </div>
+                    <div class="theme-card" onclick="selectTheme('midnight')" id="theme-midnight" style="background: linear-gradient(145deg, #232526, #414345);">
+                        <div class="theme-icon">🌃</div>
+                        <div class="theme-name">মিডনাইট থিম</div>
+                        <div class="theme-desc">গাঢ় ধূসর</div>
+                    </div>
+                    <div class="theme-card" onclick="selectTheme('candy')" id="theme-candy" style="background: linear-gradient(145deg, #ff6a88, #ff99ac); color: black;">
+                        <div class="theme-icon">🍬</div>
+                        <div class="theme-name">ক্যান্ডি থিম</div>
+                        <div class="theme-desc">গোলাপী-লাল</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button class="glow-on-hover btn-gold" onclick="applyTheme()" style="width: 100%; padding: 16px; font-size: 16px;">
+                        ✅ সিলেক্টেড থিম অ্যাপ্লাই করুন
+                    </button>
+                </div>
+            </div>
+            
+            <!-- কাস্টম কালার কন্ট্রোল -->
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 20px; margin-bottom: 25px;">
+                <h3 style="color: #FFD700; margin-bottom: 20px;">🎨 কাস্টম কালার কন্ট্রোল</h3>
+                
+                <div class="row">
+                    <div class="col">
+                        <label style="color: #ffda44; font-size: 13px;">প্রাইমারি কালার</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="color" id="primary-color" value="#FF416C" style="flex: 1;">
+                            <span class="color-preview" style="background: #FF416C;" id="primary-preview"></span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label style="color: #ffda44; font-size: 13px;">সেকেন্ডারি কালার</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="color" id="secondary-color" value="#FF4B2B" style="flex: 1;">
+                            <span class="color-preview" style="background: #FF4B2B;" id="secondary-preview"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col">
+                        <label style="color: #ffda44; font-size: 13px;">অ্যাকসেন্ট কালার</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="color" id="accent-color" value="#FFD700" style="flex: 1;">
+                            <span class="color-preview" style="background: #FFD700;" id="accent-preview"></span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label style="color: #ffda44; font-size: 13px;">টেক্সট কালার</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="color" id="text-color" value="#FFFFFF" style="flex: 1;">
+                            <span class="color-preview" style="background: #FFFFFF;" id="text-preview"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col">
+                        <label style="color: #ffda44; font-size: 13px;">ব্যাকগ্রাউন্ড কালার</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="color" id="bg-color" value="#0a0f1e" style="flex: 1;">
+                            <span class="color-preview" style="background: #0a0f1e;" id="bg-preview"></span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label style="color: #ffda44; font-size: 13px;">কার্ড কালার</label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input type="color" id="card-color" value="#1e1e1e" style="flex: 1;">
+                            <span class="color-preview" style="background: #1e1e1e;" id="card-preview"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="glow-on-hover btn-cyan" onclick="applyCustomColors()" style="margin-top: 15px;">
+                    🎨 কাস্টম কালার অ্যাপ্লাই করুন
+                </button>
+            </div>
+            
+            <!-- ফন্ট কন্ট্রোল -->
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 20px; margin-bottom: 25px;">
+                <h3 style="color: #FFD700; margin-bottom: 20px;">📝 ফন্ট কন্ট্রোল</h3>
+                
+                <div class="row">
+                    <div class="col">
+                        <label style="color: #ffda44; font-size: 13px;">হেডার ফন্ট</label>
+                        <select id="header-font" class="glow-on-hover" style="background: #222;">
+                            <option value="Poppins">Poppins</option>
+                            <option value="Montserrat">Montserrat</option>
+                            <option value="Roboto">Roboto</option>
+                            <option value="Oswald">Oswald</option>
+                            <option value="Anton">Anton</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label style="color: #ffda44; font-size: 13px;">বডি ফন্ট</label>
+                        <select id="body-font" class="glow-on-hover" style="background: #222;">
+                            <option value="Poppins">Poppins</option>
+                            <option value="Open Sans">Open Sans</option>
+                            <option value="Roboto">Roboto</option>
+                            <option value="Lato">Lato</option>
+                            <option value="Montserrat">Montserrat</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col">
+                        <input type="number" id="header-size" placeholder="হেডার সাইজ (px)" value="32">
+                    </div>
+                    <div class="col">
+                        <input type="number" id="body-size" placeholder="বডি সাইজ (px)" value="16">
+                    </div>
+                </div>
+                
+                <button class="glow-on-hover btn-yellow" onclick="applyFontSettings()">
+                    📝 ফন্ট সেটিংস আপডেট করুন
+                </button>
+            </div>
+            
+            <!-- লেআউট কন্ট্রোল -->
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 20px; margin-bottom: 25px;">
+                <h3 style="color: #FFD700; margin-bottom: 20px;">📐 লেআউট কন্ট্রোল</h3>
+                
+                <div class="row">
+                    <div class="col">
+                        <label style="color: #ffda44; font-size: 13px;">কার্ড স্টাইল</label>
+                        <select id="card-style" class="glow-on-hover" style="background: #222;">
+                            <option value="glass">🥂 গ্লাসমর্ফিজম</option>
+                            <option value="neumorph">🎨 নিউমরফিজম</option>
+                            <option value="flat">📦 ফ্ল্যাট</option>
+                            <option value="border">🔲 বর্ডার</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label style="color: #ffda44; font-size: 13px;">বর্ডার রেডিয়াস</label>
+                        <select id="border-radius" class="glow-on-hover" style="background: #222;">
+                            <option value="0">⬛ স্কোয়ার</option>
+                            <option value="10">🔹 সফট</option>
+                            <option value="20" selected>🔸 রাউন্ডেড</option>
+                            <option value="30">⚪ মোর রাউন্ডেড</option>
+                            <option value="50">🔴 সার্কেল</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col">
+                        <label style="color: #ffda44; font-size: 13px;">বক্স শ্যাডো</label>
+                        <select id="box-shadow" class="glow-on-hover" style="background: #222;">
+                            <option value="none">❌ নেই</option>
+                            <option value="light">☀️ হালকা</option>
+                            <option value="normal" selected>📦 নরমাল</option>
+                            <option value="heavy">💪 ভারী</option>
+                            <option value="glow">✨ গ্লো</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label style="color: #ffda44; font-size: 13px;">হোভার ইফেক্ট</label>
+                        <select id="hover-effect" class="glow-on-hover" style="background: #222;">
+                            <option value="none">❌ নেই</option>
+                            <option value="scale">🔍 স্কেল</option>
+                            <option value="glow">✨ গ্লো</option>
+                            <option value="slide">⬅️ স্লাইড</option>
+                            <option value="rotate">🔄 রোটেট</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button class="glow-on-hover btn-magenta" onclick="applyLayoutSettings()">
+                    📐 লেআউট সেটিংস আপডেট করুন
+                </button>
+            </div>
+            
+            <!-- প্রি-সেট থিম লোডার -->
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="glow-on-hover btn-green" onclick="saveThemeAsPreset()" style="flex: 1;">
+                    💾 কারেন্ট থিম প্রি-সেট হিসেবে সেভ করুন
+                </button>
+                <button class="glow-on-hover btn-blue" onclick="loadPresetThemes()" style="flex: 1;">
+                    📂 সেভ করা থিম লোড করুন
+                </button>
+                <button class="glow-on-hover btn-red" onclick="resetToDefault()" style="flex: 1;">
+                    ↩️ ডিফল্টে রিসেট
+                </button>
+            </div>
+        </div>
+        
+        <!-- ========== এনিমেশন কন্ট্রোল প্যানেল - সম্পূর্ণ নতুন ========== -->
+        <div class="animation-control-card">
+            <h2 style="color: #00ffff; font-size: 24px; margin-bottom: 20px; text-shadow: 0 0 15px rgba(0,255,255,0.5);">
+                <span style="font-size: 32px;">✨</span> এনিমেশন কন্ট্রোল প্যানেল
+            </h2>
+            <p style="color: #aaa; margin-bottom: 25px;">এখান থেকে ওয়েবসাইটের সব এনিমেশন অন/অফ করুন এবং নটুন এনিমেশন অ্যাড করুন</p>
+            
+            <!-- এনিমেশন প্রিভিউ -->
+            <div class="animation-preview" id="animationPreview">
+                <div class="preview-item">
+                    <div class="preview-icon" style="animation: previewPulse 1s infinite;">🌟</div>
+                    <span class="preview-name">পালস</span>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-icon" style="animation: previewFall 1s infinite;">🌧️</div>
+                    <span class="preview-name">ফল</span>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-icon" style="animation: previewTouch 1s infinite;">👆</div>
+                    <span class="preview-name">টাচ</span>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-icon" style="animation: previewSpin 2s infinite;">🔄</div>
+                    <span class="preview-name">স্পিন</span>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-icon" style="animation: previewBounce 1s infinite;">🏀</div>
+                    <span class="preview-name">বাউন্স</span>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-icon" style="animation: previewShake 0.5s infinite;">📳</div>
+                    <span class="preview-name">শেক</span>
+                </div>
+                <div class="preview-item">
+                    <div class="preview-icon" style="animation: previewGlow 1s infinite;">✨</div>
+                    <span class="preview-name">গ্লো</span>
+                </div>
+            </div>
+            
+            <!-- বর্তমান এনিমেশন স্ট্যাটাস -->
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px;">
+                <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;">
+                    <p style="color: #00ffff; margin-bottom: 10px;">🌧️ বৃষ্টি এনিমেশন</p>
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span id="rain-status-text" style="color: white;">চালু</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="rain-toggle" checked onchange="toggleRainAnimation()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;">
+                    <p style="color: #00ffff; margin-bottom: 10px;">🌟 স্টার এনিমেশন</p>
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span id="star-status-text" style="color: white;">চালু</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="star-toggle" checked onchange="toggleStarAnimation()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;">
+                    <p style="color: #00ffff; margin-bottom: 10px;">👆 টাচ এনিমেশন</p>
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <span id="touch-status-text" style="color: white;">চালু</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="touch-toggle" checked onchange="toggleTouchAnimation()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px;">
+                    <p style="color: #00ffff; margin-bottom: 10px;">⚡ এনিমেশন স্পিড</p>
+                    <select id="animation-speed" style="width: 100%; padding: 10px; border-radius: 10px; background: #333; color: white;" onchange="changeAnimationSpeed()">
+                        <option value="slow">🐢 স্লো</option>
+                        <option value="normal" selected>⚡ নরমাল</option>
+                        <option value="fast">🚀 ফাস্ট</option>
+                        <option value="ultra">⚡ আলট্রা</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- ========== নটুন এনিমেশন অ্যাড অপশন ========== -->
+            <div style="background: rgba(0,255,255,0.1); padding: 20px; border-radius: 20px; margin-top: 20px; border: 2px dashed #00ffff;">
+                <h3 style="color: #00ffff; margin-bottom: 20px; font-size: 20px;">
+                    <span style="font-size: 28px;">➕</span> নটুন এনিমেশন অ্যাড করুন
+                </h3>
+                
+                <div class="row">
+                    <div class="col">
+                        <label style="color: #00ffff; font-size: 13px;">এনিমেশন আইডি</label>
+                        <input type="text" id="new-animation-id" placeholder="যেমন: bounce, shake, spin">
+                    </div>
+                    <div class="col">
+                        <label style="color: #00ffff; font-size: 13px;">এনিমেশন নাম</label>
+                        <input type="text" id="new-animation-name" placeholder="যেমন: বাউন্স, শেক, স্পিন">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col">
+                        <label style="color: #00ffff; font-size: 13px;">এনিমেশন আইকন</label>
+                        <input type="text" id="new-animation-icon" placeholder="যেমন: 🏀, 📳, 🔄" value="✨">
+                    </div>
+                    <div class="col">
+                        <label style="color: #00ffff; font-size: 13px;">এনিমেশন ডিউরেশন</label>
+                        <select id="new-animation-duration">
+                            <option value="0.5">⚡ 0.5s (দ্রুত)</option>
+                            <option value="1" selected>⏱️ 1s (নরমাল)</option>
+                            <option value="2">🐢 2s (ধীর)</option>
+                            <option value="3">🐌 3s (অতি ধীর)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col">
+                        <label style="color: #00ffff; font-size: 13px;">এনিমেশন টাইপ</label>
+                        <select id="new-animation-type">
+                            <option value="pulse">✨ পালস</option>
+                            <option value="bounce">🏀 বাউন্স</option>
+                            <option value="shake">📳 শেক</option>
+                            <option value="spin">🔄 স্পিন</option>
+                            <option value="fade">🌫️ ফেইড</option>
+                            <option value="slide">⬅️ স্লাইড</option>
+                            <option value="custom">🎨 কাস্টম</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label style="color: #00ffff; font-size: 13px;">কাস্টম CSS (যদি থাকে)</label>
+                        <input type="text" id="new-animation-css" placeholder="যেমন: transform: scale(1.2);">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col">
+                        <label style="color: #00ffff; font-size: 13px;">এনিমেশন ইফেক্ট</label>
+                        <select id="new-animation-effect">
+                            <option value="infinite">🔄 ইনফিনিট</option>
+                            <option value="once">1️⃣ একবার</option>
+                            <option value="hover">👆 হোভার</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label style="color: #00ffff; font-size: 13px;">এনিমেশন কালার</label>
+                        <input type="color" id="new-animation-color" value="#00ffff">
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 15px; margin-top: 20px;">
+                    <button class="glow-on-hover btn-cyan" onclick="addNewAnimation()" style="flex: 2; background: #00ffff; color: black; font-weight: bold;">
+                        ✅ নটুন এনিমেশন অ্যাড করুন
+                    </button>
+                    <button class="glow-on-hover btn-blue" onclick="previewNewAnimation()" style="flex: 1;">
+                        👁️ প্রিভিউ
+                    </button>
+                </div>
+            </div>
+            
+            <!-- অ্যাক্টিভ এনিমেশন লিস্ট -->
+            <div style="margin-top: 25px;">
+                <h3 style="color: #00ffff; margin-bottom: 15px;">📋 অ্যাক্টিভ এনিমেশন লিস্ট</h3>
+                <div id="active-animations-list" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                    <!-- এনিমেশন লিস্ট জাভাস্ক্রিপ্ট থেকে লোড হবে -->
+                </div>
+            </div>
+            
+            <!-- অল এনিমেশন টগল -->
+            <div class="toggle-container" style="background: rgba(0,255,255,0.2); margin-top: 25px;">
+                <span class="toggle-label">
+                    <span style="font-size: 28px;">⚡</span>
+                    <span style="color: #00ffff; font-weight: bold;">সব এনিমেশন</span>
+                </span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="all-toggle" checked onchange="toggleAllAnimations()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 25px;">
+                <button class="glow-on-hover btn-cyan" onclick="applyAnimationSettings()" style="flex: 1; background: #00ffff; color: black; font-weight: bold;">
+                    💾 এনিমেশন সেটিংস সেভ করুন
+                </button>
+                <button class="glow-on-hover btn-red" onclick="resetAnimationSettings()" style="flex: 1;">
+                    ↩️ ডিফল্টে রিসেট
+                </button>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.5); border-radius: 15px; border-left: 5px solid #00ffff;">
+                <p style="color: #00ffff; font-size: 14px;">
+                    ⚡ বর্তমান স্ট্যাটাস: 
+                    <span id="rain-status">বৃষ্টি: চালু</span> | 
+                    <span id="star-status">স্টার: চালু</span> | 
+                    <span id="touch-status">টাচ: চালু</span> | 
+                    <span id="speed-status">স্পিড: নরমাল</span>
+                </p>
+            </div>
+        </div>
+        
+        <!-- ========== হেডার কন্ট্রোল ========== -->
+        <div class="card border-gold">
+            <h2>🏠 ওয়েবসাইট হেডার কন্ট্রোল</h2>
+            <div class="row">
+                <div class="col">
+                    <input type="text" id="header-title" placeholder="হেডার টাইটেল" value="🎮 TNM RIYAD 2026">
+                </div>
+                <div class="col">
+                    <input type="text" id="header-subtitle" placeholder="হেডার সাবটাইটেল" value="🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input type="color" id="header-color1" value="#FF416C">
+                </div>
+                <div class="col">
+                    <input type="color" id="header-color2" value="#FF4B2B">
+                </div>
+                <div class="col">
+                    <input type="color" id="header-border" value="#FFD700">
+                </div>
+            </div>
+            <button class="glow-on-hover btn-gold" onclick="updateHeaderSettings()">✅ হেডার আপডেট করুন</button>
+        </div>
+        
+        <!-- ========== ইউজার ওয়ালেট কন্ট্রোল ========== -->
+        <div class="card border-blue">
+            <h2>💰 ইউজার ওয়ালেট কন্ট্রোল</h2>
+            
+            <div class="row">
+                <div class="col">
+                    <input type="text" id="wallet-phone" placeholder="📱 ইউজারের মোবাইল নম্বর">
+                </div>
+                <div class="col">
+                    <button class="glow-on-hover btn-green" onclick="checkUserBalance()">🔍 ব্যালেন্স চেক</button>
+                </div>
+            </div>
+            
+            <div id="user-info-box" class="user-info-box" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <p style="color: #ffda44; font-size: 18px; font-weight: bold;" id="user-name-display">-</p>
+                        <p style="color: #aaa; font-size: 14px;" id="user-phone-display">-</p>
+                    </div>
+                    <span style="background: #38ef7d; color: black; padding: 8px 20px; border-radius: 50px; font-weight: bold;" id="user-balance-display">০ টাকা</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px;">
+                    <div style="text-align: center;">
+                        <p style="color: #00d2ff; font-size: 20px; font-weight: bold;" id="user-wins-display">0</p>
+                        <p style="color: #aaa; font-size: 12px;">🏆 জয়</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="color: #00d2ff; font-size: 20px; font-weight: bold;" id="user-matches-display">0</p>
+                        <p style="color: #aaa; font-size: 12px;">🎮 ম্যাচ</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="color: #00d2ff; font-size: 20px; font-weight: bold;" id="user-kills-display">0</p>
+                        <p style="color: #aaa; font-size: 12px;">🔫 কিল</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <div class="row">
+                    <div class="col">
+                        <input type="number" id="balance-amount" placeholder="💰 পরিমাণ">
+                    </div>
+                    <div class="col">
+                        <select id="balance-action" style="margin-top: 8px;">
+                            <option value="add">➕ যোগ করুন</option>
+                            <option value="remove">➖ কাট করুন</option>
+                            <option value="set">🎯 সেট করুন</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="glow-on-hover btn-blue" onclick="updateUserBalance()">✅ ব্যালেন্স আপডেট করুন</button>
+            </div>
+        </div>
+        
+        <!-- ========== ডিপোজিট কন্ট্রোল ========== -->
+        <div class="card border-green">
+            <h2>💰 ডিপোজিট কন্ট্রোল</h2>
+            <div class="row">
+                <div class="col">
+                    <input type="number" id="deposit-min" placeholder="ন্যূনতম ডিপোজিট (টাকা)" value="50">
+                </div>
+                <div class="col">
+                    <input type="number" id="deposit-max" placeholder="সর্বোচ্চ ডিপোজিট (টাকা)" value="3000">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input type="number" id="usdt-min" placeholder="ন্যূনতম USDT ($)" value="1">
+                </div>
+                <div class="col">
+                    <input type="number" id="usdt-max" placeholder="সর্বোচ্চ USDT ($)" value="20">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input type="text" id="deposit-note" placeholder="ডিপোজিট নোটিশ" value="⚠️ Send Money করে ট্রানজেকশন আইডি দিন।">
+                </div>
+            </div>
+            <button class="glow-on-hover btn-green" onclick="updateDepositSettings()">✅ ডিপোজিট সেটিংস আপডেট</button>
+        </div>
+        
+        <!-- ========== র‍্যাঙ্ক কন্ট্রোল ========== -->
+        <div class="card border-yellow">
+            <h2>🏆 র‍্যাঙ্ক ও লিডারবোর্ড কন্ট্রোল</h2>
+            <div class="row">
+                <div class="col">
+                    <select id="rank-type">
+                        <option value="wins">🏆 জয় অনুযায়ী</option>
+                        <option value="kills">🔫 কিল অনুযায়ী</option>
+                        <option value="matches">🎮 ম্যাচ অনুযায়ী</option>
+                        <option value="balance">💰 ব্যালেন্স অনুযায়ী</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input type="number" id="rank-limit" placeholder="কতজন দেখাবে" value="10">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <select id="rank-order">
+                        <option value="desc">📊 বেশি থেকে কম</option>
+                        <option value="asc">📈 কম থেকে বেশি</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input type="text" id="rank-title" placeholder="র‍্যাঙ্ক টাইটেল" value="🏆 টপ প্লেয়ার">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button class="glow-on-hover btn-yellow" onclick="updateRankSettings()">✅ র‍্যাঙ্ক সেটিংস আপডেট</button>
+                </div>
+                <div class="col">
+                    <button class="glow-on-hover btn-red" onclick="clearAllRanks()">🗑️ সব র‍্যাঙ্ক রিসেট</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ========== সাপোর্ট কন্ট্রোল ========== -->
+        <div class="card border-orange">
+            <h2>📞 সাপোর্ট কন্ট্রোল</h2>
+            <div class="row">
+                <div class="col">
+                    <input type="text" id="support-email" placeholder="ইমেইল" value="talkingmasud5511@gmail.com">
+                </div>
+                <div class="col">
+                    <input type="text" id="support-whatsapp" placeholder="WhatsApp নম্বর" value="01910658737">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input type="text" id="support-whatsapp-group" placeholder="WhatsApp গ্রুপ লিংক" value="https://chat.whatsapp.com/JvfihxThqMoLVFHLv9TVME">
+                </div>
+                <div class="col">
+                    <input type="text" id="support-telegram" placeholder="Telegram লিংক" value="https://t.me/+XF_oEofeAeEwMDI9">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input type="text" id="support-youtube" placeholder="YouTube লিংক" value="https://youtube.com/@tnmriyad">
+                </div>
+                <div class="col">
+                    <input type="text" id="support-website" placeholder="ওয়েবসাইট লিংক" value="https://tnmfreefire.netlify.app">
+                </div>
+            </div>
+            <button class="glow-on-hover btn-orange" onclick="updateSupportSettings()">✅ সাপোর্ট সেটিংস আপডেট</button>
+        </div>
+        
+        <!-- ========== নটুন ম্যাচ অ্যাড অপশন ========== -->
+        <div class="card border-purple">
+            <h2>➕ নটুন ম্যাচ অ্যাড করুন</h2>
+            <div class="row">
+                <div class="col">
+                    <input type="text" id="new-match-id" placeholder="ম্যাচ আইডি">
+                </div>
+                <div class="col">
+                    <input type="text" id="new-match-name" placeholder="ম্যাচের নাম">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input type="number" id="new-match-entry" placeholder="এন্ট্রি ফি">
+                </div>
+                <div class="col">
+                    <input type="number" id="new-match-prize" placeholder="প্রাইজ পুল">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input type="number" id="new-match-kill" placeholder="প্রতি কিল">
+                </div>
+                <div class="col">
+                    <input type="number" id="new-match-maxkill" placeholder="সর্বোচ্চ কিল" value="6">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input type="number" id="new-match-slot" placeholder="স্লট সংখ্যা" value="48">
+                </div>
+                <div class="col">
+                    <select id="new-match-type">
+                        <option value="solo">🎮 সোলো</option>
+                        <option value="duo">👥 ডুও</option>
+                        <option value="squad">👥 স্কোয়াড</option>
+                    </select>
+                </div>
+            </div>
+            <button class="glow-on-hover btn-purple" onclick="addNewMatch()">✅ নটুন ম্যাচ অ্যাড করুন</button>
+        </div>
+        
+        <!-- ========== ম্যাচ টাইমার কন্ট্রোল ========== -->
+        <div class="card border-pink">
+            <h2>⏱️ ম্যাচ টাইমার কন্ট্রোল</h2>
+            <div class="row">
+                <div class="col">
+                    <select id="timer-match">
+                        <option value="SoloBermuda">🎯 সোলো বারমুডা</option>
+                        <option value="DuoMatch1">👥 ডুও ১</option>
+                        <option value="DuoMatch2">👥 ডুও ২</option>
+                        <option value="CS4vs4">👥 ৪vs৪</option>
+                        <option value="CS2vs2">👥 ২vs২</option>
+                        <option value="CS1vs1">⚔️ ১vs১</option>
+                        <option value="FreeSolo">🎁 ফ্রি সোলো</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input type="number" id="match-minutes" placeholder="মিনিট">
+                </div>
+            </div>
+            <button class="glow-on-hover btn-pink" onclick="setMatchTimer()">⏰ টাইমার সেট করুন</button>
+        </div>
+        
+        <!-- ========== ম্যাচ নম্বর কন্ট্রোল ========== -->
+        <div class="card border-orange">
+            <h2>🔢 ম্যাচ নম্বর কন্ট্রোল</h2>
+            <div class="row">
+                <div class="col">
+                    <select id="match-number-select">
+                        <option value="match1">🎯 সোলো</option>
+                        <option value="match2">👥 ডুও ১</option>
+                        <option value="match3">👥 ডুও ২</option>
+                        <option value="match4">👥 ৪vs৪</option>
+                        <option value="match5">👥 ২vs২</option>
+                        <option value="match6">⚔️ ১vs১</option>
+                        <option value="match7">🎁 ফ্রি</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input type="number" id="match-number-value" placeholder="ম্যাচ নম্বর">
+                </div>
+            </div>
+            <button class="glow-on-hover btn-blue" onclick="setMatchNumber()">✅ ম্যাচ নম্বর আপডেট</button>
+        </div>
+        
+        <!-- ========== ম্যাচ স্লট কন্ট্রোল ========== -->
+        <div class="card border-yellow">
+            <h2>🎮 ম্যাচ স্লট কন্ট্রোল</h2>
+            <div class="row">
+                <div class="col">
+                    <select id="slot-match-select">
+                        <option value="SoloBermuda">🎯 সোলো</option>
+                        <option value="DuoMatch1">👥 ডুও ১</option>
+                        <option value="DuoMatch2">👥 ডুও ২</option>
+                        <option value="CS4vs4">👥 ৪vs৪</option>
+                        <option value="CS2vs2">👥 ২vs২</option>
+                        <option value="CS1vs1">⚔️ ১vs১</option>
+                        <option value="FreeSolo">🎁 ফ্রি</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input type="number" id="slot-count" placeholder="স্লট সংখ্যা">
+                </div>
+            </div>
+            <button class="glow-on-hover btn-yellow" onclick="setMatchSlots()">✅ স্লট আপডেট</button>
+        </div>
+        
+        <!-- ========== ম্যাচ ফি কন্ট্রোল ========== -->
+        <div class="card border-blue">
+            <h2>💰 ম্যাচ এন্ট্রি ফি কন্ট্রোল</h2>
+            <div class="row">
+                <div class="col">
+                    <select id="fee-match-select">
+                        <option value="SoloBermuda">🎯 সোলো</option>
+                        <option value="DuoMatch1">👥 ডুও ১</option>
+                        <option value="DuoMatch2">👥 ডুও ২</option>
+                        <option value="CS4vs4">👥 ৪vs৪</option>
+                        <option value="CS2vs2">👥 ২vs২</option>
+                        <option value="CS1vs1">⚔️ ১vs১</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input type="number" id="entry-fee" placeholder="এন্ট্রি ফি">
+                </div>
+            </div>
+            <button class="glow-on-hover btn-blue" onclick="setEntryFee()">✅ এন্ট্রি ফি আপডেট</button>
+        </div>
+        
+        <!-- ========== প্রাইজ পুল কন্ট্রোল ========== -->
+        <div class="card border-green">
+            <h2>🏆 ম্যাচ প্রাইজ কন্ট্রোল</h2>
+            <div class="row">
+                <div class="col">
+                    <select id="prize-match-select">
+                        <option value="SoloBermuda">🎯 সোলো</option>
+                        <option value="DuoMatch1">👥 ডুও ১</option>
+                        <option value="DuoMatch2">👥 ডুও ২</option>
+                        <option value="CS4vs4">👥 ৪vs৪</option>
+                        <option value="CS2vs2">👥 ২vs২</option>
+                        <option value="CS1vs1">⚔️ ১vs১</option>
+                        <option value="FreeSolo">🎁 ফ্রি</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input type="number" id="prize-amount" placeholder="প্রাইজ পুল">
+                </div>
+            </div>
+            <button class="glow-on-hover btn-green" onclick="setPrizePool()">✅ প্রাইজ পুল আপডেট</button>
+        </div>
+        
+        <!-- ========== কিল বোনাস কন্ট্রোল ========== -->
+        <div class="card border-yellow">
+            <h2>🔫 কিল বোনাস কন্ট্রোল</h2>
+            <div class="row">
+                <div class="col">
+                    <select id="kill-match-select">
+                        <option value="SoloBermuda">🎯 সোলো</option>
+                        <option value="DuoMatch1">👥 ডুও ১</option>
+                        <option value="DuoMatch2">👥 ডুও ২</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input type="number" id="kill-bonus" placeholder="প্রতি কিল">
+                </div>
+                <div class="col">
+                    <input type="number" id="max-kills" placeholder="সর্বোচ্চ কিল">
+                </div>
+            </div>
+            <button class="glow-on-hover btn-yellow" onclick="setKillBonus()">✅ কিল বোনাস আপডেট</button>
+        </div>
+        
+        <!-- ========== নোটিশ কন্ট্রোল ========== -->
+        <div class="card border-orange">
+            <h2>📢 নোটিশ কন্ট্রোল</h2>
+            <select id="notice-select">
+                <option value="Main">🏠 হোম পেজ নোটিশ</option>
+                <option value="SoloBermuda">🎯 সোলো</option>
+                <option value="DuoMatch1">👥 ডুও ১</option>
+                <option value="DuoMatch2">👥 ডুও ২</option>
+                <option value="CS4vs4">👥 ৪vs৪</option>
+                <option value="CS2vs2">👥 ২vs২</option>
+                <option value="CS1vs1">⚔️ ১vs১</option>
+                <option value="FreeSolo">🎁 ফ্রি</option>
             </select>
-            <input type="number" id="time-minutes" placeholder="Minutes for Countdown (e.g. 30)">
-            <button class="btn btn-update" onclick="resetTimer()">Start/Reset Timer & Clear List</button>
+            <textarea id="notice-text" rows="3" placeholder="নোটিশ লিখুন..."></textarea>
+            <button class="glow-on-hover btn-blue" onclick="setNotice()">📌 নোটিশ আপডেট</button>
         </div>
-
-        <div class="card" style="border-left-color: #ffda44;">
-            <h2>🏆 Rank & Leaderboard Control</h2>
-            <input type="text" id="rank-name" placeholder="Player Name">
-            <input type="number" id="rank-won" placeholder="Total Winnings (TK)">
-            <button class="btn btn-room" onclick="updateRank()">Update Rank</button>
-            <button class="btn btn-del" onclick="db.ref('ranks').remove()">Clear All Ranks</button>
-        </div>
-
-        <div class="card" style="border-left-color: #ff416c;">
-            <h2>📜 Match History (Add Prize)</h2>
-            <input type="text" id="hist-phone" placeholder="Player Phone">
-            <input type="text" id="hist-match" placeholder="Match Name">
-            <input type="number" id="hist-prize" placeholder="Prize Amount Won">
-            <button class="btn btn-update" onclick="addHistory()">Add History</button>
-        </div>
-
-        <div class="card" style="border-left-color: #ffda44;">
-            <h2>📢 Send Room ID & Pass</h2>
-            <select id="match-name">
-                <option value="Solo Bermuda Match">Solo Bermuda Match</option>
-                <option value="Duo Match 1">Duo Match 1</option>
-                <option value="Duo Match 2">Duo Match 2</option>
-                <option value="CS 4vs4">CS 4vs4</option>
-                <option value="CS 2vs2">CS 2vs2</option>
-                <option value="CS 1vs1">CS 1vs1</option>
+        
+        <!-- ========== রুম আইডি/পাস কন্ট্রোল ========== -->
+        <div class="card border-yellow">
+            <h2>🎲 রুম আইডি ও পাসওয়ার্ড</h2>
+            <select id="room-match-select">
+                <option value="সোলো বারমুডা">🎯 সোলো বারমুডা</option>
+                <option value="ডুও বারমুডা ১">👥 ডুও ১</option>
+                <option value="ডুও বারমুডা ২">👥 ডুও ২</option>
+                <option value="৪vs৪ ক্ল্যাশ">👥 ৪vs৪</option>
+                <option value="২vs২ কাস্টম">👥 ২vs২</option>
+                <option value="১vs১ কাস্টম">⚔️ ১vs১</option>
+                <option value="ফ্রি সোলো">🎁 ফ্রি সোলো</option>
             </select>
-            <input type="text" id="room-info" placeholder="Room ID: 1234, Pass: 555">
-            <button class="btn btn-room" onclick="sendRoom()">Send Details</button>
+            <div class="row">
+                <div class="col">
+                    <input type="text" id="room-id" placeholder="🆔 রুম আইডি">
+                </div>
+                <div class="col">
+                    <input type="text" id="room-pass" placeholder="🔑 পাসওয়ার্ড">
+                </div>
+            </div>
+            <button class="glow-on-hover btn-yellow" onclick="setRoomDetails()">✅ রুম ডিটেইলস আপডেট</button>
         </div>
-
-        <h2>🛡️ Match Registrations</h2>
-        <div id="reg-list">Loading...</div>
-        <h2>📥 Deposit Requests</h2>
-        <div id="deposit-list">Loading...</div>
-        <h2>📤 Withdraw Requests</h2>
-        <div id="withdraw-list">Loading...</div>
+        
+        <!-- ========== পেমেন্ট মেথড কন্ট্রোল ========== -->
+        <div class="card border-blue">
+            <h2>💰 পেমেন্ট মেথড কন্ট্রোল</h2>
+            <div class="row">
+                <div class="col">
+                    <input type="text" id="bkash-number" placeholder="📱 বিকাশ" value="01910658737">
+                </div>
+                <div class="col">
+                    <input type="text" id="nagad-number" placeholder="📲 নগদ" value="01910658737">
+                </div>
+            </div>
+            <input type="text" id="usdt-address" placeholder="💎 USDT ঠিকানা" value="0x75435FFD8C71423Bff36224bF656e4E137Ca90ea">
+            <button class="glow-on-hover btn-blue" onclick="setPaymentMethods()">✅ পেমেন্ট আপডেট</button>
+        </div>
+        
+        <!-- ========== উইথড্র চার্জ কন্ট্রোল ========== -->
+        <div class="card border-green">
+            <h2>⚡ উইথড্র চার্জ কন্ট্রোল</h2>
+            <div class="row">
+                <div class="col">
+                    <input type="number" id="withdraw-charge" placeholder="চার্জ" value="5">
+                </div>
+                <div class="col">
+                    <input type="number" id="withdraw-min" placeholder="ন্যূনতম" value="50">
+                </div>
+                <div class="col">
+                    <input type="number" id="withdraw-max" placeholder="সর্বোচ্চ" value="1000">
+                </div>
+            </div>
+            <button class="glow-on-hover btn-green" onclick="setWithdrawSettings()">✅ উইথড্র আপডেট</button>
+        </div>
+        
+        <!-- ========== ম্যাচ রিমুভ কন্ট্রোল ========== -->
+        <div class="card border-red">
+            <h2>❌ ম্যাচ রিমুভ করুন</h2>
+            <div class="row">
+                <div class="col">
+                    <select id="remove-match-select">
+                        <option value="SoloBermuda">🎯 সোলো</option>
+                        <option value="DuoMatch1">👥 ডুও ১</option>
+                        <option value="DuoMatch2">👥 ডুও ২</option>
+                        <option value="CS4vs4">👥 ৪vs৪</option>
+                        <option value="CS2vs2">👥 ২vs২</option>
+                        <option value="CS1vs1">⚔️ ১vs১</option>
+                        <option value="FreeSolo">🎁 ফ্রি</option>
+                    </select>
+                </div>
+            </div>
+            <button class="glow-on-hover btn-red" onclick="removeMatch()">❌ ম্যাচ রিমুভ করুন</button>
+        </div>
+        
+        <!-- ========== রেজিস্ট্রেশন লিস্ট ========== -->
+        <h3>🛡️ ম্যাচ রেজিস্ট্রেশন লিস্ট</h3>
+        <div id="reg-list" style="max-height: 300px; overflow-y: auto; background: rgba(30,35,50,0.8); padding: 15px; border-radius: 15px; margin-bottom: 20px;">No data</div>
+        
+        <!-- ========== ডিপোজিট রিকোয়েস্ট ========== -->
+        <h3>📥 ডিপোজিট রিকোয়েস্ট</h3>
+        <div id="deposit-list" style="max-height: 300px; overflow-y: auto; background: rgba(30,35,50,0.8); padding: 15px; border-radius: 15px; margin-bottom: 20px;">No data</div>
+        
+        <!-- ========== উইথড্র রিকোয়েস্ট ========== -->
+        <h3>📤 উইথড্র রিকোয়েস্ট</h3>
+        <div id="withdraw-list" style="max-height: 300px; overflow-y: auto; background: rgba(30,35,50,0.8); padding: 15px; border-radius: 15px; margin-bottom: 20px;">No data</div>
     </div>
-
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
+    
     <script>
+        // ========== ফায়ারবেস কনফিগার ==========
         const firebaseConfig = {
             apiKey: "AIzaSyB2WdXJJNYqmos9Sl_D2wCUyMzMFujE57c",
             authDomain: "tnm-a2840.firebaseapp.com",
@@ -101,111 +1654,1004 @@
             appId: "1:396157832456:web:1e127ace39524f4ca130bd"
         };
         
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        const SECRET_PASS = "riyad123"; 
-
-        function checkPassword() {
-            const passInput = document.getElementById('admin-pass').value;
-            if(passInput === SECRET_PASS) {
-                document.getElementById('login-lock').style.display = 'none';
-                document.getElementById('admin-content').style.display = 'block';
-                loadData();
-            } else { alert("Wrong Password!"); }
-        }
-
-        // Timer Function - Clear Status and Set Time
-        function resetTimer() {
-            const match = document.getElementById('time-match-name').value;
-            const mins = document.getElementById('time-minutes').value;
-            if(mins) {
-                let targetTime = new Date().getTime() + (mins * 60 * 1000);
-                db.ref('match_times/' + match).set(targetTime);
-                // Clear registration status logic
-                alert("Timer Set and Registration will show for new entries!");
+        
+        // ========== গ্লোবাল ভেরিয়েবল ==========
+        let currentUser = null;
+        let selectedTheme = 'default';
+        let rainEnabled = true;
+        let starsEnabled = true;
+        let touchEnabled = true;
+        let animationSpeed = 'normal';
+        let customAnimations = [];
+        
+        // ========== এনিমেশন ফাংশন ==========
+        function createRain(count = 60) {
+            const rainContainer = document.getElementById('rainContainer');
+            if(!rainContainer || !rainEnabled) return;
+            rainContainer.innerHTML = '';
+            
+            let speedMultiplier = animationSpeed === 'slow' ? 2 : animationSpeed === 'fast' ? 0.6 : animationSpeed === 'ultra' ? 0.4 : 1;
+            
+            for(let i = 0; i < count; i++) {
+                const rain = document.createElement('div');
+                rain.className = 'rain-drop';
+                rain.style.left = Math.random() * 100 + '%';
+                rain.style.animationDuration = (Math.random() * 1.5 + 0.5) * speedMultiplier + 's';
+                rainContainer.appendChild(rain);
             }
         }
-
-        // Rank Function
-        function updateRank() {
-            const name = document.getElementById('rank-name').value;
-            const won = document.getElementById('rank-won').value;
-            if(name && won) {
-                db.ref('ranks').push({ name, won }).then(() => alert("Rank Added!"));
+        
+        function createStars(count = 50) {
+            const starField = document.getElementById('starField');
+            if(!starField || !starsEnabled) return;
+            starField.innerHTML = '';
+            
+            let speedMultiplier = animationSpeed === 'slow' ? 2 : animationSpeed === 'fast' ? 0.6 : animationSpeed === 'ultra' ? 0.4 : 1;
+            
+            for(let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 5 + 's';
+                star.style.animationDuration = (Math.random() * 3 + 3) * speedMultiplier + 's';
+                starField.appendChild(star);
             }
         }
-
-        // History Function
-        function addHistory() {
-            const phone = document.getElementById('hist-phone').value;
-            const match = document.getElementById('hist-match').value;
-            const prize = document.getElementById('hist-prize').value;
-            if(phone && match && prize) {
-                db.ref('history/' + phone).push({ match, prize }).then(() => alert("History Added!"));
+        
+        // ========== টাচ এনিমেশন ==========
+        document.addEventListener('touchstart', function(e) {
+            if(!touchEnabled) return;
+            
+            for(let i = 0; i < Math.min(e.touches.length, 5); i++) {
+                const touch = e.touches[i];
+                const star = document.createElement('div');
+                star.className = 'touch-star';
+                star.style.left = (touch.clientX - 40) + 'px';
+                star.style.top = (touch.clientY - 40) + 'px';
+                document.body.appendChild(star);
+                setTimeout(() => star.remove(), 1200);
             }
-        }
-
-        function updateBalance() {
-            const phone = document.getElementById('target-phone').value.trim();
-            const amt = parseInt(document.getElementById('balance-amount').value);
-            if(phone && !isNaN(amt)) {
-                db.ref('users/' + phone + '/balance').transaction(c => (c || 0) + amt)
-                .then(() => { alert('Balance Updated!'); checkBalance(); });
+        }, { passive: true });
+        
+        // ========== এনিমেশন টগল ফাংশন ==========
+        function toggleRainAnimation() {
+            rainEnabled = document.getElementById('rain-toggle').checked;
+            document.getElementById('rain-status').innerHTML = `বৃষ্টি: ${rainEnabled ? 'চালু' : 'বন্ধ'}`;
+            document.getElementById('rain-status-text').innerHTML = rainEnabled ? 'চালু' : 'বন্ধ';
+            
+            if(rainEnabled) {
+                createRain(60);
+            } else {
+                document.getElementById('rainContainer').innerHTML = '';
             }
+            
+            db.ref('settings/animation/rain').set(rainEnabled);
         }
-
-        function checkBalance() {
-            const phone = document.getElementById('target-phone').value.trim();
-            if(phone) {
-                db.ref('users/' + phone + '/balance').once('value', s => {
-                    document.getElementById('bal-show').innerText = "Current Balance: ৳" + (s.val() || 0);
-                });
+        
+        function toggleStarAnimation() {
+            starsEnabled = document.getElementById('star-toggle').checked;
+            document.getElementById('star-status').innerHTML = `স্টার: ${starsEnabled ? 'চালু' : 'বন্ধ'}`;
+            document.getElementById('star-status-text').innerHTML = starsEnabled ? 'চালু' : 'বন্ধ';
+            
+            if(starsEnabled) {
+                createStars(50);
+            } else {
+                document.getElementById('starField').innerHTML = '';
             }
+            
+            db.ref('settings/animation/stars').set(starsEnabled);
         }
-
-        function sendRoom() {
-            const match = document.getElementById('match-name').value;
-            const info = document.getElementById('room-info').value;
-            if(info) {
-                db.ref('room_details/' + match).set({ msg: info, time: new Date().toLocaleString() })
-                .then(() => alert('Room Details Sent!'));
-            }
+        
+        function toggleTouchAnimation() {
+            touchEnabled = document.getElementById('touch-toggle').checked;
+            document.getElementById('touch-status').innerHTML = `টাচ: ${touchEnabled ? 'চালু' : 'বন্ধ'}`;
+            document.getElementById('touch-status-text').innerHTML = touchEnabled ? 'চালু' : 'বন্ধ';
+            
+            db.ref('settings/animation/touch').set(touchEnabled);
         }
-
-        function loadData() {
-            db.ref('registrations').on('value', s => {
-                let h = ''; 
-                s.forEach(c => { 
-                    const d = c.val();
-                    h += `<div class="box">
-                        <p style="color:#ffda44">🏆 <b>${d.match}</b></p>
-                        <p>📱 Player: ${d.players[0].name} (${d.userPhone})</p>
-                        <button class="btn-del" onclick="db.ref('registrations/${c.key}').remove()">Remove</button>
-                    </div>`;
-                });
-                document.getElementById('reg-list').innerHTML = h || 'No Registrations';
+        
+        function toggleAllAnimations() {
+            let allEnabled = document.getElementById('all-toggle').checked;
+            
+            document.getElementById('rain-toggle').checked = allEnabled;
+            document.getElementById('star-toggle').checked = allEnabled;
+            document.getElementById('touch-toggle').checked = allEnabled;
+            
+            rainEnabled = allEnabled;
+            starsEnabled = allEnabled;
+            touchEnabled = allEnabled;
+            
+            if(rainEnabled) createRain(60); else document.getElementById('rainContainer').innerHTML = '';
+            if(starsEnabled) createStars(50); else document.getElementById('starField').innerHTML = '';
+            
+            document.getElementById('rain-status').innerHTML = `বৃষ্টি: ${rainEnabled ? 'চালু' : 'বন্ধ'}`;
+            document.getElementById('star-status').innerHTML = `স্টার: ${starsEnabled ? 'চালু' : 'বন্ধ'}`;
+            document.getElementById('touch-status').innerHTML = `টাচ: ${touchEnabled ? 'চালু' : 'বন্ধ'}`;
+            document.getElementById('rain-status-text').innerHTML = rainEnabled ? 'চালু' : 'বন্ধ';
+            document.getElementById('star-status-text').innerHTML = starsEnabled ? 'চালু' : 'বন্ধ';
+            document.getElementById('touch-status-text').innerHTML = touchEnabled ? 'চালু' : 'বন্ধ';
+            
+            db.ref('settings/animation').set({
+                rain: rainEnabled,
+                stars: starsEnabled,
+                touch: touchEnabled
             });
-
-            db.ref('deposits').on('value', s => {
-                let h = ''; 
-                s.forEach(c => { 
-                    const d = c.val();
-                    h += `<div class="box"><p>📱 <b>${d.phone}</b></p><p>💵 ${d.amount} TK</p><button class="btn-del" onclick="db.ref('deposits/${c.key}').remove()">Done</button></div>`;
-                });
-                document.getElementById('deposit-list').innerHTML = h || 'No Deposits';
-            });
-
-            db.ref('withdraws').on('value', s => {
-                let h = ''; 
-                s.forEach(c => { 
-                    const d = c.val();
-                    h += `<div class="box"><p>📱 <b>${d.number}</b></p><p>💵 ${d.amount} TK</p><button class="btn-del" onclick="db.ref('withdraws/${c.key}').remove()">Paid</button></div>`;
-                });
-                document.getElementById('withdraw-list').innerHTML = h || 'No Withdraws';
+        }
+        
+        function changeAnimationSpeed() {
+            animationSpeed = document.getElementById('animation-speed').value;
+            
+            let speedText = animationSpeed === 'slow' ? 'স্লো' : 
+                           animationSpeed === 'fast' ? 'ফাস্ট' : 
+                           animationSpeed === 'ultra' ? 'আলট্রা' : 'নরমাল';
+            document.getElementById('speed-status').innerHTML = `স্পিড: ${speedText}`;
+            
+            if(rainEnabled) createRain(60);
+            if(starsEnabled) createStars(50);
+            
+            db.ref('settings/animation/speed').set(animationSpeed);
+        }
+        
+        // ========== নটুন এনিমেশন অ্যাড ফাংশন ==========
+        function addNewAnimation() {
+            let animId = document.getElementById('new-animation-id').value;
+            let animName = document.getElementById('new-animation-name').value;
+            let animIcon = document.getElementById('new-animation-icon').value;
+            let animDuration = document.getElementById('new-animation-duration').value;
+            let animType = document.getElementById('new-animation-type').value;
+            let animCss = document.getElementById('new-animation-css').value;
+            let animEffect = document.getElementById('new-animation-effect').value;
+            let animColor = document.getElementById('new-animation-color').value;
+            
+            if (!animId || !animName) {
+                alert('❌ এনিমেশন আইডি ও নাম দিন!');
+                return;
+            }
+            
+            let animationData = {
+                id: animId,
+                name: animName,
+                icon: animIcon || '✨',
+                duration: animDuration,
+                type: animType,
+                css: animCss,
+                effect: animEffect,
+                color: animColor,
+                active: true
+            };
+            
+            // ফায়ারবেসে সেভ
+            db.ref('settings/animations/' + animId).set(animationData).then(() => {
+                alert(`✅ ${animName} এনিমেশন অ্যাড করা হয়েছে!`);
+                loadActiveAnimations();
+                
+                // ফর্ম ক্লিয়ার
+                document.getElementById('new-animation-id').value = '';
+                document.getElementById('new-animation-name').value = '';
+                document.getElementById('new-animation-icon').value = '';
+                document.getElementById('new-animation-css').value = '';
             });
         }
+        
+        function previewNewAnimation() {
+            let animIcon = document.getElementById('new-animation-icon').value || '✨';
+            let animType = document.getElementById('new-animation-type').value;
+            let animDuration = document.getElementById('new-animation-duration').value;
+            
+            let previewDiv = document.createElement('div');
+            previewDiv.className = 'preview-item';
+            previewDiv.style.animation = `${animType} ${animDuration}s infinite`;
+            
+            let iconDiv = document.createElement('div');
+            iconDiv.className = 'preview-icon';
+            iconDiv.innerHTML = animIcon;
+            
+            let nameSpan = document.createElement('span');
+            nameSpan.className = 'preview-name';
+            nameSpan.innerHTML = 'প্রিভিউ';
+            
+            previewDiv.appendChild(iconDiv);
+            previewDiv.appendChild(nameSpan);
+            
+            document.getElementById('animationPreview').appendChild(previewDiv);
+            
+            setTimeout(() => {
+                previewDiv.remove();
+            }, 3000);
+        }
+        
+        function loadActiveAnimations() {
+            db.ref('settings/animations').once('value', (snap) => {
+                let anims = snap.val();
+                let html = '';
+                
+                for(let key in anims) {
+                    let anim = anims[key];
+                    html += `
+                        <div style="background: rgba(0,255,255,0.1); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #00ffff;">
+                            <div style="font-size: 30px; animation: ${anim.type} ${anim.duration}s infinite;">${anim.icon}</div>
+                            <p style="color: #00ffff; margin-top: 5px; font-size: 12px;">${anim.name}</p>
+                            <div style="display: flex; gap: 5px; margin-top: 10px;">
+                                <button class="small-btn btn-cyan" onclick="toggleAnimationStatus('${anim.id}')" style="font-size: 10px; padding: 5px;">${anim.active ? '✅' : '⏹️'}</button>
+                                <button class="small-btn btn-red" onclick="removeAnimation('${anim.id}')" style="font-size: 10px; padding: 5px;">❌</button>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('active-animations-list').innerHTML = html || '<p style="color: #888;">কোনো এনিমেশন নেই</p>';
+            });
+        }
+        
+        function toggleAnimationStatus(animId) {
+            db.ref('settings/animations/' + animId + '/active').once('value', (snap) => {
+                let current = snap.val();
+                db.ref('settings/animations/' + animId + '/active').set(!current).then(() => {
+                    loadActiveAnimations();
+                });
+            });
+        }
+        
+        function removeAnimation(animId) {
+            if(confirm('এই এনিমেশন ডিলিট করবেন?')) {
+                db.ref('settings/animations/' + animId).remove().then(() => {
+                    alert('✅ এনিমেশন ডিলিট করা হয়েছে!');
+                    loadActiveAnimations();
+                });
+            }
+        }
+        
+        function applyAnimationSettings() {
+            let settings = {
+                rain: rainEnabled,
+                stars: starsEnabled,
+                touch: touchEnabled,
+                speed: animationSpeed
+            };
+            
+            db.ref('settings/animation').set(settings).then(() => {
+                alert('✅ এনিমেশন সেটিংস সেভ করা হয়েছে!');
+            });
+        }
+        
+        function resetAnimationSettings() {
+            document.getElementById('rain-toggle').checked = true;
+            document.getElementById('star-toggle').checked = true;
+            document.getElementById('touch-toggle').checked = true;
+            document.getElementById('all-toggle').checked = true;
+            document.getElementById('animation-speed').value = 'normal';
+            
+            rainEnabled = true;
+            starsEnabled = true;
+            touchEnabled = true;
+            animationSpeed = 'normal';
+            
+            createRain(60);
+            createStars(50);
+            
+            document.getElementById('rain-status').innerHTML = 'বৃষ্টি: চালু';
+            document.getElementById('star-status').innerHTML = 'স্টার: চালু';
+            document.getElementById('touch-status').innerHTML = 'টাচ: চালু';
+            document.getElementById('speed-status').innerHTML = 'স্পিড: নরমাল';
+            document.getElementById('rain-status-text').innerHTML = 'চালু';
+            document.getElementById('star-status-text').innerHTML = 'চালু';
+            document.getElementById('touch-status-text').innerHTML = 'চালু';
+            
+            db.ref('settings/animation').set({
+                rain: true,
+                stars: true,
+                touch: true,
+                speed: 'normal'
+            }).then(() => {
+                alert('✅ এনিমেশন সেটিংস ডিফল্টে রিসেট করা হয়েছে!');
+            });
+        }
+        
+        // ========== অ্যাডমিন অথেনটিকেশন ==========
+        const ADMIN_USER = "ffbd123";
+        const ADMIN_PASS = "worldff123";
+        
+        function adminLogin() {
+            let user = document.getElementById('admin-username').value;
+            let pass = document.getElementById('admin-password').value;
+            
+            if (user === ADMIN_USER && pass === ADMIN_PASS) {
+                localStorage.setItem('admin_logged', 'true');
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('admin-panel').classList.add('active');
+                loadAllAdminData();
+                startTimeUpdate();
+                loadAnimationSettings();
+                loadDesignSettings();
+                loadActiveAnimations();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('login-error').style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        function adminLogout() {
+            localStorage.removeItem('admin_logged');
+            document.getElementById('login-page').style.display = 'block';
+            document.getElementById('admin-panel').classList.remove('active');
+        }
+        
+        function startTimeUpdate() {
+            function updateTime() {
+                let now = new Date();
+                document.getElementById('current-time').innerText = now.toLocaleString('bn-BD');
+            }
+            updateTime();
+            setInterval(updateTime, 1000);
+        }
+        
+        // ========== এনিমেশন সেটিংস লোড ==========
+        function loadAnimationSettings() {
+            db.ref('settings/animation').once('value', (snap) => {
+                let settings = snap.val();
+                if(settings) {
+                    rainEnabled = settings.rain !== undefined ? settings.rain : true;
+                    starsEnabled = settings.stars !== undefined ? settings.stars : true;
+                    touchEnabled = settings.touch !== undefined ? settings.touch : true;
+                    animationSpeed = settings.speed || 'normal';
+                    
+                    document.getElementById('rain-toggle').checked = rainEnabled;
+                    document.getElementById('star-toggle').checked = starsEnabled;
+                    document.getElementById('touch-toggle').checked = touchEnabled;
+                    document.getElementById('animation-speed').value = animationSpeed;
+                    
+                    let allEnabled = rainEnabled && starsEnabled && touchEnabled;
+                    document.getElementById('all-toggle').checked = allEnabled;
+                    
+                    if(rainEnabled) createRain(60); else document.getElementById('rainContainer').innerHTML = '';
+                    if(starsEnabled) createStars(50); else document.getElementById('starField').innerHTML = '';
+                    
+                    document.getElementById('rain-status').innerHTML = `বৃষ্টি: ${rainEnabled ? 'চালু' : 'বন্ধ'}`;
+                    document.getElementById('star-status').innerHTML = `স্টার: ${starsEnabled ? 'চালু' : 'বন্ধ'}`;
+                    document.getElementById('touch-status').innerHTML = `টাচ: ${touchEnabled ? 'চালু' : 'বন্ধ'}`;
+                    document.getElementById('rain-status-text').innerHTML = rainEnabled ? 'চালু' : 'বন্ধ';
+                    document.getElementById('star-status-text').innerHTML = starsEnabled ? 'চালু' : 'বন্ধ';
+                    document.getElementById('touch-status-text').innerHTML = touchEnabled ? 'চালু' : 'বন্ধ';
+                    
+                    let speedText = animationSpeed === 'slow' ? 'স্লো' : 
+                                   animationSpeed === 'fast' ? 'ফাস্ট' : 
+                                   animationSpeed === 'ultra' ? 'আলট্রা' : 'নরমাল';
+                    document.getElementById('speed-status').innerHTML = `স্পিড: ${speedText}`;
+                } else {
+                    rainEnabled = true;
+                    starsEnabled = true;
+                    touchEnabled = true;
+                    animationSpeed = 'normal';
+                    createRain(60);
+                    createStars(50);
+                }
+            });
+        }
+        
+        // ========== ওয়েবসাইট ডিজাইন কন্ট্রোল ফাংশন ==========
+        function selectTheme(theme) {
+            selectedTheme = theme;
+            
+            document.querySelectorAll('.theme-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            document.getElementById(`theme-${theme}`).classList.add('active');
+        }
+        
+        function applyTheme() {
+            let themeData = {};
+            
+            switch(selectedTheme) {
+                case 'default':
+                    themeData = {
+                        primary: '#FF416C',
+                        secondary: '#FF4B2B',
+                        accent: '#FFD700',
+                        bg: '#0a0f1e',
+                        card: '#1e1e1e',
+                        text: '#FFFFFF',
+                        name: 'ডিফল্ট থিম'
+                    };
+                    break;
+                case 'dark':
+                    themeData = {
+                        primary: '#1a1e2c',
+                        secondary: '#0a0f1a',
+                        accent: '#ffda44',
+                        bg: '#000000',
+                        card: '#121212',
+                        text: '#FFFFFF',
+                        name: 'ডার্ক থিম'
+                    };
+                    break;
+                case 'neon':
+                    themeData = {
+                        primary: '#00ff9d',
+                        secondary: '#00b8ff',
+                        accent: '#ff00ff',
+                        bg: '#0a0f1e',
+                        card: '#1a1e2c',
+                        text: '#FFFFFF',
+                        name: 'নিয়ন থিম'
+                    };
+                    break;
+                case 'royal':
+                    themeData = {
+                        primary: '#8E2DE2',
+                        secondary: '#4A00E0',
+                        accent: '#FFD700',
+                        bg: '#1a0f2a',
+                        card: '#2a1a3a',
+                        text: '#FFFFFF',
+                        name: 'রয়্যাল থিম'
+                    };
+                    break;
+                case 'sunset':
+                    themeData = {
+                        primary: '#ff9a9e',
+                        secondary: '#fad0c4',
+                        accent: '#ff6a88',
+                        bg: '#2a1a1a',
+                        card: '#3a2a2a',
+                        text: '#FFFFFF',
+                        name: 'সানসেট থিম'
+                    };
+                    break;
+                case 'ocean':
+                    themeData = {
+                        primary: '#00c6fb',
+                        secondary: '#005bea',
+                        accent: '#00FFFF',
+                        bg: '#0a1a2a',
+                        card: '#1a2a3a',
+                        text: '#FFFFFF',
+                        name: 'ওশান থিম'
+                    };
+                    break;
+                case 'forest':
+                    themeData = {
+                        primary: '#11998e',
+                        secondary: '#38ef7d',
+                        accent: '#FFD700',
+                        bg: '#0a1a0a',
+                        card: '#1a2a1a',
+                        text: '#FFFFFF',
+                        name: 'ফরেস্ট থিম'
+                    };
+                    break;
+                case 'midnight':
+                    themeData = {
+                        primary: '#232526',
+                        secondary: '#414345',
+                        accent: '#ffda44',
+                        bg: '#0a0a0a',
+                        card: '#1a1a1a',
+                        text: '#FFFFFF',
+                        name: 'মিডনাইট থিম'
+                    };
+                    break;
+                case 'candy':
+                    themeData = {
+                        primary: '#ff6a88',
+                        secondary: '#ff99ac',
+                        accent: '#ffda44',
+                        bg: '#2a1a1a',
+                        card: '#3a2a2a',
+                        text: '#FFFFFF',
+                        name: 'ক্যান্ডি থিম'
+                    };
+                    break;
+            }
+            
+            db.ref('settings/design/theme').set(themeData).then(() => {
+                alert(`✅ ${themeData.name} অ্যাপ্লাই করা হয়েছে!`);
+            });
+        }
+        
+        function applyCustomColors() {
+            let colors = {
+                primary: document.getElementById('primary-color').value,
+                secondary: document.getElementById('secondary-color').value,
+                accent: document.getElementById('accent-color').value,
+                text: document.getElementById('text-color').value,
+                bg: document.getElementById('bg-color').value,
+                card: document.getElementById('card-color').value,
+                name: 'কাস্টম থিম'
+            };
+            
+            db.ref('settings/design/theme').set(colors).then(() => {
+                alert('✅ কাস্টম কালার অ্যাপ্লাই করা হয়েছে!');
+            });
+        }
+        
+        function applyFontSettings() {
+            let settings = {
+                headerFont: document.getElementById('header-font').value,
+                bodyFont: document.getElementById('body-font').value,
+                headerSize: document.getElementById('header-size').value,
+                bodySize: document.getElementById('body-size').value
+            };
+            
+            db.ref('settings/design/font').set(settings).then(() => {
+                alert('✅ ফন্ট সেটিংস আপডেট হয়েছে!');
+            });
+        }
+        
+        function applyLayoutSettings() {
+            let settings = {
+                cardStyle: document.getElementById('card-style').value,
+                borderRadius: document.getElementById('border-radius').value,
+                boxShadow: document.getElementById('box-shadow').value,
+                hoverEffect: document.getElementById('hover-effect').value
+            };
+            
+            db.ref('settings/design/layout').set(settings).then(() => {
+                alert('✅ লেআউট সেটিংস আপডেট হয়েছে!');
+            });
+        }
+        
+        function saveThemeAsPreset() {
+            let themeName = prompt('থিমের নাম দিন:', 'মাই থিম ' + new Date().toLocaleDateString());
+            if (themeName) {
+                let currentTheme = {
+                    primary: document.getElementById('primary-color').value,
+                    secondary: document.getElementById('secondary-color').value,
+                    accent: document.getElementById('accent-color').value,
+                    text: document.getElementById('text-color').value,
+                    bg: document.getElementById('bg-color').value,
+                    card: document.getElementById('card-color').value,
+                    name: themeName
+                };
+                
+                db.ref('settings/design/presets/' + Date.now()).set(currentTheme).then(() => {
+                    alert('✅ থিম প্রি-সেট হিসেবে সেভ করা হয়েছে!');
+                });
+            }
+        }
+        
+        function loadPresetThemes() {
+            db.ref('settings/design/presets').once('value', (snap) => {
+                let presets = snap.val();
+                let list = 'সেভ করা থিম সমূহ:\n\n';
+                for(let key in presets) {
+                    list += `• ${presets[key].name}\n`;
+                }
+                alert(list || 'কোনো প্রি-সেট থিম নেই!');
+            });
+        }
+        
+        function resetToDefault() {
+            if(confirm('ডিফল্ট থিমে রিসেট করবেন?')) {
+                selectTheme('default');
+                applyTheme();
+            }
+        }
+        
+        function loadDesignSettings() {
+            db.ref('settings/design/theme').once('value', (snap) => {
+                let theme = snap.val();
+                if(theme) {
+                    document.getElementById('primary-color').value = theme.primary || '#FF416C';
+                    document.getElementById('secondary-color').value = theme.secondary || '#FF4B2B';
+                    document.getElementById('accent-color').value = theme.accent || '#FFD700';
+                    document.getElementById('text-color').value = theme.text || '#FFFFFF';
+                    document.getElementById('bg-color').value = theme.bg || '#0a0f1e';
+                    document.getElementById('card-color').value = theme.card || '#1e1e1e';
+                    
+                    document.getElementById('primary-preview').style.background = theme.primary || '#FF416C';
+                    document.getElementById('secondary-preview').style.background = theme.secondary || '#FF4B2B';
+                    document.getElementById('accent-preview').style.background = theme.accent || '#FFD700';
+                    document.getElementById('text-preview').style.background = theme.text || '#FFFFFF';
+                    document.getElementById('bg-preview').style.background = theme.bg || '#0a0f1e';
+                    document.getElementById('card-preview').style.background = theme.card || '#1e1e1e';
+                }
+            });
+        }
+        
+        // ========== হেডার সেটিংস ==========
+        function updateHeaderSettings() {
+            let title = document.getElementById('header-title').value;
+            let subtitle = document.getElementById('header-subtitle').value;
+            let color1 = document.getElementById('header-color1').value;
+            let color2 = document.getElementById('header-color2').value;
+            let border = document.getElementById('header-border').value;
+            
+            db.ref('settings/header').set({
+                title: title,
+                subtitle: subtitle,
+                color1: color1,
+                color2: color2,
+                border: border
+            }).then(() => alert('✅ হেডার আপডেট হয়েছে!'));
+        }
+        
+        // ========== ডিপোজিট সেটিংস ==========
+        function updateDepositSettings() {
+            let min = document.getElementById('deposit-min').value;
+            let max = document.getElementById('deposit-max').value;
+            let usdtMin = document.getElementById('usdt-min').value;
+            let usdtMax = document.getElementById('usdt-max').value;
+            let note = document.getElementById('deposit-note').value;
+            
+            db.ref('settings/deposit').set({
+                min: parseInt(min),
+                max: parseInt(max),
+                usdtMin: parseInt(usdtMin),
+                usdtMax: parseInt(usdtMax),
+                note: note
+            }).then(() => alert('✅ ডিপোজিট সেটিংস আপডেট হয়েছে!'));
+        }
+        
+        // ========== র‍্যাঙ্ক সেটিংস ==========
+        function updateRankSettings() {
+            let type = document.getElementById('rank-type').value;
+            let limit = document.getElementById('rank-limit').value;
+            let order = document.getElementById('rank-order').value;
+            let title = document.getElementById('rank-title').value;
+            
+            db.ref('settings/rank').set({
+                type: type,
+                limit: parseInt(limit),
+                order: order,
+                title: title
+            }).then(() => alert('✅ র‍্যাঙ্ক সেটিংস আপডেট হয়েছে!'));
+        }
+        
+        function clearAllRanks() {
+            if(confirm('সব র‍্যাঙ্ক ডাটা রিসেট করবেন?')) {
+                db.ref('ranks').remove();
+                alert('✅ সব র‍্যাঙ্ক রিসেট করা হয়েছে!');
+            }
+        }
+        
+        // ========== সাপোর্ট সেটিংস ==========
+        function updateSupportSettings() {
+            let email = document.getElementById('support-email').value;
+            let whatsapp = document.getElementById('support-whatsapp').value;
+            let group = document.getElementById('support-whatsapp-group').value;
+            let telegram = document.getElementById('support-telegram').value;
+            let youtube = document.getElementById('support-youtube').value;
+            let website = document.getElementById('support-website').value;
+            
+            db.ref('settings/support').set({
+                email: email,
+                whatsapp: whatsapp,
+                whatsappGroup: group,
+                telegram: telegram,
+                youtube: youtube,
+                website: website
+            }).then(() => alert('✅ সাপোর্ট সেটিংস আপডেট হয়েছে!'));
+        }
+        
+        // ========== ইউজার ব্যালেন্স ==========
+        function checkUserBalance() {
+            let phone = document.getElementById('wallet-phone').value;
+            if (!phone) return alert('❌ মোবাইল নম্বর দিন!');
+            
+            db.ref('users/' + phone).once('value', (snap) => {
+                let user = snap.val();
+                if (user) {
+                    document.getElementById('user-info-box').style.display = 'block';
+                    document.getElementById('user-name-display').innerText = user.name || 'N/A';
+                    document.getElementById('user-phone-display').innerText = '📱 ' + phone;
+                    document.getElementById('user-balance-display').innerText = (user.balance || 0) + ' টাকা';
+                    document.getElementById('user-wins-display').innerText = user.wins || 0;
+                    document.getElementById('user-matches-display').innerText = user.matches || 0;
+                    document.getElementById('user-kills-display').innerText = user.kills || 0;
+                } else {
+                    alert('❌ ইউজার পাওয়া যায়নি!');
+                }
+            });
+        }
+        
+        function updateUserBalance() {
+            let phone = document.getElementById('wallet-phone').value;
+            let amount = parseInt(document.getElementById('balance-amount').value);
+            let action = document.getElementById('balance-action').value;
+            
+            if (!phone || !amount) return alert('❌ সব তথ্য দিন!');
+            
+            db.ref('users/' + phone).once('value', (snap) => {
+                let user = snap.val();
+                if (user) {
+                    let current = user.balance || 0;
+                    let newBalance = current;
+                    
+                    if (action === 'add') newBalance = current + amount;
+                    else if (action === 'remove') newBalance = Math.max(0, current - amount);
+                    else if (action === 'set') newBalance = amount;
+                    
+                    db.ref('users/' + phone + '/balance').set(newBalance).then(() => {
+                        alert(`✅ ব্যালেন্স আপডেট হয়েছে!\n📱 ${phone}\n💰 নতুন ব্যালেন্স: ${newBalance} টাকা`);
+                        checkUserBalance();
+                        document.getElementById('balance-amount').value = '';
+                    });
+                }
+            });
+        }
+        
+        // ========== নটুন ম্যাচ অ্যাড ==========
+        function addNewMatch() {
+            let id = document.getElementById('new-match-id').value;
+            let name = document.getElementById('new-match-name').value;
+            if (!id || !name) return alert('❌ ম্যাচ আইডি ও নাম দিন!');
+            
+            let entry = document.getElementById('new-match-entry').value;
+            let prize = document.getElementById('new-match-prize').value;
+            let kill = document.getElementById('new-match-kill').value;
+            let maxKill = document.getElementById('new-match-maxkill').value;
+            let slot = document.getElementById('new-match-slot').value;
+            let type = document.getElementById('new-match-type').value;
+            
+            let matchData = {
+                name: name,
+                entryFee: parseInt(entry) || 0,
+                prizePool: parseInt(prize) || 0,
+                killBonus: parseInt(kill) || 0,
+                maxKills: parseInt(maxKill) || 6,
+                slots: parseInt(slot) || 48,
+                type: type
+            };
+            
+            db.ref('match_settings/' + id).set(matchData);
+            db.ref('slot_settings/' + id).set(parseInt(slot) || 48);
+            db.ref('match_prices/' + id).set({
+                entry: parseInt(entry) || 0,
+                prize: parseInt(prize) || 0,
+                killRate: parseInt(kill) || 0
+            });
+            db.ref('match_names/' + id).set(name);
+            
+            alert('✅ নটুন ম্যাচ অ্যাড করা হয়েছে!');
+        }
+        
+        // ========== ম্যাচ টাইমার ==========
+        function setMatchTimer() {
+            let match = document.getElementById('timer-match').value;
+            let mins = document.getElementById('match-minutes').value;
+            if (!mins) return alert('❌ সময় দিন!');
+            
+            let target = new Date().getTime() + (parseInt(mins) * 60000);
+            db.ref('match_times/' + match).set(target).then(() => {
+                alert('✅ টাইমার সেট করা হয়েছে!');
+                document.getElementById('match-minutes').value = '';
+            });
+        }
+        
+        // ========== ম্যাচ নম্বর ==========
+        function setMatchNumber() {
+            let match = document.getElementById('match-number-select').value;
+            let number = document.getElementById('match-number-value').value;
+            if (!number) return alert('❌ ম্যাচ নম্বর দিন!');
+            
+            let updates = {};
+            updates[match] = parseInt(number);
+            db.ref('match_numbers').update(updates).then(() => alert('✅ ম্যাচ নম্বর আপডেট!'));
+        }
+        
+        // ========== ম্যাচ স্লট ==========
+        function setMatchSlots() {
+            let match = document.getElementById('slot-match-select').value;
+            let slots = document.getElementById('slot-count').value;
+            if (!slots) return alert('❌ স্লট সংখ্যা দিন!');
+            
+            db.ref('slot_settings/' + match).set(parseInt(slots)).then(() => {
+                alert('✅ স্লট আপডেট!');
+                document.getElementById('slot-count').value = '';
+            });
+        }
+        
+        // ========== এন্ট্রি ফি ==========
+        function setEntryFee() {
+            let match = document.getElementById('fee-match-select').value;
+            let fee = document.getElementById('entry-fee').value;
+            if (!fee) return alert('❌ এন্ট্রি ফি দিন!');
+            
+            db.ref('match_prices/' + match + '/entry').set(parseInt(fee)).then(() => alert('✅ এন্ট্রি ফি আপডেট!'));
+        }
+        
+        // ========== প্রাইজ পুল ==========
+        function setPrizePool() {
+            let match = document.getElementById('prize-match-select').value;
+            let prize = document.getElementById('prize-amount').value;
+            if (!prize) return alert('❌ প্রাইজ পুল দিন!');
+            
+            db.ref('match_prices/' + match + '/prize').set(parseInt(prize)).then(() => alert('✅ প্রাইজ পুল আপডেট!'));
+        }
+        
+        // ========== কিল বোনাস ==========
+        function setKillBonus() {
+            let match = document.getElementById('kill-match-select').value;
+            let bonus = document.getElementById('kill-bonus').value;
+            let maxKills = document.getElementById('max-kills').value;
+            
+            if (bonus) db.ref('match_prices/' + match + '/killRate').set(parseInt(bonus));
+            if (maxKills) db.ref('match_settings/' + match + '/maxKills').set(parseInt(maxKills));
+            
+            alert('✅ কিল বোনাস আপডেট!');
+        }
+        
+        // ========== নোটিশ ==========
+        function setNotice() {
+            let type = document.getElementById('notice-select').value;
+            let text = document.getElementById('notice-text').value;
+            if (!text) return alert('❌ নোটিশ লিখুন!');
+            
+            db.ref('notices/' + type).set(text).then(() => {
+                alert('✅ নোটিশ আপডেট!');
+                document.getElementById('notice-text').value = '';
+            });
+        }
+        
+        // ========== রুম ডিটেইলস ==========
+        function setRoomDetails() {
+            let match = document.getElementById('room-match-select').value;
+            let id = document.getElementById('room-id').value;
+            let pass = document.getElementById('room-pass').value;
+            if (!id || !pass) return alert('❌ রুম আইডি ও পাসওয়ার্ড দিন!');
+            
+            db.ref('room_details/' + match).set({
+                roomId: id,
+                pass: pass,
+                msg: 'Room ID: ' + id + ', Pass: ' + pass
+            }).then(() => {
+                alert('✅ রুম ডিটেইলস আপডেট!');
+                document.getElementById('room-id').value = '';
+                document.getElementById('room-pass').value = '';
+            });
+        }
+        
+        // ========== পেমেন্ট মেথড ==========
+        function setPaymentMethods() {
+            let bkash = document.getElementById('bkash-number').value;
+            let nagad = document.getElementById('nagad-number').value;
+            let usdt = document.getElementById('usdt-address').value;
+            
+            db.ref('payment_methods').set({ bkash, nagad, usdt }).then(() => alert('✅ পেমেন্ট মেথড আপডেট!'));
+        }
+        
+        // ========== উইথড্র সেটিংস ==========
+        function setWithdrawSettings() {
+            let charge = document.getElementById('withdraw-charge').value;
+            let min = document.getElementById('withdraw-min').value;
+            let max = document.getElementById('withdraw-max').value;
+            
+            db.ref('withdraw_settings').set({
+                charge: parseInt(charge) || 5,
+                min: parseInt(min) || 50,
+                max: parseInt(max) || 1000
+            }).then(() => alert('✅ উইথড্র সেটিংস আপডেট!'));
+        }
+        
+        // ========== ম্যাচ রিমুভ ==========
+        function removeMatch() {
+            let id = document.getElementById('remove-match-select').value;
+            if (confirm('ম্যাচ রিমুভ করবেন?')) {
+                db.ref('match_settings/' + id).remove();
+                db.ref('slot_settings/' + id).remove();
+                db.ref('match_prices/' + id).remove();
+                db.ref('match_names/' + id).remove();
+                db.ref('match_times/' + id).remove();
+                alert('✅ ম্যাচ রিমুভ করা হয়েছে!');
+            }
+        }
+        
+        // ========== ডাটা লোড ==========
+        function loadAllAdminData() {
+            db.ref('users').on('value', (s) => {
+                let c = 0; s.forEach(() => c++);
+                document.getElementById('total-users').innerText = c;
+            });
+            
+            db.ref('registrations').on('value', (s) => {
+                let c = 0; s.forEach(() => c++);
+                document.getElementById('total-matches').innerText = c;
+                loadRegistrations();
+            });
+            
+            db.ref('deposits').on('value', (s) => {
+                let p = 0; s.forEach((c) => { if(c.val().status === 'pending') p++; });
+                document.getElementById('pending-deposits').innerText = p;
+                loadDeposits();
+            });
+            
+            db.ref('withdraws').on('value', (s) => {
+                let p = 0; s.forEach((c) => { if(c.val().status === 'pending') p++; });
+                document.getElementById('pending-withdraws').innerText = p;
+                loadWithdraws();
+            });
+        }
+        
+        function loadRegistrations() {
+            db.ref('registrations').limitToLast(20).on('value', (s) => {
+                let h = '';
+                s.forEach((c) => {
+                    let d = c.val();
+                    h += `<div class="box"><div class="box-title">🎮 ${d.match}</div>
+                        👤 ${d.players[0].name}<br>📱 ${d.userPhone}<br>💰 ${d.fee} টাকা
+                        <button class="small-btn btn-red" onclick="db.ref('registrations/${c.key}').remove()">❌</button></div>`;
+                });
+                document.getElementById('reg-list').innerHTML = h || 'No data';
+            });
+        }
+        
+        function loadDeposits() {
+            db.ref('deposits').limitToLast(20).on('value', (s) => {
+                let h = '';
+                s.forEach((c) => {
+                    let d = c.val();
+                    h += `<div class="box"><div class="box-title">💳 ${d.method}</div>
+                        📱 ${d.phone}<br>💰 ${d.amount} টাকা<br>🔢 ${d.trxid}
+                        <button class="small-btn btn-green" onclick="approveDeposit('${d.userPhone}', ${d.amount}, '${c.key}')">✅</button>
+                        <button class="small-btn btn-red" onclick="db.ref('deposits/${c.key}').remove()">❌</button></div>`;
+                });
+                document.getElementById('deposit-list').innerHTML = h || 'No data';
+            });
+        }
+        
+        function approveDeposit(phone, amount, key) {
+            db.ref('users/' + phone + '/balance').transaction(c => (c || 0) + parseInt(amount));
+            db.ref('deposits/' + key).remove();
+            alert('✅ ডিপোজিট অ্যাপ্রুভ!');
+        }
+        
+        function loadWithdraws() {
+            db.ref('withdraws').limitToLast(20).on('value', (s) => {
+                let h = '';
+                s.forEach((c) => {
+                    let d = c.val();
+                    h += `<div class="box"><div class="box-title">💳 ${d.method}</div>
+                        📱 ${d.phone}<br>💰 ${d.amount} টাকা
+                        <button class="small-btn btn-yellow" onclick="db.ref('withdraws/${c.key}').remove()">✅</button>
+                        <button class="small-btn btn-red" onclick="db.ref('withdraws/${c.key}').remove()">❌</button></div>`;
+                });
+                document.getElementById('withdraw-list').innerHTML = h || 'No data';
+            });
+        }
+        
+        // ========== কালার প্রিভিউ আপডেট ==========
+        document.getElementById('primary-color').addEventListener('input', function(e) {
+            document.getElementById('primary-preview').style.background = e.target.value;
+        });
+        document.getElementById('secondary-color').addEventListener('input', function(e) {
+            document.getElementById('secondary-preview').style.background = e.target.value;
+        });
+        document.getElementById('accent-color').addEventListener('input', function(e) {
+            document.getElementById('accent-preview').style.background = e.target.value;
+        });
+        document.getElementById('text-color').addEventListener('input', function(e) {
+            document.getElementById('text-preview').style.background = e.target.value;
+        });
+        document.getElementById('bg-color').addEventListener('input', function(e) {
+            document.getElementById('bg-preview').style.background = e.target.value;
+        });
+        document.getElementById('card-color').addEventListener('input', function(e) {
+            document.getElementById('card-preview').style.background = e.target.value;
+        });
+        
+        // ========== চেক লগইন ==========
+        window.onload = function() {
+            if (localStorage.getItem('admin_logged') === 'true') {
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('admin-panel').classList.add('active');
+                loadAllAdminData();
+                startTimeUpdate();
+                loadAnimationSettings();
+                loadDesignSettings();
+                loadActiveAnimations();
+            } else {
+                rainEnabled = true;
+                starsEnabled = true;
+                touchEnabled = true;
+                createRain(60);
+                createStars(50);
+            }u6jikkuuu
+        };
     </script>
 </body>
 </html>
