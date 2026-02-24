@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>FREE FIRE TOURNAMENT 2026 - TNM RIYAD</title>
+    <title>FREE FIRE TOURNAMENT 2026 - TNM FF</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
@@ -20,14 +21,27 @@
             font-family: 'Poppins', sans-serif;
         }
         
+        /* ===== গ্লোবাল থিম ভেরিয়েবল (পুরো সাইট কন্ট্রোল) ===== */
+        :root {
+            --primary-color: #FF416C;
+            --secondary-color: #FF4B2B;
+            --accent-color: #FFD700;
+            --bg-start: #1a0f1f;
+            --bg-end: #0a0612;
+            --card-bg: rgba(25, 30, 45, 0.85);
+            --text-color: #ffffff;
+            --glow-color: rgba(255, 215, 0, 0.5);
+        }
+        
         body {
-            background: radial-gradient(circle at 20% 30%, #1a0f1f, #0a0612);
-            color: #fff;
+            background: radial-gradient(circle at 20% 30%, var(--bg-start), var(--bg-end));
+            color: var(--text-color);
             padding: 0;
             padding-bottom: 80px;
             position: relative;
             overflow-x: hidden;
             min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
         }
         
         /* গেমিং ব্যাকগ্রাউন্ড */
@@ -67,7 +81,7 @@
             background: linear-gradient(to bottom, rgba(255,215,0,0.8), rgba(255,140,0,0.3));
             border-radius: 0 0 5px 5px;
             animation: fall linear infinite;
-            box-shadow: 0 0 10px #FFD700;
+            box-shadow: 0 0 10px var(--accent-color);
         }
         
         @keyframes fall {
@@ -90,10 +104,10 @@
             position: absolute;
             width: 12px;
             height: 12px;
-            background: #FFD700;
+            background: var(--accent-color);
             border-radius: 50%;
             animation: starFall 5s linear infinite;
-            box-shadow: 0 0 30px #FFA500, 0 0 60px #FFD700;
+            box-shadow: 0 0 30px #FFA500, 0 0 60px var(--accent-color);
             opacity: 0;
         }
         
@@ -101,8 +115,8 @@
             content: '★';
             position: absolute;
             font-size: 20px;
-            color: #FFD700;
-            text-shadow: 0 0 30px #FFA500, 0 0 60px #FFD700;
+            color: var(--accent-color);
+            text-shadow: 0 0 30px #FFA500, 0 0 60px var(--accent-color);
             left: -4px;
             top: -4px;
         }
@@ -113,7 +127,7 @@
             100% { opacity: 0; transform: translateY(100vh) translateX(100px) rotate(360deg); }
         }
         
-        /* টাচ স্টার */
+        /* ===== টাচ স্টার (আগের মতো ফিরিয়ে দেওয়া) ===== */
         .touch-star {
             position: fixed;
             width: 30px;
@@ -138,12 +152,12 @@
             100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
         }
         
-        /* ===== অ্যাপ ডাউনলোড বাটন (উপরে কর্নারে) ===== */
+        /* ===== অ্যাপ ডাউনলোড বাটন ===== */
         .app-download-btn {
             position: fixed;
             top: 10px;
             left: 10px;
-            background: linear-gradient(145deg, #FF416C, #FF4B2B);
+            background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 8px 15px;
             border-radius: 50px;
@@ -155,18 +169,14 @@
             align-items: center;
             gap: 5px;
             box-shadow: 0 0 20px rgba(255,75,43,0.5);
-            border: 2px solid #FFD700;
+            border: 2px solid var(--accent-color);
             transition: all 0.3s;
             cursor: pointer;
         }
         
         .app-download-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(255,215,0,0.8);
-        }
-        
-        .app-download-btn span {
-            font-size: 16px;
+            box-shadow: 0 0 30px var(--accent-color);
         }
         
         /* ===== বাটন এনিমেশন ===== */
@@ -225,7 +235,7 @@
             position: absolute;
             width: 100%;
             height: 100%;
-            background: linear-gradient(145deg, #ff416c, #ff4b2b);
+            background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
             left: 0;
             top: 0;
             border-radius: 10px;
@@ -245,29 +255,46 @@
         .glow-on-hover.btn-red:after { background: linear-gradient(145deg, #ff4b2b, #ff2222); }
         .glow-on-hover.btn-purple:after { background: linear-gradient(145deg, #9C27B0, #673AB7); }
         .glow-on-hover.btn-gold:after { background: linear-gradient(145deg, #FFD700, #FFA500); }
+        .glow-on-hover.btn-orange:after { background: linear-gradient(145deg, #FF9800, #F57C00); }
         
         /* ম্যাচ ডিটেইলস বাটন - এনিমেশন নেই */
         .btn-details {
             width: 100%;
-            margin-bottom: 10px;
-        }
-        .btn-details:after { 
-            background: linear-gradient(145deg, #6c5ce7, #a363d9); 
+            height: 50px;
+            border: none;
+            outline: none;
+            color: #fff;
+            background: linear-gradient(145deg, #555, #333);
+            cursor: pointer;
+            border-radius: 10px;
+            padding: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+            margin: 5px 0;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,215,0,0.3);
         }
         
-        /* জয়েন বাটন - এনিমেশন আছে */
+        .btn-details:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            background: linear-gradient(145deg, #666, #444);
+        }
+        
+        /* জয়েন বাটন */
         .btn-join {
             width: 100%;
         }
         .btn-join:after { 
-            background: linear-gradient(145deg, #ff416c, #ff4b2b); 
+            background: linear-gradient(145deg, var(--primary-color), var(--secondary-color)); 
         }
         
         /* কপি বাটন */
         .copy-btn {
             background: rgba(255,215,0,0.2);
-            border: 1px solid #FFD700;
-            color: #FFD700;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
             padding: 8px 15px;
             border-radius: 30px;
             font-size: 12px;
@@ -280,7 +307,7 @@
         }
         
         .copy-btn:hover {
-            background: #FFD700;
+            background: var(--accent-color);
             color: black;
         }
         
@@ -301,9 +328,9 @@
         }
         
         .auth-card {
-            background: rgba(30, 35, 50, 0.95);
+            background: var(--card-bg);
             backdrop-filter: blur(20px);
-            border: 3px solid #FFD700;
+            border: 3px solid var(--accent-color);
             border-radius: 40px;
             padding: 40px 30px;
             max-width: 450px;
@@ -343,9 +370,9 @@
         }
         
         .tab.active {
-            background: linear-gradient(45deg, #FFD700, #FFA500);
+            background: linear-gradient(45deg, var(--accent-color), #FFA500);
             color: black;
-            box-shadow: 0 5px 25px rgba(255,215,0,0.5);
+            box-shadow: 0 5px 25px var(--glow-color);
         }
         
         /* সেকশন */
@@ -368,7 +395,7 @@
         
         /* ম্যাচ কার্ড */
         .match-card {
-            background: rgba(25, 30, 45, 0.85);
+            background: var(--card-bg);
             backdrop-filter: blur(20px);
             border: 2px solid rgba(255, 215, 0, 0.5);
             border-radius: 35px;
@@ -382,13 +409,13 @@
         
         .match-card:hover {
             transform: translateY(-5px);
-            border-color: #FFD700;
+            border-color: var(--accent-color);
         }
         
         .match-title {
             font-size: 24px;
             font-weight: 800;
-            background: linear-gradient(45deg, #FFD700, #FFA500);
+            background: linear-gradient(45deg, var(--accent-color), #FFA500);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
@@ -476,14 +503,14 @@
             margin-top: 15px;
             max-height: 100px;
             overflow-y: auto;
-            border: 1px solid #FFD700;
+            border: 1px solid var(--accent-color);
         }
         
         /* প্রোফাইল */
         .profile-card {
-            background: rgba(25, 30, 45, 0.85);
+            background: var(--card-bg);
             backdrop-filter: blur(20px);
-            border: 2px solid #FFD700;
+            border: 2px solid var(--accent-color);
             border-radius: 35px;
             padding: 30px;
             text-align: center;
@@ -493,17 +520,17 @@
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            border: 5px solid #FFD700;
+            border: 5px solid var(--accent-color);
             margin: 0 auto 20px;
             object-fit: cover;
-            box-shadow: 0 0 50px rgba(255,215,0,0.5);
+            box-shadow: 0 0 50px var(--glow-color);
             cursor: pointer;
             transition: all 0.3s;
         }
         
         .profile-avatar:hover {
             transform: scale(1.1);
-            box-shadow: 0 0 70px rgba(255,215,0,0.8);
+            box-shadow: 0 0 70px var(--accent-color);
         }
         
         /* গুগল ফটোস */
@@ -547,7 +574,7 @@
             background: linear-gradient(145deg, #1e1e2e, #2a2a3a);
             padding: 20px;
             border-radius: 20px;
-            border: 2px solid #FFD700;
+            border: 2px solid var(--accent-color);
         }
         
         /* স্ট্যাটাস ব্যাজ */
@@ -603,12 +630,12 @@
             max-width: 450px;
             background: rgba(20, 25, 40, 0.98);
             backdrop-filter: blur(30px);
-            border: 4px solid #FFD700;
+            border: 4px solid var(--accent-color);
             border-radius: 40px;
             padding: 40px;
             z-index: 10002;
             display: none;
-            box-shadow: 0 0 100px rgba(255,215,0,0.5);
+            box-shadow: 0 0 100px var(--glow-color);
         }
         
         .room-modal.active {
@@ -617,8 +644,8 @@
         }
         
         @keyframes modalGlow {
-            0%, 100% { box-shadow: 0 0 50px rgba(255,215,0,0.5); }
-            50% { box-shadow: 0 0 100px rgba(255,215,0,0.8); }
+            0%, 100% { box-shadow: 0 0 50px var(--glow-color); }
+            50% { box-shadow: 0 0 100px var(--accent-color); }
         }
         
         /* ইতিহাস কার্ড */
@@ -635,7 +662,7 @@
         
         .history-card:hover {
             transform: translateX(5px);
-            border-color: #FFD700;
+            border-color: var(--accent-color);
         }
         
         /* নিচের নেভিগেশন */
@@ -648,7 +675,7 @@
             display: flex;
             justify-content: space-around;
             padding: 15px 0;
-            border-top: 3px solid #FFD700;
+            border-top: 3px solid var(--accent-color);
             z-index: 1000;
             box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
         }
@@ -666,7 +693,7 @@
         }
         
         .nav-item.active {
-            color: #FFD700;
+            color: var(--accent-color);
             background: rgba(255,215,0,0.15);
             transform: translateY(-5px);
         }
@@ -690,59 +717,140 @@
             outline: none;
         }
         
-        /* নোটিশ বোর্ড */
-        .notice {
-            background: linear-gradient(145deg, #FF416C, #FF4B2B);
-            padding: 18px;
+        /* ========== নোটিশ সিস্টেম ========== */
+        .notice-container {
+            margin: 15px;
+            position: relative;
+        }
+        
+        .main-notice {
+            background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
+            padding: 18px 45px 18px 18px;
             border-radius: 25px;
-            margin-bottom: 20px;
             border: 2px solid white;
             color: white;
             font-weight: bold;
             text-align: center;
+            animation: noticePulse 2s infinite;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(255,75,43,0.5);
         }
         
-        /* একাধিক নোটিশের জন্য */
-        .notice-board {
+        .main-notice:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(255,75,43,0.8);
+        }
+        
+        @keyframes noticePulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255,75,43,0.5); }
+            50% { box-shadow: 0 0 40px rgba(255,75,43,0.8); }
+        }
+        
+        .notice-got-it {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.3);
+            color: white;
+            border: 2px solid white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .notice-got-it:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        .notice-got-it.clicked {
+            display: none;
+        }
+        
+        .notice-minimized {
+            background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
+            padding: 8px 15px;
+            border-radius: 50px;
             margin: 15px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: none;
+            box-shadow: 0 5px 20px rgba(255,75,43,0.3);
         }
         
-        .notice-item {
-            background: linear-gradient(145deg, #FF416C, #FF4B2B);
+        .notice-minimized:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255,75,43,0.6);
+        }
+        
+        .notice-minimized.active {
+            display: block;
+        }
+        
+        /* ম্যাচ নোটিশ - প্রতিটি ম্যাচের জন্য */
+        .match-notice {
+            background: rgba(255,255,255,0.1);
+            border-left: 5px solid var(--accent-color);
+            border-radius: 15px;
             padding: 12px 15px;
-            border-radius: 20px;
-            margin-bottom: 10px;
-            border: 1px solid #FFD700;
+            margin-bottom: 20px;
             color: white;
             font-weight: 500;
             font-size: 14px;
-            box-shadow: 0 5px 15px rgba(255,75,43,0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+        
+        /* রেজিস্ট্রেশন পেজে ম্যাচ স্পেসিফিক নোটিশ */
+        .registration-notice {
+            background: rgba(255,215,0,0.1);
+            border-left: 8px solid var(--accent-color);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 16px;
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--accent-color);
+            text-align: center;
         }
         
         /* উইথড্র পিন সেটিংস */
         .pin-settings {
             background: rgba(255,215,0,0.1);
-            border: 2px solid #FFD700;
+            border: 2px solid var(--accent-color);
             border-radius: 20px;
             padding: 20px;
             margin: 20px 0;
         }
         
-        /* ========== সেটিংস আইকন (কর্নারে) ========== */
+        /* ========== সেটিংস আইকন ========== */
         .settings-corner {
             position: fixed;
             bottom: 80px;
             right: 10px;
             width: 50px;
             height: 50px;
-            background: linear-gradient(145deg, #FFD700, #FFA500);
+            background: linear-gradient(145deg, var(--accent-color), #FFA500);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 10001;
-            box-shadow: 0 0 30px rgba(255,215,0,0.8);
+            box-shadow: 0 0 30px var(--glow-color);
             animation: settingsPulse 2s infinite;
             border: 2px solid white;
         }
@@ -754,25 +862,25 @@
         }
         
         @keyframes settingsPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(255,215,0,0.8); }
-            50% { transform: scale(1.1); box-shadow: 0 0 50px rgba(255,215,0,1); }
+            0%, 100% { transform: scale(1); box-shadow: 0 0 30px var(--glow-color); }
+            50% { transform: scale(1.1); box-shadow: 0 0 50px var(--accent-color); }
         }
         
         .settings-panel {
             position: fixed;
             bottom: 140px;
             right: 10px;
-            width: 280px;
+            width: 300px;
             max-height: 70vh;
             overflow-y: auto;
             background: rgba(20, 25, 40, 0.98);
             backdrop-filter: blur(20px);
-            border: 3px solid #FFD700;
+            border: 3px solid var(--accent-color);
             border-radius: 30px;
             padding: 20px;
             z-index: 10002;
             display: none;
-            box-shadow: 0 0 50px rgba(255,215,0,0.5);
+            box-shadow: 0 0 50px var(--glow-color);
         }
         
         .settings-panel.active {
@@ -786,7 +894,7 @@
         }
         
         .settings-header {
-            color: #FFD700;
+            color: var(--accent-color);
             font-size: 18px;
             font-weight: bold;
             text-align: center;
@@ -864,6 +972,35 @@
             padding: 8px 0;
         }
         
+        /* ===== নতুন: এনিমেশন স্পিড কন্ট্রোল ===== */
+        .speed-selector, .size-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .speed-option, .size-option {
+            flex: 1;
+            background: rgba(255,215,0,0.1);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 12px;
+        }
+        
+        .speed-option:hover, .size-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--glow-color);
+        }
+        
+        .speed-option.active, .size-option.active {
+            border-color: var(--accent-color);
+            background: rgba(255,215,0,0.2);
+        }
+        
         /* থিম সিলেক্টর */
         .theme-selector {
             display: grid;
@@ -885,18 +1022,20 @@
         
         .theme-option:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255,215,0,0.3);
+            box-shadow: 0 5px 15px var(--glow-color);
         }
         
         .theme-option.active {
-            border-color: #FFD700;
+            border-color: var(--accent-color);
             background: rgba(255,215,0,0.2);
         }
         
-        .theme-option.default { background: linear-gradient(145deg, #FF416C, #FF4B2B); }
+        .theme-option.default { background: linear-gradient(145deg, #FF416C, #FF4B2B); color: white; }
         .theme-option.dark { background: linear-gradient(145deg, #1a1e2c, #0a0f1a); }
         .theme-option.neon { background: linear-gradient(145deg, #00ff9d, #00b8ff); color: black; }
         .theme-option.royal { background: linear-gradient(145deg, #8E2DE2, #4A00E0); }
+        .theme-option.ocean { background: linear-gradient(145deg, #00c6fb, #005bea); }
+        .theme-option.forest { background: linear-gradient(145deg, #11998e, #38ef7d); color: black; }
         
         /* কালার পিকার */
         .color-option {
@@ -911,7 +1050,7 @@
             height: 30px;
             padding: 2px;
             border-radius: 5px;
-            border: 2px solid #FFD700;
+            border: 2px solid var(--accent-color);
         }
         
         .apply-btn {
@@ -933,22 +1072,53 @@
             box-shadow: 0 5px 20px rgba(0,210,255,0.4);
         }
         
-        /* সেভ করা সেটিংস */
-        .saved-settings {
-            font-size: 12px;
-            color: #aaa;
-            text-align: center;
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(0,0,0,0.3);
+        /* নোটিফিকেশন ব্যাজ */
+        .notification-badge {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid white;
+            z-index: 1001;
+            cursor: pointer;
+        }
+        
+        /* নোটিফিকেশন মডাল */
+        .notification-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 380px;
+            background: #1e1e2e;
+            border: 3px solid var(--accent-color);
+            border-radius: 20px;
+            padding: 20px;
+            z-index: 10001;
+            display: none;
+        }
+        .notification-item {
+            background: rgba(255,255,255,0.1);
             border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--accent-color);
         }
         
         @media (max-width: 768px) {
             .match-title { font-size: 20px; }
             .tab { padding: 12px 16px; font-size: 12px; }
             .settings-panel {
-                width: 250px;
+                width: 280px;
                 right: 5px;
             }
             .app-download-btn {
@@ -959,7 +1129,7 @@
     </style>
 </head>
 <body>
-    <!-- অ্যাপ ডাউনলোড বাটন (উপরে কর্নারে) -->
+    <!-- অ্যাপ ডাউনলোড বাটন -->
     <a id="app-download-link" href="https://www.mediafire.com/file/qcnpve9mykukmfo/TNM_FF.apk/file" class="app-download-btn" target="_blank">
         <span>📱</span> TNM FF APP
     </a>
@@ -969,14 +1139,14 @@
     <div class="rain-container" id="rainContainer"></div>
     <div class="star-field" id="starField"></div>
     
-    <!-- ========== সেটিংস আইকন (কর্নারে) ========== -->
+    <!-- ========== সেটিংস আইকন ========== -->
     <div class="settings-corner" onclick="toggleSettingsPanel()">
         <span>⚙️</span>
     </div>
     
     <div class="settings-panel" id="settingsPanel">
         <div class="settings-header">
-            ⚙️ সেটিংস
+            ⚙️ সাইট কাস্টমাইজ
             <span style="float: right; cursor: pointer;" onclick="toggleSettingsPanel()">✖️</span>
         </div>
         
@@ -1004,21 +1174,38 @@
                     <span class="toggle-slider"></span>
                 </label>
             </div>
-        </div>
-        
-        <!-- থিম সিলেক্টর -->
-        <div class="settings-item">
-            <div class="settings-title">🎨 থিম সিলেক্ট</div>
-            <div class="theme-selector">
-                <div class="theme-option default" onclick="selectTheme('default')" id="theme-default">ডিফল্ট</div>
-                <div class="theme-option dark" onclick="selectTheme('dark')" id="theme-dark">ডার্ক</div>
-                <div class="theme-option neon" onclick="selectTheme('neon')" id="theme-neon">নিয়ন</div>
-                <div class="theme-option royal" onclick="selectTheme('royal')" id="theme-royal">রয়্যাল</div>
+            
+            <!-- নতুন: স্পিড কন্ট্রোল -->
+            <div class="settings-title" style="margin-top: 10px;">⚡ স্পিড কন্ট্রোল</div>
+            <div class="speed-selector">
+                <div class="speed-option" onclick="setAnimationSpeed('slow')" id="speed-slow">স্লো</div>
+                <div class="speed-option active" onclick="setAnimationSpeed('normal')" id="speed-normal">নরমাল</div>
+                <div class="speed-option" onclick="setAnimationSpeed('fast')" id="speed-fast">ফাস্ট</div>
             </div>
-            <button class="apply-btn" onclick="applyTheme()">থিম অ্যাপ্লাই</button>
+            
+            <!-- নতুন: সাইজ কন্ট্রোল -->
+            <div class="settings-title" style="margin-top: 10px;">📏 সাইজ কন্ট্রোল</div>
+            <div class="size-selector">
+                <div class="size-option" onclick="setAnimationSize('small')" id="size-small">ছোট</div>
+                <div class="size-option active" onclick="setAnimationSize('medium')" id="size-medium">মাঝারি</div>
+                <div class="size-option" onclick="setAnimationSize('large')" id="size-large">বড়</div>
+            </div>
         </div>
         
-        <!-- কাস্টম কালার -->
+        <!-- থিম সিলেক্টর (পুরো সাইটের জন্য) -->
+        <div class="settings-item">
+            <div class="settings-title">🎨 প্রিসেট থিম</div>
+            <div class="theme-selector">
+                <div class="theme-option default" onclick="applyPresetTheme('default')" id="theme-default">ডিফল্ট</div>
+                <div class="theme-option dark" onclick="applyPresetTheme('dark')" id="theme-dark">ডার্ক</div>
+                <div class="theme-option neon" onclick="applyPresetTheme('neon')" id="theme-neon">নিয়ন</div>
+                <div class="theme-option royal" onclick="applyPresetTheme('royal')" id="theme-royal">রয়্যাল</div>
+                <div class="theme-option ocean" onclick="applyPresetTheme('ocean')" id="theme-ocean">ওশান</div>
+                <div class="theme-option forest" onclick="applyPresetTheme('forest')" id="theme-forest">ফরেস্ট</div>
+            </div>
+        </div>
+        
+        <!-- কাস্টম কালার (পুরো সাইটের জন্য) -->
         <div class="settings-item">
             <div class="settings-title">🎨 কাস্টম কালার</div>
             <div class="color-option">
@@ -1034,42 +1221,51 @@
                 <input type="color" id="accent-color" value="#FFD700">
             </div>
             <div class="color-option">
-                <span>ব্যাকগ্রাউন্ড</span>
-                <input type="color" id="bg-color" value="#0a0612">
+                <span>ব্যাকগ্রাউন্ড স্টার্ট</span>
+                <input type="color" id="bg-start" value="#1a0f1f">
+            </div>
+            <div class="color-option">
+                <span>ব্যাকগ্রাউন্ড এন্ড</span>
+                <input type="color" id="bg-end" value="#0a0612">
             </div>
             <button class="apply-btn" onclick="applyCustomColors()">কালার অ্যাপ্লাই</button>
         </div>
-        
-        <!-- সেভ করা সেটিংস -->
-        <div class="saved-settings" id="savedSettings">
-            আপনার সেটিংস স্বয়ংক্রিয়ভাবে সেভ হয়
-        </div>
+    </div>
+    
+    <!-- ========== নোটিফিকেশন ব্যাজ ========== -->
+    <div id="notificationBadge" class="notification-badge" onclick="openNotifications()" style="display: none;">0</div>
+    
+    <!-- ========== নোটিফিকেশন মডাল ========== -->
+    <div id="notificationModal" class="notification-modal">
+        <h3 style="color: var(--accent-color); margin-bottom:15px; text-align:center;">📢 নোটিফিকেশন</h3>
+        <div id="notificationList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
+        <button onclick="closeNotificationModal()" style="width:100%; background:var(--accent-color); border:none; padding:12px; border-radius:50px; font-weight:bold; cursor:pointer;">✅ ঠিক আছে</button>
     </div>
     
     <!-- ========== অথ পেইজ ========== -->
     <div id="auth-page" style="display: block;">
         <div class="auth-container">
             <div class="auth-card">
-                <div style="color: #FFD700; font-size: 32px; font-weight: 800; text-align: center; margin-bottom: 10px;">🎮 TNM RIYAD</div>
-                <div style="color: #FFD700; text-align: center; margin-bottom: 30px; font-size: 18px;">TOURNAMENT 2026</div>
+                <div style="color: var(--accent-color); font-size: 32px; font-weight: 800; text-align: center; margin-bottom: 10px;">🎮 TNM RIYAD</div>
+                <div style="color: var(--accent-color); text-align: center; margin-bottom: 30px; font-size: 18px;">TOURNAMENT 2026</div>
                 
                 <!-- লগইন -->
                 <div id="login-box">
-                    <h2 style="color: #FFD700; margin-bottom: 25px; text-align: center;">🔐 লগইন</h2>
+                    <h2 style="color: var(--accent-color); margin-bottom: 25px; text-align: center;">🔐 লগইন</h2>
                     <input type="text" id="login-phone" placeholder="📱 মোবাইল নম্বর">
                     <input type="password" id="login-pass" placeholder="🔑 পাসওয়ার্ড">
                     <button class="glow-on-hover btn-join" onclick="loginUser()">লগইন করুন</button>
-                    <p onclick="toggleAuth()" style="text-align:center; color: #FFD700; cursor: pointer; margin-top: 25px;">নতুন একাউন্ট? সাইন আপ করুন</p>
+                    <p onclick="toggleAuth()" style="text-align:center; color: var(--accent-color); cursor: pointer; margin-top: 25px;">নতুন একাউন্ট? সাইন আপ করুন</p>
                 </div>
                 
                 <!-- সাইনআপ -->
                 <div id="signup-box" style="display: none;">
-                    <h2 style="color: #FFD700; margin-bottom: 25px; text-align: center;">📝 সাইন আপ</h2>
+                    <h2 style="color: var(--accent-color); margin-bottom: 25px; text-align: center;">📝 সাইন আপ</h2>
                     <input type="text" id="reg-user-name" placeholder="👤 আপনার নাম">
                     <input type="text" id="reg-user-phone" placeholder="📱 মোবাইল নম্বর">
                     <input type="password" id="reg-user-pass" placeholder="🔑 পাসওয়ার্ড">
                     <button class="glow-on-hover btn-join" onclick="signupUser()">সাইন আপ করুন</button>
-                    <p onclick="toggleAuth()" style="text-align:center; color: #FFD700; cursor: pointer; margin-top: 25px;">একাউন্ট আছে? লগইন করুন</p>
+                    <p onclick="toggleAuth()" style="text-align:center; color: var(--accent-color); cursor: pointer; margin-top: 25px;">একাউন্ট আছে? লগইন করুন</p>
                 </div>
             </div>
         </div>
@@ -1077,14 +1273,22 @@
     
     <!-- ========== মেইন অ্যাপ ========== -->
     <div id="main-app" style="display: none;">
-        <!-- হেডার -->
-        <div id="main-header" style="background: linear-gradient(135deg, #FF416C, #FF4B2B); padding: 25px 20px; text-align: center; border-bottom: 3px solid #FFD700;">
+        <!-- হেডার - থিম কন্ট্রোলের সাথে আপডেট হবে -->
+        <div id="main-header" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); padding: 25px 20px; text-align: center; border-bottom: 3px solid var(--accent-color);">
             <div id="header-title" style="font-size: 28px; font-weight: 800; color: white; text-shadow: 0 0 20px rgba(255,215,0,0.8);">🎮 TNM RIYAD 2026</div>
-            <div id="header-subtitle" style="font-size: 16px; color: #FFD700; margin-top: 5px;">🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট</div>
+            <div id="header-subtitle" style="font-size: 16px; color: var(--accent-color); margin-top: 5px;">🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট</div>
         </div>
         
-        <!-- নোটিশ বোর্ড (একাধিক নোটিশ) -->
-        <div class="notice-board" id="noticeBoard"></div>
+        <!-- ========== হোম পেজের নোটিশ ========== -->
+        <div class="notice-container">
+            <div id="mainNotice" class="main-notice" onclick="expandNotice()">
+                📢 স্বাগতম! সব ম্যাচ চালু আছে। নিয়ম মেনে খেলুন।
+                <span class="notice-got-it" onclick="event.stopPropagation(); minimizeNotice()">Got it</span>
+            </div>
+            <div id="minimizedNotice" class="notice-minimized" onclick="expandNotice()">
+                📢 নোটিশ দেখুন...
+            </div>
+        </div>
         
         <!-- ট্যাব মেনু -->
         <div class="tabs">
@@ -1098,11 +1302,11 @@
         
         <!-- ========== হোম ========== -->
         <div id="home" class="section active">
-            <!-- ম্যাচ 1: সোলো বারমুডা -->
+            <!-- ম্যাচ 1: সোলো বারমুডা (ছবি: Gv57Crmh) -->
             <div class="match-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <span style="font-size: 50px;">🎯</span>
+                        <img src="https://i.ibb.co.com/Gv57Crmh/free-fire-characters.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="সোলো">
                         <div>
                             <div class="match-title">সোলো বারমুডা #<span id="match1Number">01</span></div>
                             <span class="live-badge" id="live-SoloBermuda">🔴 লাইভ</span>
@@ -1111,8 +1315,8 @@
                     <span class="timer" id="timer-SoloBermuda">⏰ --:--</span>
                 </div>
                 
-                <span class="per-kill">🔫 প্রতি কিল: ৫ টাকা (সর্বোচ্চ ৬ কিল)</span>
-                <p style="color: #FFD700; margin-top: 15px;">💰 এন্ট্রি: ১০ টাকা | প্রাইজ: ১৫০ টাকা</p>
+                <span class="per-kill">🔫 প্রতি কিল: ৫ টাকা (সর্বোচ্চ ৬)</span>
+                <p style="color: var(--accent-color);">💰 এন্ট্রি: ১০ টাকা | প্রাইজ: ১৫০ টাকা</p>
                 
                 <table class="prize-table">
                     <tr><td>🥇 ১ম</td><td>৫০ টাকা</td></tr>
@@ -1123,19 +1327,17 @@
                     <tr><td style="color: #00ffcc;">🎮 স্লট</td><td id="slot-SoloBermuda">০/৪৮</td></tr>
                 </table>
                 
-                <!-- ম্যাচ ডিটেইলস বাটন - এনিমেশন নেই -->
-                <button class="glow-on-hover btn-details" style="background: #555;" onclick="showMatchDetails('সোলো বারমুডা')">📋 ম্যাচ ডিটেইলস</button>
-                <!-- জয়েন বাটন - এনিমেশন আছে -->
-                <button class="glow-on-hover btn-join" onclick="openRegistration('সোলো বারমুডা', 10, 'solo')">✅ সোলো জয়েন করুন</button>
+                <button class="btn-details" onclick="showMatchDetails('সোলো বারমুডা')">📋 ম্যাচ ডিটেইলস</button>
+                <button class="glow-on-hover btn-join" onclick="openRegistration('সোলো বারমুডা', 10, 'solo')">✅ জয়েন করুন</button>
                 
                 <div class="reg-names" id="list-SoloBermuda">👥 নিবন্ধিত: লোড হচ্ছে...</div>
             </div>
             
-            <!-- ম্যাচ 2: ডুও ১ (২০ টাকা) -->
+            <!-- ম্যাচ 2: ডুও ১ (ছবি: rDgKsWm) -->
             <div class="match-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <span style="font-size: 50px;">👥</span>
+                        <img src="https://i.ibb.co.com/rDgKsWm/duo-image.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="ডুও">
                         <div>
                             <div class="match-title">ডুও ১ #<span id="match2Number">01</span></div>
                             <span class="live-badge" id="live-DuoMatch1">🔴 লাইভ</span>
@@ -1144,8 +1346,8 @@
                     <span class="timer" id="timer-DuoMatch1">⏰ --:--</span>
                 </div>
                 
-                <span class="per-kill">🔫 প্রতি কিল: ১০ টাকা (সর্বোচ্চ ৬ কিল)</span>
-                <p style="color: #FFD700; margin-top: 15px;">💰 এন্ট্রি: ২০ টাকা/জন | প্রাইজ: ৩০০ টাকা</p>
+                <span class="per-kill">🔫 প্রতি কিল: ১০ টাকা (সর্বোচ্চ ৬)</span>
+                <p style="color: var(--accent-color);">💰 এন্ট্রি: ২০ টাকা/জন | প্রাইজ: ৩০০ টাকা</p>
                 
                 <table class="prize-table">
                     <tr><td>🥇 ১ম</td><td>১০০ টাকা (৫০/জন)</td></tr>
@@ -1156,17 +1358,17 @@
                     <tr><td style="color: #00ffcc;">🎮 স্লট</td><td id="slot-DuoMatch1">০/৪৮</td></tr>
                 </table>
                 
-                <button class="glow-on-hover btn-details" style="background: #555;" onclick="showMatchDetails('ডুও বারমুডা ১')">📋 ম্যাচ ডিটেইলস</button>
-                <button class="glow-on-hover btn-join" onclick="openRegistration('ডুও বারমুডা ১', 20, 'duo')">👥 ডুও জয়েন করুন</button>
+                <button class="btn-details" onclick="showMatchDetails('ডুও ১')">📋 ম্যাচ ডিটেইলস</button>
+                <button class="glow-on-hover btn-join" onclick="openRegistration('ডুও ১', 20, 'duo')">👥 জয়েন করুন</button>
                 
                 <div class="reg-names" id="list-DuoMatch1">👥 নিবন্ধিত: লোড হচ্ছে...</div>
             </div>
             
-            <!-- ম্যাচ 3: ডুও ২ (৪০ টাকা) -->
+            <!-- ম্যাচ 3: ডুও ২ (ছবি: rDgKsWm) -->
             <div class="match-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <span style="font-size: 50px;">👑</span>
+                        <img src="https://i.ibb.co.com/rDgKsWm/duo-image.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="ডুও২">
                         <div>
                             <div class="match-title">ডুও ২ #<span id="match3Number">01</span></div>
                             <span class="live-badge" id="live-DuoMatch2">🔴 লাইভ</span>
@@ -1175,8 +1377,8 @@
                     <span class="timer" id="timer-DuoMatch2">⏰ --:--</span>
                 </div>
                 
-                <span class="per-kill">🔫 প্রতি কিল: ২০ টাকা (সর্বোচ্চ ৬ কিল)</span>
-                <p style="color: #FFD700; margin-top: 15px;">💰 এন্ট্রি: ৪০ টাকা/জন | প্রাইজ: ৬০০ টাকা</p>
+                <span class="per-kill">🔫 প্রতি কিল: ২০ টাকা (সর্বোচ্চ ৬)</span>
+                <p style="color: var(--accent-color);">💰 এন্ট্রি: ৪০ টাকা/জন | প্রাইজ: ৬০০ টাকা</p>
                 
                 <table class="prize-table">
                     <tr><td>🥇 ১ম</td><td>২০০ টাকা (১০০/জন)</td></tr>
@@ -1187,17 +1389,17 @@
                     <tr><td style="color: #00ffcc;">🎮 স্লট</td><td id="slot-DuoMatch2">০/৪৮</td></tr>
                 </table>
                 
-                <button class="glow-on-hover btn-details" style="background: #555;" onclick="showMatchDetails('ডুও বারমুডা ২')">📋 ম্যাচ ডিটেইলস</button>
-                <button class="glow-on-hover btn-join" onclick="openRegistration('ডুও বারমুডা ২', 40, 'duo')">👥 ডুও জয়েন করুন</button>
+                <button class="btn-details" onclick="showMatchDetails('ডুও ২')">📋 ম্যাচ ডিটেইলস</button>
+                <button class="glow-on-hover btn-join" onclick="openRegistration('ডুও ২', 40, 'duo')">👥 জয়েন করুন</button>
                 
                 <div class="reg-names" id="list-DuoMatch2">👥 নিবন্ধিত: লোড হচ্ছে...</div>
             </div>
             
-            <!-- ম্যাচ 4: ৪vs৪ ক্ল্যাশ -->
+            <!-- ম্যাচ 4: ৪vs৪ ক্ল্যাশ (ছবি: C57vzBfL) -->
             <div class="match-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <span style="font-size: 50px;">⚔️</span>
+                        <img src="https://i.ibb.co.com/C57vzBfL/maxresdefault.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="৪vs৪">
                         <div>
                             <div class="match-title">৪vs৪ ক্ল্যাশ #<span id="match4Number">01</span></div>
                             <span class="live-badge" id="live-CS4vs4">🔴 লাইভ</span>
@@ -1207,7 +1409,7 @@
                 </div>
                 
                 <span class="per-kill">🏆 জয়ী: ৩৪০ টাকা (৮৫/জন)</span>
-                <p style="color: #FFD700;">💰 এন্ট্রি: ৫০ টাকা/জন</p>
+                <p style="color: var(--accent-color);">💰 এন্ট্রি: ৫০ টাকা/জন</p>
                 
                 <table class="prize-table">
                     <tr><td>স্কোয়াড এন্ট্রি</td><td>২০০ টাকা</td></tr>
@@ -1215,7 +1417,7 @@
                     <tr><td style="color: #00ffcc;">🎮 স্লট</td><td id="slot-CS4vs4">০/৮ টিম</td></tr>
                 </table>
                 
-                <button class="glow-on-hover btn-details" style="background: #555;" onclick="showMatchDetails('৪vs৪ ক্ল্যাশ')">📋 ম্যাচ ডিটেইলস</button>
+                <button class="btn-details" onclick="showMatchDetails('৪vs৪ ক্ল্যাশ')">📋 ম্যাচ ডিটেইলস</button>
                 <div style="display: flex; gap: 10px; margin-top: 10px;">
                     <button class="glow-on-hover btn-join" onclick="openRegistration('৪vs৪ ক্ল্যাশ', 50, 'solo')">🎮 সোলো</button>
                     <button class="glow-on-hover btn-join" onclick="openRegistration('৪vs৪ ক্ল্যাশ', 50, 'duo')">👥 ডুও</button>
@@ -1225,11 +1427,11 @@
                 <div class="reg-names" id="list-CS4vs4">👥 নিবন্ধিত: লোড হচ্ছে...</div>
             </div>
             
-            <!-- ম্যাচ 5: ২vs২ কাস্টম -->
+            <!-- ম্যাচ 5: ২vs২ কাস্টম (ছবি: nqdgm6jw) -->
             <div class="match-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <span style="font-size: 50px;">⚡</span>
+                        <img src="https://i.ibb.co.com/nqdgm6jw/free-fire-735x400.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="২vs২">
                         <div>
                             <div class="match-title">২vs২ কাস্টম #<span id="match5Number">01</span></div>
                             <span class="live-badge" id="live-CS2vs2">🔴 লাইভ</span>
@@ -1239,7 +1441,7 @@
                 </div>
                 
                 <span class="per-kill">🏆 জয়ী: ৩৫০ টাকা</span>
-                <p style="color: #FFD700;">💰 এন্ট্রি: ১০০ টাকা/জন</p>
+                <p style="color: var(--accent-color);">💰 এন্ট্রি: ১০০ টাকা/জন</p>
                 
                 <table class="prize-table">
                     <tr><td>🥇 ১ম (আলাদা)</td><td>১৭৫ টাকা/জন</td></tr>
@@ -1247,7 +1449,7 @@
                     <tr><td style="color: #00ffcc;">🎮 স্লট</td><td id="slot-CS2vs2">০/৪ টিম</td></tr>
                 </table>
                 
-                <button class="glow-on-hover btn-details" style="background: #555;" onclick="showMatchDetails('২vs২ কাস্টম')">📋 ম্যাচ ডিটেইলস</button>
+                <button class="btn-details" onclick="showMatchDetails('২vs২ কাস্টম')">📋 ম্যাচ ডিটেইলস</button>
                 <div style="display: flex; gap: 10px; margin-top: 10px;">
                     <button class="glow-on-hover btn-join" onclick="openRegistration('২vs২ কাস্টম', 100, 'solo')">🎮 সোলো</button>
                     <button class="glow-on-hover btn-join" onclick="openRegistration('২vs২ কাস্টম', 100, 'duo')">👥 ডুও</button>
@@ -1256,11 +1458,11 @@
                 <div class="reg-names" id="list-CS2vs2">👥 নিবন্ধিত: লোড হচ্ছে...</div>
             </div>
             
-            <!-- ম্যাচ 6: ১vs১ কাস্টম -->
+            <!-- ম্যাচ 6: ১vs১ নকআউট (ছবি: JW1Qh62T) -->
             <div class="match-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <span style="font-size: 50px;">🥊</span>
+                        <img src="https://i.ibb.co.com/JW1Qh62T/screenshot.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="১vs১">
                         <div>
                             <div class="match-title">১ VS ১ নকআউট</div>
                             <span style="color: #ff4444; font-size: 14px;">IT'S TIME TO KNOCKOUT</span>
@@ -1270,24 +1472,24 @@
                 </div>
                 
                 <span class="per-kill">🏆 জয়ী: ৩৬০ টাকা</span>
-                <p style="color: #FFD700;">💰 এন্ট্রি: ২০০ টাকা</p>
+                <p style="color: var(--accent-color);">💰 এন্ট্রি: ২০০ টাকা</p>
                 
                 <table class="prize-table">
                     <tr><td>🥇 ১ম স্থান</td><td>৩৬০ টাকা</td></tr>
                     <tr><td style="color: #00ffcc;">🎮 স্লট</td><td id="slot-CS1vs1">০/২</td></tr>
                 </table>
                 
-                <button class="glow-on-hover btn-details" style="background: #555;" onclick="showMatchDetails('১vs১ কাস্টম')">📋 ম্যাচ ডিটেইলস</button>
-                <button class="glow-on-hover btn-join" onclick="openRegistration('১vs১ কাস্টম', 200, 'solo')">⚔️ জয়েন করুন</button>
+                <button class="btn-details" onclick="showMatchDetails('১vs১ নকআউট')">📋 ম্যাচ ডিটেইলস</button>
+                <button class="glow-on-hover btn-join" onclick="openRegistration('১vs১ নকআউট', 200, 'solo')">⚔️ জয়েন করুন</button>
                 
                 <div class="reg-names" id="list-CS1vs1">👥 নিবন্ধিত: লোড হচ্ছে...</div>
             </div>
             
-            <!-- ম্যাচ 7: ফ্রি সোলো -->
+            <!-- ম্যাচ 7: ফ্রি সোলো (ছবি: jPbw04PT) -->
             <div class="match-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <span style="font-size: 50px;">🎁</span>
+                        <img src="https://i.ibb.co.com/jPbw04PT/wp12125274.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="ফ্রি">
                         <div>
                             <div class="match-title">ফ্রি সোলো #<span id="match7Number">01</span></div>
                             <span class="live-badge" style="background: #4CAF50;" id="live-FreeSolo">🟢 ফ্রি</span>
@@ -1296,7 +1498,7 @@
                     <span class="timer" id="timer-FreeSolo">⏰ রাত ১০:০০</span>
                 </div>
                 
-                <p style="color: #FFD700;">💰 প্রাইজ পুল: ১২৫ টাকা</p>
+                <p style="color: var(--accent-color);">💰 প্রাইজ পুল: ১২৫ টাকা</p>
                 
                 <table class="prize-table">
                     <tr><td>🥇 ১ম</td><td>৪০ টাকা</td></tr>
@@ -1308,7 +1510,7 @@
                     <tr><td style="color: #00ffcc;">🎮 স্লট</td><td id="slot-FreeSolo">০/৪৮</td></tr>
                 </table>
                 
-                <button class="glow-on-hover btn-details" style="background: #555;" onclick="showMatchDetails('ফ্রি সোলো')">📋 ম্যাচ ডিটেইলস</button>
+                <button class="btn-details" onclick="showMatchDetails('ফ্রি সোলো')">📋 ম্যাচ ডিটেইলস</button>
                 <button class="glow-on-hover btn-join" onclick="openRegistration('ফ্রি সোলো', 0, 'solo')">🎁 জয়েন করুন</button>
                 
                 <div class="reg-names" id="list-FreeSolo">👥 নিবন্ধিত: লোড হচ্ছে...</div>
@@ -1318,9 +1520,12 @@
         <!-- ========== রেজিস্ট্রেশন ========== -->
         <div id="register-page" class="section">
             <button class="glow-on-hover btn-join" onclick="showSection('home')">⬅ ব্যাক</button>
-            <h2 id="reg-title" style="color: #FFD700; margin: 25px 0; text-align: center;">📝 রেজিস্ট্রেশন</h2>
+            <h2 id="reg-title" style="color: var(--accent-color); margin: 25px 0; text-align: center;">📝 রেজিস্ট্রেশন</h2>
             
-            <div class="notice">⚠️ কাস্টম ম্যাচে অবৈধ আইটেম ব্যবহার নিষেধ</div>
+            <!-- এখানে ম্যাচ স্পেসিফিক নোটিশ দেখাবে -->
+            <div id="matchNoticeContainer" class="registration-notice">
+                ⚠️ কাস্টম ম্যাচে অবৈধ আইটেম ব্যবহার নিষেধ
+            </div>
             
             <select id="reg-mode" class="glow-on-hover btn-join" style="background: rgba(0,0,0,0.8);" onchange="updateRegForm()">
                 <option value="solo">🎮 সোলো (১ জন)</option>
@@ -1328,8 +1533,8 @@
                 <option value="squad">👥 স্কোয়াড (৪ জন)</option>
             </select>
             
-            <div style="background: rgba(0,0,0,0.6); padding: 25px; border-radius: 25px; margin: 25px 0; border: 2px solid #FFD700; text-align: center;">
-                <p style="color: #FFD700;">💰 পরিশোধ করতে হবে</p>
+            <div style="background: rgba(0,0,0,0.6); padding: 25px; border-radius: 25px; margin: 25px 0; border: 2px solid var(--accent-color); text-align: center;">
+                <p style="color: var(--accent-color);">💰 পরিশোধ করতে হবে</p>
                 <p style="color: #00ffcc; font-size: 48px; font-weight: 800;" id="fee-display">0</p>
                 <p style="color: #aaa;">টাকা</p>
             </div>
@@ -1340,37 +1545,34 @@
         
         <!-- ========== র‍্যাঙ্ক ========== -->
         <div id="leaderboard" class="section">
-            <div style="background: rgba(25,30,45,0.85); border: 2px solid #FFD700; border-radius: 35px; padding: 25px;">
-                <h2 style="color: #FFD700; margin-bottom: 25px; text-align: center;">🏆 টপ প্লেয়ার</h2>
-                <table class="prize-table" id="leaderboard-table">
-                    <tr style="background: rgba(255,215,0,0.2);"><td>র‍্যাঙ্ক</td><td>নাম</td><td>জয়</td></tr>
-                </table>
+            <div style="background: var(--card-bg); border: 2px solid var(--accent-color); border-radius: 35px; padding: 25px;">
+                <h2 style="color: var(--accent-color); margin-bottom: 25px; text-align: center;">🏆 টপ প্লেয়ার (উইনিং টাকা)</h2>
+                <div id="leaderboard-list" style="max-height: 400px; overflow-y: auto;"></div>
             </div>
         </div>
         
         <!-- ========== ডিপোজিট ========== -->
         <div id="deposit" class="section">
-            <div style="background: rgba(25,30,45,0.85); border: 2px solid #2196F3; border-radius: 35px; padding: 25px;">
+            <div style="background: var(--card-bg); border: 2px solid #2196F3; border-radius: 35px; padding: 25px;">
                 <h2 style="color: #2196F3; margin-bottom: 25px; text-align: center;">💰 ডিপোজিট</h2>
                 
                 <div style="background: rgba(33,150,243,0.1); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 2px solid #2196F3;">
-                    <p style="color: #FFD700;">🏦 ব্যক্তিগত অ্যাকাউন্ট (Send Money)</p>
+                    <p style="color: var(--accent-color);">🏦 ব্যক্তিগত অ্যাকাউন্ট</p>
                     <div style="display: flex; align-items: center; justify-content: space-between; margin: 15px 0;">
-                        <span style="font-size: 20px;">📱 বিকাশ:</span>
-                        <span style="color: #00ffcc; font-size: 20px; font-weight: bold;" id="bkashDisplay">01910658737</span>
+                        <span>📱 বিকাশ:</span>
+                        <span style="color: #00ffcc; font-weight: bold;" id="bkashDisplay">01910658737</span>
                         <button class="copy-btn" onclick="copyText('bkashDisplay')">📋 কপি</button>
                     </div>
                     <div style="display: flex; align-items: center; justify-content: space-between; margin: 15px 0;">
-                        <span style="font-size: 20px;">📲 নগদ:</span>
-                        <span style="color: #00ffcc; font-size: 20px; font-weight: bold;" id="nagadDisplay">01910658737</span>
+                        <span>📲 নগদ:</span>
+                        <span style="color: #00ffcc; font-weight: bold;" id="nagadDisplay">01910658737</span>
                         <button class="copy-btn" onclick="copyText('nagadDisplay')">📋 কপি</button>
                     </div>
                     <div style="display: flex; align-items: center; justify-content: space-between; margin: 15px 0;">
-                        <span style="font-size: 20px;">💎 USDT (TRC20):</span>
-                        <span style="color: #00ffcc; font-size: 14px; font-weight: bold; word-break: break-all;" id="usdtDisplay">0x75435FFD8C71423Bff36224bF656e4E137Ca90ea</span>
+                        <span>💎 USDT:</span>
+                        <span style="color: #00ffcc; font-size: 12px; word-break: break-all;" id="usdtDisplay">0x75435FFD8C71423Bff36224bF656e4E137Ca90ea</span>
                         <button class="copy-btn" onclick="copyText('usdtDisplay')">📋 কপি</button>
                     </div>
-                    <p style="color: #FF9800; margin-top: 10px;">⚠️ Send Money করে ট্রানজেকশন আইডি দিন। বিকাশ/নগদে ৫ টাকা চার্জ প্রযোজ্য।</p>
                 </div>
                 
                 <select id="depositMethod" class="glow-on-hover btn-join" style="background: rgba(0,0,0,0.8);">
@@ -1384,31 +1586,28 @@
                 <input type="text" id="dep-trx" placeholder="🔢 ট্রানজেকশন আইডি">
                 
                 <button class="glow-on-hover btn-join" onclick="submitDeposit()">✅ ডিপোজিট রিকোয়েস্ট</button>
-                <p style="color: #aaa; text-align: center; margin-top: 15px;">⏰ ৩০ মিনিটের মধ্যে কনফার্ম</p>
             </div>
         </div>
         
         <!-- ========== উইথড্র ========== -->
         <div id="withdraw" class="section">
-            <div style="background: rgba(25,30,45,0.85); border: 2px solid #4CAF50; border-radius: 35px; padding: 25px;">
+            <div style="background: var(--card-bg); border: 2px solid #4CAF50; border-radius: 35px; padding: 25px;">
                 <h2 style="color: #4CAF50; margin-bottom: 25px; text-align: center;">💳 উইথড্র</h2>
                 
                 <div style="background: rgba(76,175,80,0.1); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 2px solid #4CAF50;">
-                    <p style="color: #FFD700;">📌 উত্তোলন লিমিট ও চার্জ</p>
+                    <p style="color: var(--accent-color);">📌 উত্তোলন লিমিট ও চার্জ</p>
                     <p style="font-size: 18px; margin: 12px 0;">💳 বিকাশ/নগদ: ৫০-১০০০ টাকা</p>
                     <p style="font-size: 18px; margin: 12px 0;">💎 USDT: ১৫০-১০০০ টাকা</p>
-                    <p style="font-size: 18px; margin: 12px 0; color: #FF9800;">⚡ উইথড্র চার্জ: ৫ টাকা (Send Money ফি)</p>
-                    <p style="font-size: 14px; color: #aaa;">নোট: প্রতিটি উইথড্র রিকোয়েস্টে ৫ টাকা চার্জ কাটা হবে</p>
+                    <p style="font-size: 18px; margin: 12px 0; color: #FF9800;">⚡ চার্জ: ৫ টাকা</p>
                 </div>
                 
                 <!-- উইথড্র পিন সেটিংস -->
                 <div class="pin-settings">
-                    <p style="color: #FFD700; margin-bottom: 15px;">🔐 উইথড্র পিন সেটিংস</p>
-                    <input type="password" id="current-pin" placeholder="বর্তমান পিন (ডিফল্ট: 1234)">
+                    <p style="color: var(--accent-color); margin-bottom: 15px;">🔐 উইথড্র পিন</p>
+                    <input type="password" id="current-pin" placeholder="বর্তমান পিন (1234)" value="1234">
                     <input type="password" id="new-pin" placeholder="নতুন পিন (৪ ডিজিট)">
                     <input type="password" id="confirm-pin" placeholder="নতুন পিন আবার দিন">
-                    <button class="glow-on-hover btn-join" style="background: #FF9800;" onclick="changeWithdrawPin()">🔄 পিন পরিবর্তন করুন</button>
-                    <p style="color: #aaa; font-size: 12px; margin-top: 10px;">নতুন পিন মনে রাখবেন। পিন ভুলে গেলে অ্যাডমিনের সাথে যোগাযোগ করুন।</p>
+                    <button class="glow-on-hover btn-join" style="background: #FF9800;" onclick="changeWithdrawPin()">🔄 পিন পরিবর্তন</button>
                 </div>
                 
                 <select id="withdrawMethod" class="glow-on-hover btn-join" style="background: rgba(0,0,0,0.8);">
@@ -1418,7 +1617,7 @@
                 </select>
                 
                 <input type="number" id="wit-amount" placeholder="💰 পরিমাণ">
-                <input type="text" id="wit-phone" placeholder="📱 রিসিভার নম্বর/ওয়ালেট">
+                <input type="text" id="wit-phone" placeholder="📱 রিসিভার নম্বর">
                 <input type="password" id="wit-pin" placeholder="🔑 উইথড্র পিন">
                 
                 <button class="glow-on-hover btn-join" onclick="submitWithdraw()">💳 উইথড্র রিকোয়েস্ট</button>
@@ -1430,16 +1629,16 @@
             <div class="profile-card">
                 <div style="position: relative; display: inline-block;">
                     <img id="profileAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23FFD700'/%3E%3Ctext x='50' y='70' font-size='50' text-anchor='middle' fill='black'%3E👤%3C/text%3E%3C/svg%3E" class="profile-avatar">
-                    <div style="position: absolute; bottom: 0; right: 0; background: #FFD700; color: black; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; border: 3px solid white;" onclick="document.getElementById('photoInput').click()">✏️</div>
+                    <div style="position: absolute; bottom: 0; right: 0; background: var(--accent-color); color: black; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 20px; border: 3px solid white;" onclick="document.getElementById('photoInput').click()">✏️</div>
                 </div>
                 
                 <!-- গুগল ফটোস -->
                 <div class="photo-upload" onclick="document.getElementById('photoInput').click()">
                     <input type="file" id="photoInput" accept="image/*" onchange="changeProfilePhoto(event)">
-                    📸 গুগল ফটোস / ক্যামেরা / গ্যালারি থেকে ছবি নির্বাচন করুন
+                    📸 ছবি নির্বাচন করুন
                 </div>
                 
-                <h3 id="prof-name" style="color: #FFD700; font-size: 26px; margin: 20px 0;">TNM MASUD</h3>
+                <h3 id="prof-name" style="color: var(--accent-color); font-size: 26px; margin: 20px 0;">TNM MASUD</h3>
                 <p id="prof-phone" style="color: #aaa; font-size: 18px;">📱 01910658737</p>
                 
                 <div style="display: grid; grid-template-columns: repeat(2,1fr); gap: 20px; margin: 30px 0;">
@@ -1453,11 +1652,23 @@
                     </div>
                 </div>
                 
-                <h3 style="color: #FFD700; font-size: 22px; margin-bottom: 20px;">📜 লেনদেন হিস্ট্রি</h3>
-                <div id="transaction-history" style="max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.5); border-radius: 20px; padding: 15px;"></div>
+                <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin: 20px 0;">
+                    <div class="balance-box" style="padding: 10px;">
+                        <p style="color: #00d2ff; font-size: 20px; font-weight: bold;" id="prof-matches">0</p>
+                        <p>🎮 ম্যাচ</p>
+                    </div>
+                    <div class="balance-box" style="padding: 10px;">
+                        <p style="color: #ff4444; font-size: 20px; font-weight: bold;" id="prof-kills">0</p>
+                        <p>🔫 কিল</p>
+                    </div>
+                    <div class="balance-box" style="padding: 10px;">
+                        <p style="color: #38ef7d; font-size: 20px; font-weight: bold;" id="prof-earnings">0</p>
+                        <p>💰 আয়</p>
+                    </div>
+                </div>
                 
-                <h3 style="color: #FFD700; font-size: 22px; margin: 30px 0 20px;">🏆 ম্যাচ হিস্ট্রি</h3>
-                <div id="match-winnings" style="max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.5); border-radius: 20px; padding: 15px;"></div>
+                <h3 style="color: var(--accent-color); font-size: 22px; margin-bottom: 20px;">📜 ইতিহাস</h3>
+                <div id="transaction-history" style="max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.5); border-radius: 20px; padding: 15px;"></div>
                 
                 <button class="glow-on-hover btn-join" onclick="logoutUser()" style="background: linear-gradient(45deg, #ff4444, #ff2222);">🚪 লগআউট</button>
             </div>
@@ -1465,14 +1676,45 @@
         
         <!-- ========== সাপোর্ট ========== -->
         <div id="support" class="section">
-            <div style="background: rgba(25,30,45,0.85); border: 2px solid #FFD700; border-radius: 35px; padding: 25px;">
-                <h2 style="color: #FFD700; margin-bottom: 25px; text-align: center;">📞 সাপোর্ট</h2>
+            <div style="background: var(--card-bg); border: 2px solid var(--accent-color); border-radius: 35px; padding: 25px;">
+                <h2 style="color: var(--accent-color); margin-bottom: 25px; text-align: center;">📞 সাপোর্ট</h2>
                 
-                <!-- ডায়নামিক সাপোর্ট লিংক লোড হবে -->
-                <div id="support-links-container"></div>
+                <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,152,0,0.1); border-radius: 20px; border: 1px solid #FF9800;">
+                    <p style="color: #FF9800; font-weight: bold;">⚠️ গুরুত্বপূর্ণ নোটিশ</p>
+                    <p style="color: white;" id="support-notice">উইথড্র চার্জ: ৫ টাকা</p>
+                </div>
+                
+                <!-- ডিফল্ট সাপোর্ট লিংক -->
+                <a href="mailto:talkingmasud5511@gmail.com" class="support-link" id="support-email-link">
+                    <div style="background: #EA4335; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">📧</div>
+                    <div><p style="color: var(--accent-color);">ইমেইল</p><p style="color: #00ffcc;" id="support-email">talkingmasud5511@gmail.com</p></div>
+                </a>
+                
+                <a href="https://wa.me/8801910658737" class="support-link" id="support-whatsapp-link">
+                    <div style="background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">📱</div>
+                    <div><p style="color: var(--accent-color);">WhatsApp</p><p style="color: #00ffcc;" id="support-whatsapp">01910658737</p></div>
+                </a>
+                
+                <a href="https://chat.whatsapp.com/JvfihxThqMoLVFHLv9TVME" class="support-link" id="support-whatsapp-group-link">
+                    <div style="background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">👥</div>
+                    <div><p style="color: var(--accent-color);">WhatsApp গ্রুপ</p><p style="color: #00ffcc;" id="support-whatsapp-group">জয়েন করুন</p></div>
+                </a>
+                
+                <a href="https://t.me/+XF_oEofeAeEwMDI9" class="support-link" id="support-telegram-link">
+                    <div style="background: #0088cc; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">✈️</div>
+                    <div><p style="color: var(--accent-color);">Telegram</p><p style="color: #00ffcc;" id="support-telegram">জয়েন করুন</p></div>
+                </a>
+                
+                <a href="https://youtube.com/@tnmriyad" class="support-link" id="support-youtube-link">
+                    <div style="background: #FF0000; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">▶️</div>
+                    <div><p style="color: var(--accent-color);">YouTube</p><p style="color: #00ffcc;" id="support-youtube">সাবস্ক্রাইব</p></div>
+                </a>
+                
+                <!-- ডায়নামিক সাপোর্ট লিংক -->
+                <div id="dynamic-support-links"></div>
                 
                 <div style="margin-top: 30px;">
-                    <h3 style="color: #FFD700; margin-bottom: 20px;">🔫 কিল বোনাস</h3>
+                    <h3 style="color: var(--accent-color); margin-bottom: 20px;">🔫 কিল বোনাস</h3>
                     <div style="display: grid; grid-template-columns: repeat(2,1fr); gap: 15px;">
                         <div style="background: rgba(76,175,80,0.1); padding: 15px; border-radius: 15px; text-align: center; border: 1px solid #4CAF50;">
                             <p style="color: #4CAF50; font-size: 24px; font-weight: bold;">৫ টাকা</p>
@@ -1498,12 +1740,12 @@
         
         <!-- ========== রুম মডাল ========== -->
         <div id="roomModal" class="room-modal">
-            <h3 style="color: #FFD700; font-size: 28px; margin-bottom: 25px; text-align: center;">🎮 রুম ইনফরমেশন</h3>
-            <div style="background: rgba(255,215,0,0.2); padding: 30px; border-radius: 25px; margin: 20px 0; border: 2px solid #FFD700;">
+            <h3 style="color: var(--accent-color); font-size: 28px; margin-bottom: 25px; text-align: center;">🎮 রুম ইনফরমেশন</h3>
+            <div style="background: rgba(255,215,0,0.2); padding: 30px; border-radius: 25px; margin: 20px 0; border: 2px solid var(--accent-color);">
                 <p style="color: #00ffcc; font-size: 30px; text-align: center; font-weight: 800;">🆔 <span id="roomIdDisplay">123456</span></p>
                 <p style="color: #00ffcc; font-size: 30px; text-align: center; font-weight: 800;">🔑 <span id="roomPassDisplay">123456</span></p>
             </div>
-            <button onclick="closeRoomModal()" class="glow-on-hover btn-join" style="background: linear-gradient(45deg, #FFD700, #FFA500); color: black;">✅ ঠিক আছে</button>
+            <button onclick="closeRoomModal()" class="glow-on-hover btn-join" style="background: linear-gradient(45deg, var(--accent-color), #FFA500); color: black;">✅ ঠিক আছে</button>
         </div>
         
         <!-- নেভিগেশন -->
@@ -1528,85 +1770,113 @@
         };
         
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
         const db = firebase.database();
         
         // ========== গ্লোবাল ==========
         let currentUser = null;
         let baseFee = 0;
         let withdrawPin = localStorage.getItem('withdrawPin') || '1234';
+        let currentMatchForRegistration = '';
         
         // ========== এনিমেশন কন্ট্রোল ভেরিয়েবল ==========
         let rainEnabled = true;
         let starsEnabled = true;
         let touchEnabled = true;
+        let animationSpeed = 'normal';
+        let animationSize = 'medium';
         
-        // ========== এনিমেশন ফাংশন ==========
+        // ========== নোটিশ স্টেট ==========
+        let noticeMinimized = false;
+        
+        // ========== নোটিশ ফাংশন ==========
+        function minimizeNotice() {
+            document.getElementById('mainNotice').style.display = 'none';
+            document.getElementById('minimizedNotice').classList.add('active');
+            noticeMinimized = true;
+            localStorage.setItem('noticeMinimized', 'true');
+        }
+        
+        function expandNotice() {
+            document.getElementById('mainNotice').style.display = 'block';
+            document.getElementById('minimizedNotice').classList.remove('active');
+            noticeMinimized = false;
+            localStorage.setItem('noticeMinimized', 'false');
+        }
+        
+        // ========== এনিমেশন ফাংশন (স্পিড ও সাইজ কন্ট্রোল সহ) ==========
         function createRain() {
             const c = document.getElementById('rainContainer');
-            if(!c || !rainEnabled) {
-                if(c) c.innerHTML = '';
-                return;
-            }
+            if(!c || !rainEnabled) { if(c) c.innerHTML = ''; return; }
             c.innerHTML = '';
-            for(let i=0;i<30;i++) { 
+            
+            let speedMultiplier = 1;
+            if (animationSpeed === 'slow') speedMultiplier = 2;
+            else if (animationSpeed === 'fast') speedMultiplier = 0.6;
+            
+            let sizeMultiplier = 1;
+            if (animationSize === 'small') sizeMultiplier = 0.7;
+            else if (animationSize === 'large') sizeMultiplier = 1.5;
+            
+            let count = animationSize === 'small' ? 20 : animationSize === 'large' ? 40 : 30;
+            
+            for(let i=0; i<count; i++) { 
                 let r = document.createElement('div'); 
                 r.className = 'rain-drop'; 
                 r.style.left = Math.random()*100+'%'; 
-                r.style.animationDuration = Math.random()*1+0.5+'s'; 
+                r.style.animationDuration = (Math.random()*1.5 + 0.5) * speedMultiplier + 's';
+                r.style.width = (2 * sizeMultiplier) + 'px';
+                r.style.height = (20 * sizeMultiplier) + 'px';
                 c.appendChild(r); 
             }
         }
         
-        function clearRain() {
-            const c = document.getElementById('rainContainer');
-            if(c) c.innerHTML = '';
-        }
+        function clearRain() { const c = document.getElementById('rainContainer'); if(c) c.innerHTML = ''; }
         
         function createStars() {
             const starField = document.getElementById('starField');
-            if(!starField || !starsEnabled) {
-                if(starField) starField.innerHTML = '';
-                return;
-            }
+            if(!starField || !starsEnabled) { if(starField) starField.innerHTML = ''; return; }
             starField.innerHTML = '';
             
-            for(let i = 0; i < 30; i++) {
+            let speedMultiplier = 1;
+            if (animationSpeed === 'slow') speedMultiplier = 2;
+            else if (animationSpeed === 'fast') speedMultiplier = 0.6;
+            
+            let sizeMultiplier = 1;
+            if (animationSize === 'small') sizeMultiplier = 0.7;
+            else if (animationSize === 'large') sizeMultiplier = 1.5;
+            
+            let count = animationSize === 'small' ? 15 : animationSize === 'large' ? 30 : 20;
+            
+            for(let i=0; i<count; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 5 + 's';
-                star.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                star.style.left = Math.random()*100+'%';
+                star.style.animationDelay = Math.random()*5+'s';
+                star.style.animationDuration = (Math.random()*3+3) * speedMultiplier + 's';
+                star.style.width = (12 * sizeMultiplier) + 'px';
+                star.style.height = (12 * sizeMultiplier) + 'px';
                 starField.appendChild(star);
             }
         }
         
-        function clearStars() {
-            const starField = document.getElementById('starField');
-            if(starField) starField.innerHTML = '';
-        }
+        function clearStars() { const starField = document.getElementById('starField'); if(starField) starField.innerHTML = ''; }
         
-        function createShootingStars() {
-            setInterval(() => {
-                if(!starsEnabled) return;
-                if(Math.random()>0.7) {
-                    let s = document.createElement('div');
-                    s.className = 'shooting-star';
-                    s.style.left = Math.random()*window.innerWidth+'px';
-                    s.style.top = Math.random()*window.innerHeight*0.3+'px';
-                    s.style.setProperty('--moveX', (Math.random()-0.5)*300+'px');
-                    s.style.setProperty('--moveY', Math.random()*300+100+'px');
-                    document.body.appendChild(s);
-                    setTimeout(()=>s.remove(),1500);
-                }
-            },500);
-        }
-        
+        // টাচ এনিমেশন ফিরিয়ে দেওয়া হয়েছে
         document.addEventListener('touchstart', e => {
             if(!touchEnabled) return;
             for(let i=0; i<Math.min(e.touches.length,3); i++) {
                 let t = e.touches[i], s = document.createElement('div');
-                s.className = 'touch-star'; s.style.left = t.clientX+'px'; s.style.top = t.clientY+'px';
-                document.body.appendChild(s); setTimeout(()=>s.remove(),800);
+                s.className = 'touch-star'; s.style.left = t.clientX-15+'px'; s.style.top = t.clientY-15+'px';
+                
+                let sizeMultiplier = 1;
+                if (animationSize === 'small') sizeMultiplier = 0.7;
+                else if (animationSize === 'large') sizeMultiplier = 1.5;
+                s.style.width = (30 * sizeMultiplier) + 'px';
+                s.style.height = (30 * sizeMultiplier) + 'px';
+                
+                document.body.appendChild(s); 
+                setTimeout(()=>s.remove(), 800 * (animationSpeed === 'slow' ? 1.5 : animationSpeed === 'fast' ? 0.6 : 1));
             }
         }, {passive:true});
         
@@ -1614,8 +1884,16 @@
             if(!touchEnabled) return;
             for(let i=0; i<Math.min(e.touches.length,2); i++) {
                 let t = e.touches[i], s = document.createElement('div');
-                s.className = 'touch-star'; s.style.left = t.clientX+'px'; s.style.top = t.clientY+'px';
-                document.body.appendChild(s); setTimeout(()=>s.remove(),600);
+                s.className = 'touch-star'; s.style.left = t.clientX-15+'px'; s.style.top = t.clientY-15+'px';
+                
+                let sizeMultiplier = 1;
+                if (animationSize === 'small') sizeMultiplier = 0.7;
+                else if (animationSize === 'large') sizeMultiplier = 1.5;
+                s.style.width = (30 * sizeMultiplier) + 'px';
+                s.style.height = (30 * sizeMultiplier) + 'px';
+                
+                document.body.appendChild(s); 
+                setTimeout(()=>s.remove(), 600 * (animationSpeed === 'slow' ? 1.5 : animationSpeed === 'fast' ? 0.6 : 1));
             }
         }, {passive:true});
         
@@ -1641,44 +1919,154 @@
             localStorage.setItem('touchEnabled', touchEnabled);
         }
         
-        function selectTheme(theme) {
-            document.querySelectorAll('.theme-option').forEach(opt => opt.classList.remove('active'));
-            document.getElementById('theme-' + theme).classList.add('active');
-            localStorage.setItem('selectedTheme', theme);
+        // নতুন: স্পিড কন্ট্রোল
+        function setAnimationSpeed(speed) {
+            animationSpeed = speed;
+            document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
+            document.getElementById('speed-' + speed).classList.add('active');
+            localStorage.setItem('animationSpeed', speed);
+            if(rainEnabled) createRain();
+            if(starsEnabled) createStars();
         }
         
-        function applyTheme() {
-            let theme = localStorage.getItem('selectedTheme') || 'default';
-            let header = document.getElementById('main-header');
+        // নতুন: সাইজ কন্ট্রোল
+        function setAnimationSize(size) {
+            animationSize = size;
+            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
+            document.getElementById('size-' + size).classList.add('active');
+            localStorage.setItem('animationSize', size);
+            if(rainEnabled) createRain();
+            if(starsEnabled) createStars();
+        }
+        
+        // ========== থিম কন্ট্রোল (পুরো সাইটের জন্য) ==========
+        function applyPresetTheme(theme) {
+            const root = document.documentElement;
             
-            switch(theme) {
-                case 'default':
-                    header.style.background = 'linear-gradient(135deg, #FF416C, #FF4B2B)';
-                    break;
-                case 'dark':
-                    header.style.background = 'linear-gradient(135deg, #1a1e2c, #0a0f1a)';
-                    break;
-                case 'neon':
-                    header.style.background = 'linear-gradient(135deg, #00ff9d, #00b8ff)';
-                    break;
-                case 'royal':
-                    header.style.background = 'linear-gradient(135deg, #8E2DE2, #4A00E0)';
-                    break;
-            }
+            const themes = {
+                default: { primary: '#FF416C', secondary: '#FF4B2B', accent: '#FFD700', bgStart: '#1a0f1f', bgEnd: '#0a0612' },
+                dark: { primary: '#1a1e2c', secondary: '#0a0f1a', accent: '#ffda44', bgStart: '#000000', bgEnd: '#121212' },
+                neon: { primary: '#00ff9d', secondary: '#00b8ff', accent: '#ff00ff', bgStart: '#0a0f1e', bgEnd: '#1a1e2c' },
+                royal: { primary: '#8E2DE2', secondary: '#4A00E0', accent: '#FFD700', bgStart: '#1a0f2a', bgEnd: '#2a1a3a' },
+                ocean: { primary: '#00c6fb', secondary: '#005bea', accent: '#00FFFF', bgStart: '#0a1a2a', bgEnd: '#1a2a3a' },
+                forest: { primary: '#11998e', secondary: '#38ef7d', accent: '#FFD700', bgStart: '#0a1a0a', bgEnd: '#1a2a1a' }
+            };
+            
+            let t = themes[theme];
+            
+            root.style.setProperty('--primary-color', t.primary);
+            root.style.setProperty('--secondary-color', t.secondary);
+            root.style.setProperty('--accent-color', t.accent);
+            root.style.setProperty('--bg-start', t.bgStart);
+            root.style.setProperty('--bg-end', t.bgEnd);
+            
+            // কালার পিকার আপডেট
+            document.getElementById('primary-color').value = t.primary;
+            document.getElementById('secondary-color').value = t.secondary;
+            document.getElementById('accent-color').value = t.accent;
+            document.getElementById('bg-start').value = t.bgStart;
+            document.getElementById('bg-end').value = t.bgEnd;
+            
+            localStorage.setItem('theme', theme);
             toggleSettingsPanel();
         }
         
         function applyCustomColors() {
+            const root = document.documentElement;
+            
             let primary = document.getElementById('primary-color').value;
             let secondary = document.getElementById('secondary-color').value;
             let accent = document.getElementById('accent-color').value;
-            let bg = document.getElementById('bg-color').value;
+            let bgStart = document.getElementById('bg-start').value;
+            let bgEnd = document.getElementById('bg-end').value;
             
-            document.getElementById('main-header').style.background = `linear-gradient(135deg, ${primary}, ${secondary})`;
-            document.body.style.background = `radial-gradient(circle at 20% 30%, ${bg}, #0a0612)`;
+            root.style.setProperty('--primary-color', primary);
+            root.style.setProperty('--secondary-color', secondary);
+            root.style.setProperty('--accent-color', accent);
+            root.style.setProperty('--bg-start', bgStart);
+            root.style.setProperty('--bg-end', bgEnd);
             
-            localStorage.setItem('customColors', JSON.stringify({primary, secondary, accent, bg}));
+            localStorage.setItem('customColors', JSON.stringify({primary, secondary, accent, bgStart, bgEnd}));
             toggleSettingsPanel();
+        }
+        
+        function selectTheme(theme) {
+            // পুরনো ফাংশন, নতুন ফাংশন applyPresetTheme ব্যবহার করুন
+            applyPresetTheme(theme);
+        }
+        
+        // ========== হেডার কন্ট্রোল (অ্যাডমিন থেকে) ==========
+        function loadHeaderSettings() {
+            db.ref('settings/header').on('value', snap => {
+                let h = snap.val();
+                if(h) {
+                    document.getElementById('header-title').innerText = h.title || '🎮 TNM RIYAD 2026';
+                    document.getElementById('header-subtitle').innerText = h.subtitle || '🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট';
+                }
+            });
+        }
+        
+        function loadAppDownloadLink() {
+            db.ref('settings/app_download').on('value', snap => {
+                document.getElementById('app-download-link').href = snap.val() || 'https://www.mediafire.com/file/qcnpve9mykukmfo/TNM_FF.apk/file';
+            });
+        }
+        
+        // ========== নোটিশ লোড ==========
+        function loadMainNotice() {
+            db.ref('notices/Main').on('value', snap => {
+                let n = snap.val();
+                document.getElementById('mainNotice').innerHTML = '📢 ' + (n || 'স্বাগতম! সব ম্যাচ চালু আছে।') + ' <span class="notice-got-it" onclick="event.stopPropagation(); minimizeNotice()">Got it</span>';
+            });
+        }
+        
+        function loadSupportNotice() {
+            db.ref('notices/Support').on('value', snap => {
+                document.getElementById('support-notice').innerHTML = snap.val() || 'উইথড্র চার্জ: ৫ টাকা';
+            });
+        }
+        
+        // ========== সাপোর্ট লোড ==========
+        function loadSupportLinks() {
+            db.ref('default_support').on('value', snap => {
+                let s = snap.val() || {};
+                if(s.email) {
+                    document.getElementById('support-email').innerText = s.email;
+                    document.getElementById('support-email-link').href = 'mailto:' + s.email;
+                }
+                if(s.whatsapp) {
+                    document.getElementById('support-whatsapp').innerText = s.whatsapp;
+                    document.getElementById('support-whatsapp-link').href = 'https://wa.me/' + s.whatsapp.replace(/[^0-9]/g, '');
+                }
+                if(s.whatsappGroup) {
+                    document.getElementById('support-whatsapp-group').innerText = s.whatsappGroup;
+                    document.getElementById('support-whatsapp-group-link').href = s.whatsappGroup;
+                }
+                if(s.telegram) {
+                    document.getElementById('support-telegram').innerText = s.telegram;
+                    document.getElementById('support-telegram-link').href = s.telegram;
+                }
+                if(s.youtube) {
+                    document.getElementById('support-youtube').innerText = s.youtube;
+                    document.getElementById('support-youtube-link').href = s.youtube;
+                }
+            });
+            
+            db.ref('supports').on('value', snap => {
+                let supports = snap.val() || {};
+                let container = document.getElementById('dynamic-support-links');
+                let html = '';
+                for(let key in supports) {
+                    let s = supports[key];
+                    html += `
+                        <a href="${s.value}" class="support-link" target="_blank" style="background: ${s.color}20;">
+                            <div style="background: ${s.color}; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">${s.icon}</div>
+                            <div><p style="color: var(--accent-color);">${s.name}</p><p style="color: #00ffcc;">${s.value}</p></div>
+                        </a>
+                    `;
+                }
+                container.innerHTML = html;
+            });
         }
         
         // ========== কপি টেক্সট ==========
@@ -1687,94 +2075,6 @@
             navigator.clipboard.writeText(text).then(() => alert('✅ নম্বর কপি হয়েছে!'));
         };
         
-        // ========== অ্যাপ ডাউনলোড লিংক আপডেট ==========
-        function updateAppDownloadLink(link) {
-            document.getElementById('app-download-link').href = link;
-        }
-        
-        // ========== নোটিশ লোড ==========
-        function loadNotices() {
-            db.ref('notices').on('value', (snap) => {
-                let notices = snap.val() || {};
-                let noticeBoard = document.getElementById('noticeBoard');
-                let html = '';
-                
-                // Main নোটিশ সবসময় দেখাবে
-                if (notices.Main) {
-                    html += `<div class="notice-item">📢 ${notices.Main}</div>`;
-                }
-                
-                // অন্যান্য নোটিশ
-                for (let key in notices) {
-                    if (key !== 'Main' && key !== 'Support') {
-                        html += `<div class="notice-item">📢 ${notices[key]}</div>`;
-                    }
-                }
-                
-                // সাপোর্ট নোটিশ আলাদাভাবে
-                if (notices.Support) {
-                    // সাপোর্ট পেজে দেখানো হবে
-                }
-                
-                if (html === '') {
-                    html = '<div class="notice-item">📢 স্বাগতম! সব ম্যাচ চালু আছে। নিয়ম মেনে খেলুন।</div>';
-                }
-                
-                noticeBoard.innerHTML = html;
-            });
-        }
-        
-        // ========== সাপোর্ট লিংক লোড ==========
-        function loadSupportLinks() {
-            db.ref('supports').on('value', (snap) => {
-                let supports = snap.val() || {};
-                let container = document.getElementById('support-links-container');
-                let html = '';
-                
-                for (let key in supports) {
-                    let s = supports[key];
-                    html += `
-                        <a href="${s.value}" class="support-link" target="_blank" style="background: ${s.color}20;">
-                            <div style="background: ${s.color}; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">${s.icon}</div>
-                            <div><p style="color: #FFD700;">${s.name}</p><p style="color: #00ffcc;">${s.value}</p></div>
-                        </a>
-                    `;
-                }
-                
-                // ডিফল্ট সাপোর্ট লিংক (যদি কোনো সাপোর্ট না থাকে)
-                if (html === '') {
-                    html = `
-                        <a href="mailto:talkingmasud5511@gmail.com" class="support-link">
-                            <div style="background: #EA4335; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">📧</div>
-                            <div><p style="color: #FFD700;">ইমেইল</p><p style="color: #00ffcc;">talkingmasud5511@gmail.com</p></div>
-                        </a>
-                        
-                        <a href="https://wa.me/8801910658737" class="support-link">
-                            <div style="background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">📱</div>
-                            <div><p style="color: #FFD700;">WhatsApp</p><p style="color: #00ffcc;">01910658737</p></div>
-                        </a>
-                        
-                        <a href="https://chat.whatsapp.com/JvfihxThqMoLVFHLv9TVME" class="support-link">
-                            <div style="background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">👥</div>
-                            <div><p style="color: #FFD700;">WhatsApp গ্রুপ</p><p style="color: #00ffcc;">জয়েন করুন</p></div>
-                        </a>
-                        
-                        <a href="https://t.me/+XF_oEofeAeEwMDI9" class="support-link">
-                            <div style="background: #0088cc; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">✈️</div>
-                            <div><p style="color: #FFD700;">Telegram</p><p style="color: #00ffcc;">জয়েন করুন</p></div>
-                        </a>
-                        
-                        <a href="https://youtube.com/@tnmriyad" class="support-link">
-                            <div style="background: #FF0000; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">▶️</div>
-                            <div><p style="color: #FFD700;">YouTube</p><p style="color: #00ffcc;">সাবস্ক্রাইব</p></div>
-                        </a>
-                    `;
-                }
-                
-                container.innerHTML = html;
-            });
-        }
-        
         // ========== অথ ==========
         window.toggleAuth = ()=>{
             let l=document.getElementById('login-box'), s=document.getElementById('signup-box');
@@ -1782,46 +2082,82 @@
             s.style.display = s.style.display==='none'?'block':'none';
         };
         
+        // ========== সাইনআপ (শুধু ফোন নম্বর, UID নেই) ==========
         window.signupUser = ()=>{
             let n = document.getElementById('reg-user-name').value;
             let p = document.getElementById('reg-user-phone').value;
             let ps = document.getElementById('reg-user-pass').value;
+            
             if(!n||!p||!ps) return alert('❌ সব তথ্য দিন!');
             if(p.length!==11||!p.startsWith('01')) return alert('❌ সঠিক নম্বর দিন!');
-            if(ps.length<4) return alert('❌ পাসওয়ার্ড কমপক্ষে ৪ অক্ষর!');
             
-            db.ref('users/'+p).once('value', s=>{
-                if(s.val()) return alert('❌ এই নম্বর already registered!');
-                let u = {name:n, phone:p, pass:ps, balance:0, wins:0, matches:0, kills:0, uid: '', joinDate:new Date().toLocaleString('bn-BD')};
-                db.ref('users/'+p).set(u).then(()=>{
-                    localStorage.setItem('user', JSON.stringify(u));
-                    currentUser = u;
-                    document.getElementById('auth-page').style.display='none';
-                    document.getElementById('main-app').style.display='block';
-                    updateProfileUI(); loadAllData();
-                    alert('✅ একাউন্ট তৈরি হয়েছে!');
+            let email = p + "@tnm.app";
+            
+            auth.createUserWithEmailAndPassword(email, ps)
+                .then((userCredential) => {
+                    // UID সংরক্ষণ করছি না, শুধু ফোন নম্বর দিয়ে ডাটা সেভ করছি
+                    let userData = {
+                        name: n,
+                        phone: p,
+                        balance: 0,
+                        wins: 0,
+                        matches: 0,
+                        kills: 0,
+                        totalWinnings: 0,
+                        joinDate: new Date().toLocaleString('bn-BD')
+                    };
+                    
+                    // ফোন নম্বর দিয়ে ডাটাবেসে সংরক্ষণ
+                    db.ref('users/' + p).set(userData).then(() => {
+                        localStorage.setItem('user', JSON.stringify(userData));
+                        currentUser = userData;
+                        document.getElementById('auth-page').style.display='none';
+                        document.getElementById('main-app').style.display='block';
+                        loadAllData();
+                        alert('✅ একাউন্ট তৈরি হয়েছে!');
+                    });
+                })
+                .catch((error) => {
+                    alert('❌ সমস্যা: ' + error.message);
                 });
-            });
         };
         
+        // ========== লগইন (শুধু ফোন নম্বর) ==========
         window.loginUser = ()=>{
             let p = document.getElementById('login-phone').value;
             let ps = document.getElementById('login-pass').value;
+            
             if(!p||!ps) return alert('❌ তথ্য দিন!');
-            db.ref('users/'+p).once('value', s=>{
-                let u = s.val();
-                if(u && u.pass===ps) {
-                    localStorage.setItem('user', JSON.stringify(u));
-                    currentUser = u;
-                    document.getElementById('auth-page').style.display='none';
-                    document.getElementById('main-app').style.display='block';
-                    updateProfileUI(); loadAllData();
-                    alert('✅ লগইন সফল!');
-                } else alert('❌ ভুল তথ্য!');
-            });
+            
+            let email = p + "@tnm.app";
+            
+            auth.signInWithEmailAndPassword(email, ps)
+                .then(() => {
+                    // ফোন নম্বর দিয়ে সরাসরি ডাটাবেস থেকে ইউজার তথ্য আনুন
+                    db.ref('users/' + p).once('value', (snap) => {
+                        let userData = snap.val();
+                        if(userData) {
+                            localStorage.setItem('user', JSON.stringify(userData));
+                            currentUser = userData;
+                            document.getElementById('auth-page').style.display='none';
+                            document.getElementById('main-app').style.display='block';
+                            updateProfileUI(); 
+                            loadAllData();
+                            alert('✅ লগইন সফল!');
+                        }
+                    });
+                })
+                .catch((error) => {
+                    alert('❌ ভুল তথ্য! ' + error.message);
+                });
         };
         
-        window.logoutUser = ()=>{ localStorage.removeItem('user'); location.reload(); };
+        window.logoutUser = ()=>{ 
+            auth.signOut().then(() => {
+                localStorage.removeItem('user'); 
+                location.reload();
+            });
+        };
         
         // ========== উইথড্র পিন ==========
         window.changeWithdrawPin = function() {
@@ -1861,30 +2197,146 @@
             rainEnabled = localStorage.getItem('rainEnabled') !== 'false';
             starsEnabled = localStorage.getItem('starsEnabled') !== 'false';
             touchEnabled = localStorage.getItem('touchEnabled') !== 'false';
+            animationSpeed = localStorage.getItem('animationSpeed') || 'normal';
+            animationSize = localStorage.getItem('animationSize') || 'medium';
             
             document.getElementById('rain-toggle').checked = rainEnabled;
             document.getElementById('star-toggle').checked = starsEnabled;
             document.getElementById('touch-toggle').checked = touchEnabled;
             
+            // স্পিড ও সাইজ অ্যাক্টিভেট
+            document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
+            document.getElementById('speed-' + animationSpeed).classList.add('active');
+            
+            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
+            document.getElementById('size-' + animationSize).classList.add('active');
+            
             if(rainEnabled) createRain(); else clearRain();
             if(starsEnabled) createStars(); else clearStars();
+            
+            noticeMinimized = localStorage.getItem('noticeMinimized') === 'true';
+            if (noticeMinimized) {
+                document.getElementById('mainNotice').style.display = 'none';
+                document.getElementById('minimizedNotice').classList.add('active');
+            } else {
+                document.getElementById('mainNotice').style.display = 'block';
+                document.getElementById('minimizedNotice').classList.remove('active');
+            }
+            
+            // থিম লোড
+            let savedTheme = localStorage.getItem('theme');
+            if(savedTheme) applyPresetTheme(savedTheme);
+            
+            let savedColors = localStorage.getItem('customColors');
+            if(savedColors) {
+                let colors = JSON.parse(savedColors);
+                document.getElementById('primary-color').value = colors.primary;
+                document.getElementById('secondary-color').value = colors.secondary;
+                document.getElementById('accent-color').value = colors.accent;
+                document.getElementById('bg-start').value = colors.bgStart;
+                document.getElementById('bg-end').value = colors.bgEnd;
+            }
         }
+        
+        // ========== সেকশন ==========
+        window.showSection = (id)=>{
+            document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+            let items = document.querySelectorAll('.nav-item');
+            if(id==='home') items[0].classList.add('active');
+            if(id==='leaderboard') items[1].classList.add('active');
+            if(id==='deposit') items[2].classList.add('active');
+            if(id==='withdraw') items[3].classList.add('active');
+            if(id==='profile') items[4].classList.add('active');
+            if(id==='support') items[5].classList.add('active');
+            if(id==='profile' && currentUser) updateProfileUI();
+            if(id==='leaderboard') loadLeaderboard();
+        };
         
         // ========== ডাটা লোড ==========
         function loadAllData() {
             loadRegistrationStatus(); loadLeaderboard(); loadUserMatchHistory();
             loadPaymentMethods(); startAllTimers(); updateMatchNumbers();
             loadLiveStatus(); loadMatchSettings();
-            loadNotices(); // নোটিশ লোড
-            loadSupportLinks(); // সাপোর্ট লিংক লোড
-            
-            // অ্যাপ ডাউনলোড লিংক লোড
-            db.ref('settings/app_download').on('value', (snap) => {
-                let link = snap.val() || 'https://www.mediafire.com/file/qcnpve9mykukmfo/TNM_FF.apk/file';
-                updateAppDownloadLink(link);
+            loadMainNotice(); loadSupportNotice(); loadSupportLinks();
+            loadAppDownloadLink();
+            loadHeaderSettings();
+            loadNotifications();
+        }
+        
+        function loadHeaderSettings() {
+            db.ref('settings/header').on('value', snap => {
+                let h = snap.val();
+                if(h) {
+                    document.getElementById('header-title').innerText = h.title || '🎮 TNM RIYAD 2026';
+                    document.getElementById('header-subtitle').innerText = h.subtitle || '🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট';
+                }
             });
         }
         
+        function loadAppDownloadLink() {
+            db.ref('settings/app_download').on('value', snap => {
+                document.getElementById('app-download-link').href = snap.val() || 'https://www.mediafire.com/file/qcnpve9mykukmfo/TNM_FF.apk/file';
+            });
+        }
+        
+        function loadMainNotice() {
+            db.ref('notices/Main').on('value', snap => {
+                let n = snap.val();
+                document.getElementById('mainNotice').innerHTML = '📢 ' + (n || 'স্বাগতম! সব ম্যাচ চালু আছে।') + ' <span class="notice-got-it" onclick="event.stopPropagation(); minimizeNotice()">Got it</span>';
+            });
+        }
+        
+        function loadSupportNotice() {
+            db.ref('notices/Support').on('value', snap => {
+                document.getElementById('support-notice').innerHTML = snap.val() || 'উইথড্র চার্জ: ৫ টাকা';
+            });
+        }
+        
+        function loadSupportLinks() {
+            db.ref('default_support').on('value', snap => {
+                let s = snap.val() || {};
+                if(s.email) {
+                    document.getElementById('support-email').innerText = s.email;
+                    document.getElementById('support-email-link').href = 'mailto:' + s.email;
+                }
+                if(s.whatsapp) {
+                    document.getElementById('support-whatsapp').innerText = s.whatsapp;
+                    document.getElementById('support-whatsapp-link').href = 'https://wa.me/' + s.whatsapp.replace(/[^0-9]/g, '');
+                }
+                if(s.whatsappGroup) {
+                    document.getElementById('support-whatsapp-group').innerText = s.whatsappGroup;
+                    document.getElementById('support-whatsapp-group-link').href = s.whatsappGroup;
+                }
+                if(s.telegram) {
+                    document.getElementById('support-telegram').innerText = s.telegram;
+                    document.getElementById('support-telegram-link').href = s.telegram;
+                }
+                if(s.youtube) {
+                    document.getElementById('support-youtube').innerText = s.youtube;
+                    document.getElementById('support-youtube-link').href = s.youtube;
+                }
+            });
+            
+            db.ref('supports').on('value', snap => {
+                let supports = snap.val() || {};
+                let container = document.getElementById('dynamic-support-links');
+                let html = '';
+                for(let key in supports) {
+                    let s = supports[key];
+                    html += `
+                        <a href="${s.value}" class="support-link" target="_blank" style="background: ${s.color}20;">
+                            <div style="background: ${s.color}; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">${s.icon}</div>
+                            <div><p style="color: var(--accent-color);">${s.name}</p><p style="color: #00ffcc;">${s.value}</p></div>
+                        </a>
+                    `;
+                }
+                container.innerHTML = html;
+            });
+        }
+        
+        // ========== ম্যাচ সেটিংস ==========
         function loadMatchSettings() {
             db.ref('match_settings').on('value', (snap) => {
                 let settings = snap.val() || {};
@@ -1913,6 +2365,17 @@
                     }
                 }
             });
+            
+            db.ref('match_icons').on('value', (snap) => {
+                let icons = snap.val() || {};
+                document.getElementById('match1-icon').src = icons.SoloBermuda || 'https://i.ibb.co.com/Gv57Crmh/free-fire-characters.jpg';
+                document.getElementById('match2-icon').src = icons.DuoMatch1 || 'https://i.ibb.co.com/rDgKsWm/duo-image.jpg';
+                document.getElementById('match3-icon').src = icons.DuoMatch2 || 'https://i.ibb.co.com/rDgKsWm/duo-image.jpg';
+                document.getElementById('match4-icon').src = icons.CS4vs4 || 'https://i.ibb.co.com/C57vzBfL/maxresdefault.jpg';
+                document.getElementById('match5-icon').src = icons.CS2vs2 || 'https://i.ibb.co.com/nqdgm6jw/free-fire-735x400.jpg';
+                document.getElementById('match6-icon').src = icons.CS1vs1 || 'https://i.ibb.co.com/JW1Qh62T/screenshot.jpg';
+                document.getElementById('match7-icon').src = icons.FreeSolo || 'https://i.ibb.co.com/jPbw04PT/wp12125274.jpg';
+            });
         }
         
         function loadLiveStatus() {
@@ -1935,7 +2398,7 @@
         }
         
         function loadRegistrationStatus() {
-            let m = {'সোলো বারমুডা':'SoloBermuda','ডুও বারমুডা ১':'DuoMatch1','ডুও বারমुডা ২':'DuoMatch2','৪vs৪ ক্ল্যাশ':'CS4vs4','২vs২ কাস্টম':'CS2vs2','১vs১ কাস্টম':'CS1vs1','ফ্রি সোলো':'FreeSolo'};
+            let m = {'সোলো বারমুডা':'SoloBermuda','ডুও ১':'DuoMatch1','ডুও ২':'DuoMatch2','৪vs৪ ক্ল্যাশ':'CS4vs4','২vs২ কাস্টম':'CS2vs2','১vs১ নকআউট':'CS1vs1','ফ্রি সোলো':'FreeSolo'};
             db.ref('registrations').on('value', snap=>{
                 let lists = {}, slots = {};
                 snap.forEach(c=>{ let d=c.val(), k=m[d.match]; if(k) {
@@ -1958,12 +2421,38 @@
             });
         }
         
+        // ========== লিডারবোর্ড (টাকা অনুযায়ী) ==========
         function loadLeaderboard() {
-            db.ref('users').orderByChild('wins').limitToLast(10).on('value', snap=>{
-                let l=[]; snap.forEach(c=>l.push(c.val())); l.reverse();
-                let h='<tr style="background:rgba(255,215,0,0.2);"><td>র‍্যাঙ্ক</td><td>নাম</td><td>জয়</td></tr>';
-                l.forEach((u,i)=>h+=`<tr><td>#${i+1}</td><td>${u.name}</td><td>${u.wins||0}</td></tr>`);
-                document.getElementById('leaderboard-table').innerHTML = h||'<tr><td colspan="3">কোনো ডাটা নেই</td></tr>';
+            db.ref('users').once('value', (snap) => {
+                let users = [];
+                snap.forEach((child) => {
+                    let u = child.val();
+                    users.push({
+                        name: u.name || 'নাম নেই',
+                        phone: child.key,
+                        totalWinnings: u.totalWinnings || 0,
+                        wins: u.wins || 0
+                    });
+                });
+                
+                users.sort((a, b) => b.totalWinnings - a.totalWinnings);
+                
+                let html = '';
+                users.forEach((u, i) => {
+                    let rankEmoji = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '#';
+                    html += `<div style="background:rgba(0,0,0,0.4); border-left:5px solid var(--accent-color); border-radius:10px; padding:12px; margin-bottom:8px;">
+                        <div style="display:flex; justify-content:space-between;">
+                            <span style="color:var(--accent-color); font-weight:bold;">${rankEmoji} ${u.name}</span>
+                            <span style="color:#38ef7d; font-weight:bold;">💰 ${u.totalWinnings} টাকা</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-top:5px; color:#aaa; font-size:12px;">
+                            <span>🏆 ${u.wins} জয়</span>
+                            <span>📱 ${u.phone}</span>
+                        </div>
+                    </div>`;
+                });
+                
+                document.getElementById('leaderboard-list').innerHTML = html || '<p style="color:#888;">কোনো ইউজার নেই</p>';
             });
         }
         
@@ -1978,7 +2467,7 @@
                     let statusText = h.status === 'confirmed' ? '✅ পেমেন্ট কনফার্ম' : '⏳ পেন্ডিং';
                     mh+=`<div class="history-card" style="border-left-color:#4CAF50;">
                         <div style="display:flex;justify-content:space-between;">
-                            <p style="color:#FFD700;">🏆 ${h.match}</p>
+                            <p style="color:var(--accent-color);">🏆 ${h.match}</p>
                             <p style="color:#4CAF50;font-weight:bold;">+${h.prize} টাকা</p>
                         </div>
                         <div style="display:flex;justify-content:space-between;margin-top:5px;">
@@ -2004,7 +2493,6 @@
                     </div>`;
                 });
                 
-                document.getElementById('match-winnings').innerHTML = mh||'<p style="color:#888;text-align:center;padding:20px;">🎮 কোনো ম্যাচ খেলেননি</p>';
                 document.getElementById('transaction-history').innerHTML = th||'<p style="color:#888;text-align:center;padding:20px;">💰 কোনো লেনদেন নেই</p>';
             });
         }
@@ -2043,24 +2531,12 @@
             });
         }
         
-        // ========== সেকশন ==========
-        window.showSection = (id)=>{
-            document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-            let items = document.querySelectorAll('.nav-item');
-            if(id==='home') items[0].classList.add('active');
-            if(id==='leaderboard') items[1].classList.add('active');
-            if(id==='deposit') items[2].classList.add('active');
-            if(id==='withdraw') items[3].classList.add('active');
-            if(id==='profile') items[4].classList.add('active');
-            if(id==='support') items[5].classList.add('active');
-            if(id==='profile' && currentUser) updateProfileUI();
-        };
-        
         // ========== রেজিস্ট্রেশন ==========
         window.openRegistration = (match, fee, type)=>{
             if(!currentUser) return alert('❌ আগে লগইন করুন!');
+            
+            currentMatchForRegistration = match;
+            
             showSection('register-page');
             document.getElementById('reg-title').innerText = match;
             baseFee = fee;
@@ -2077,7 +2553,7 @@
             let count = {solo:1, duo:2, squad:4}[mode]||1;
             document.getElementById('fee-display').innerText = baseFee * count;
             let html = '';
-            for(let i=1;i<=count;i++) html += `<div style="margin:20px 0; background:rgba(255,215,0,0.05); padding:20px; border-radius:20px;"><p style="color:#FFD700; margin-bottom:10px;">👤 প্লেয়ার ${i}</p><input type="text" id="p${i}-name" placeholder="নাম"><input type="text" id="p${i}-uid" placeholder="UID"></div>`;
+            for(let i=1;i<=count;i++) html += `<div style="margin:20px 0; background:rgba(255,215,0,0.05); padding:20px; border-radius:20px;"><p style="color:var(--accent-color); margin-bottom:10px;">👤 প্লেয়ার ${i}</p><input type="text" id="p${i}-name" placeholder="নাম"><input type="text" id="p${i}-uid" placeholder="UID"></div>`;
             html += `<input type="text" id="reg-phone" placeholder="📱 মোবাইল" value="${currentUser?.phone||''}">`;
             document.getElementById('dynamic-inputs').innerHTML = html;
         };
@@ -2097,7 +2573,7 @@
                 players.push({name, uid});
             }
             
-            let matchKey = {'সোলো বারমুডা':'SoloBermuda','ডুও বারমুডা ১':'DuoMatch1','ডুও বারমুডা ২':'DuoMatch2','৪vs৪ ক্ল্যাশ':'CS4vs4','২vs২ কাস্টম':'CS2vs2','১vs১ কাস্টম':'CS1vs1','ফ্রি সোলো':'FreeSolo'}[match];
+            let matchKey = {'সোলো বারমুডা':'SoloBermuda','ডুও ১':'DuoMatch1','ডুও ২':'DuoMatch2','৪vs৪ ক্ল্যাশ':'CS4vs4','২vs২ কাস্টম':'CS2vs2','১vs১ নকআউট':'CS1vs1','ফ্রি সোলো':'FreeSolo'}[match];
             db.ref('match_settings/'+matchKey+'/live').once('value', (s) => {
                 if(s.val() === false) {
                     alert('❌ এই ম্যাচটি বর্তমানে বন্ধ আছে!');
@@ -2109,7 +2585,6 @@
                         let bal = s.val()||0;
                         if(bal<fee) { alert('❌ ব্যালেন্স কম!'); showSection('deposit'); }
                         else { 
-                            // ইউজারের UID আপডেট
                             let firstUid = players[0].uid;
                             db.ref('users/'+currentUser.phone+'/uid').set(firstUid);
                             db.ref('users/'+currentUser.phone+'/balance').set(bal-fee); 
@@ -2117,7 +2592,6 @@
                         }
                     });
                 } else {
-                    // ফ্রি ম্যাচ হলে শুধু UID আপডেট
                     let firstUid = players[0].uid;
                     db.ref('users/'+currentUser.phone+'/uid').set(firstUid);
                     saveReg();
@@ -2125,7 +2599,15 @@
             });
             
             function saveReg() {
-                db.ref('registrations').push({match, mode, players, userPhone:currentUser.phone, userName:currentUser.name, fee, time:new Date().toLocaleString('bn-BD')}).then(()=>{
+                db.ref('registrations').push({
+                    match: match, 
+                    mode: mode, 
+                    players: players, 
+                    userPhone: currentUser.phone,
+                    userName: currentUser.name, 
+                    fee: fee, 
+                    time: new Date().toLocaleString('bn-BD')
+                }).then(()=>{
                     alert(`✅ ${match} এ রেজিস্ট্রেশন হয়েছে!`);
                     if(baseFee>0) {
                         db.ref('room_details/'+match).once('value', s=>{
@@ -2142,47 +2624,66 @@
             }
         };
         
-        // ========== ম্যাচ ডিটেইলস ==========
+        // ========== ম্যাচ ডিটেইলস - শুধু রেজিস্ট্রেশন করা ইউজার দেখতে পাবে ==========
         window.showMatchDetails = (match)=>{
             if(!currentUser) return alert('❌ আগে লগইন করুন!');
-            db.ref('registrations').orderByChild('userPhone').equalTo(currentUser.phone).once('value', snap=>{
-                let reg = false;
-                snap.forEach(c=>{ if(c.val().match===match) reg=true; });
-                if(reg||match.includes('ফ্রি')) {
-                    db.ref('room_details/'+match).once('value', s=>{
+            
+            let phone = currentUser.phone;
+            
+            db.ref('registrations').once('value', (snap) => {
+                let isRegistered = false;
+                
+                snap.forEach((child) => {
+                    let reg = child.val();
+                    if(reg.match === match && reg.userPhone === phone) {
+                        isRegistered = true;
+                    }
+                });
+                
+                if(isRegistered || match.includes('ফ্রি')) {
+                    db.ref('room_details/' + match).once('value', (s) => {
                         let r = s.val();
                         if(r) {
-                            document.getElementById('roomIdDisplay').innerText = r.roomId||'123456';
-                            document.getElementById('roomPassDisplay').innerText = r.pass||'123456';
+                            document.getElementById('roomIdDisplay').innerText = r.roomId || '123456';
+                            document.getElementById('roomPassDisplay').innerText = r.pass || '123456';
                             document.getElementById('roomModal').classList.add('active');
-                        } else alert('📋 রুম ডিটেইলস আপডেট হবে...');
+                        } else {
+                            alert('📋 রুম ডিটেইলস আপডেট হবে...');
+                        }
                     });
-                } else alert('❌ শুধুমাত্র রেজিস্ট্রেশন করা প্লেয়াররা দেখতে পারবেন!');
+                } else {
+                    alert('❌ আপনি এই ম্যাচে রেজিস্ট্রেশন করেননি! শুধুমাত্র রেজিস্ট্রেশন করা প্লেয়াররা রুম ডিটেইলস দেখতে পারবেন۔');
+                }
             });
         };
         
         window.closeRoomModal = ()=> document.getElementById('roomModal').classList.remove('active');
         
-        // ========== প্রোফাইল ==========
+        // ========== প্রোফাইল আপডেট (ফোন নম্বর ভিত্তিক) ==========
         function updateProfileUI() {
             if(!currentUser) return;
-            document.getElementById('prof-name').innerText = currentUser.name;
-            document.getElementById('prof-phone').innerText = '📱 '+currentUser.phone;
-            let saved = localStorage.getItem('profilePhoto_'+currentUser.phone);
-            if(saved) document.getElementById('profileAvatar').src = saved;
-            db.ref('users/'+currentUser.phone).on('value', s=>{
+            
+            db.ref('users/' + currentUser.phone).on('value', s=>{
                 let u = s.val();
                 if(u) { 
                     currentUser = u; 
-                    document.getElementById('prof-balance').innerText = u.balance||0; 
-                    document.getElementById('prof-wins').innerText = u.wins||0; 
+                    document.getElementById('prof-name').innerText = u.name || 'N/A';
+                    document.getElementById('prof-phone').innerText = '📱 ' + (u.phone || '');
+                    document.getElementById('prof-balance').innerText = u.balance || 0; 
+                    document.getElementById('prof-wins').innerText = u.wins || 0;
+                    document.getElementById('prof-matches').innerText = u.matches || 0;
+                    document.getElementById('prof-kills').innerText = u.kills || 0;
+                    document.getElementById('prof-earnings').innerText = u.totalWinnings || 0;
+                    
+                    let saved = localStorage.getItem('profilePhoto_'+u.phone);
+                    if(saved) document.getElementById('profileAvatar').src = saved;
                 }
             });
         }
         
         window.changeProfilePhoto = (e)=>{
             let file = e.target.files[0];
-            if(file) {
+            if(file && currentUser) {
                 let reader = new FileReader();
                 reader.onload = (ev)=>{
                     document.getElementById('profileAvatar').src = ev.target.result;
@@ -2261,20 +2762,76 @@
             });
         };
         
-        // ========== অটো লগইন ==========
+        // ========== নোটিফিকেশন ==========
+        function loadNotifications() {
+            if (!currentUser) return;
+            db.ref('notifications/' + currentUser.phone).on('value', (snap) => {
+                let notifs = snap.val() || {};
+                let count = 0;
+                let html = '';
+                for (let key in notifs) {
+                    let n = notifs[key];
+                    if (!n.read) count++;
+                    html += `<div class="notification-item" onclick="window.location.href='tnmapp://notification/${key}'"><p>${n.text}</p><p style="color:#aaa; font-size:10px; margin-top:5px;">🕐 ${n.time}</p></div>`;
+                }
+                document.getElementById('notificationList').innerHTML = html || '<p style="color:#888; text-align:center;">কোনো নোটিফিকেশন নেই</p>';
+                if (count > 0) {
+                    document.getElementById('notificationBadge').style.display = 'flex';
+                    document.getElementById('notificationBadge').innerText = count;
+                } else {
+                    document.getElementById('notificationBadge').style.display = 'none';
+                }
+            });
+        }
+        
+        window.openNotifications = function() {
+            document.getElementById('notificationModal').style.display = 'block';
+            if (currentUser) {
+                db.ref('notifications/' + currentUser.phone).once('value', (snap) => {
+                    snap.forEach((child) => {
+                        db.ref('notifications/' + currentUser.phone + '/' + child.key + '/read').set(true);
+                    });
+                });
+            }
+        };
+        
+        window.closeNotificationModal = function() {
+            document.getElementById('notificationModal').style.display = 'none';
+            document.getElementById('notificationBadge').style.display = 'none';
+        };
+        
+        // ========== অটো লগইন (শুধু ফোন নম্বর) ==========
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                let email = user.email;
+                let phone = email ? email.replace('@tnm.app', '') : null;
+                
+                if (phone) {
+                    db.ref('users/' + phone).once('value', (snap) => {
+                        let userData = snap.val();
+                        if (userData) {
+                            localStorage.setItem('user', JSON.stringify(userData));
+                            currentUser = userData;
+                            document.getElementById('auth-page').style.display = 'none';
+                            document.getElementById('main-app').style.display = 'block';
+                            updateProfileUI(); 
+                            loadAllData();
+                            loadNotifications();
+                        } else {
+                            console.log('ইউজার ডাটা নেই');
+                        }
+                    });
+                }
+            } else {
+                document.getElementById('auth-page').style.display = 'block';
+                document.getElementById('main-app').style.display = 'none';
+            }
+        });
+        
         window.onload = ()=>{
             loadLocalSettings();
             loadAnimationSettings();
-            createRain(); createStars(); createShootingStars();
-            
-            let u = localStorage.getItem('user');
-            if(u) { 
-                currentUser = JSON.parse(u); 
-                document.getElementById('auth-page').style.display='none'; 
-                document.getElementById('main-app').style.display='block'; 
-                updateProfileUI(); 
-                loadAllData(); 
-            }
+            createRain(); createStars();
         };
     </script>
 </body>
