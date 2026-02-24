@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>TNM RIYAD - অ্যাডমিন প্যানেল ২০২৬</title>
+    <title>TNM FF - অ্যাডমিন প্যানেল ২০২৬</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -150,7 +150,7 @@
             background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
             position: absolute;
             top: -2px;
-            left: -2px;
+            left:-2px;
             background-size: 400%;
             z-index: -1;
             filter: blur(5px);
@@ -290,7 +290,7 @@
             margin-top: 5px;
         }
         
-        /* নেভিগেশন মেনু - আলাদা সেকশনের জন্য */
+        /* নেভিগেশন মেনু - নতুন সেকশন */
         .admin-nav {
             display: flex;
             flex-wrap: wrap;
@@ -801,6 +801,37 @@
             margin-bottom: 8px;
         }
         
+        .notice-preview {
+            background: linear-gradient(145deg, #FF416C, #FF4B2B);
+            padding: 12px 15px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            border: 2px solid #FFD700;
+            color: white;
+            font-size: 14px;
+            position: relative;
+        }
+        
+        .notice-preview .got-it {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.3);
+            color: white;
+            border: 2px solid white;
+            padding: 3px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .notice-preview.minimized {
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 13px;
+        }
+        
         /* এডিট মোড স্টাইল */
         .edit-mode {
             background: rgba(255, 215, 0, 0.1);
@@ -815,6 +846,36 @@
             font-weight: bold;
             margin-bottom: 10px;
             font-size: 16px;
+        }
+        
+        /* Rank কার্ডের জন্য স্টাইল */
+        .rank-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-left: 4px solid #FFD700;
+        }
+        
+        .rank-position {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .winning-amount {
+            color: #00ffcc;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        /* উইনিং সেকশনের জন্য */
+        .winning-player-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-left: 4px solid #4CAF50;
         }
         
         @media (max-width: 768px) {
@@ -906,7 +967,7 @@
             </div>
         </div>
         
-        <!-- নেভিগেশন মেনু - আলাদা সেকশন -->
+        <!-- নেভিগেশন মেনু - নতুন সেকশন "ম্যাচ ইমেজ" যোগ করা হলো -->
         <div class="admin-nav">
             <button class="nav-btn active" onclick="showSection('dashboard')">🏠 ড্যাশবোর্ড</button>
             <button class="nav-btn" onclick="showSection('users')">👥 ইউজার</button>
@@ -914,10 +975,16 @@
             <button class="nav-btn" onclick="showSection('payments')">💰 পেমেন্ট</button>
             <button class="nav-btn" onclick="showSection('support')">📞 সাপোর্ট</button>
             <button class="nav-btn" onclick="showSection('notice')">📢 নোটিশ</button>
+            <button class="nav-btn" onclick="showSection('header')">📝 হেডার</button>
             <button class="nav-btn" onclick="showSection('design')">🎨 ডিজাইন</button>
             <button class="nav-btn" onclick="showSection('animation')">✨ এনিমেশন</button>
             <button class="nav-btn" onclick="showSection('app')">📱 অ্যাপ</button>
             <button class="nav-btn" onclick="showSection('requests')">📋 রিকোয়েস্ট</button>
+            <!-- নতুন ৪টি সেকশন -->
+            <button class="nav-btn" onclick="showSection('rank-control')">🏆 র্যাঙ্ক কন্ট্রোল</button>
+            <button class="nav-btn" onclick="showSection('winning-control')">💰 উইনিং কন্ট্রোল</button>
+            <button class="nav-btn" onclick="showSection('notification-control')">📢 নোটিফিকেশন</button>
+            <button class="nav-btn" onclick="showSection('match-images')">🖼️ ম্যাচ ইমেজ</button>   <!-- নতুন বাটন -->
         </div>
         
         <!-- ========== সেকশন ১: ড্যাশবোর্ড ========== -->
@@ -1214,88 +1281,90 @@
             </div>
         </div>
         
-        <!-- ========== সেকশন ৫: সাপোর্ট কন্ট্রোল (এডিট অপশন সহ - বর্তমান সাপোর্ট) ========== -->
+        <!-- ========== সেকশন ৫: সাপোর্ট কন্ট্রোল (এডিট/ডিলিট সহ) ========== -->
         <div id="support" class="section">
             <div class="card border-orange">
-                <div class="card-header">📞 সাপোর্ট এডিট/ডিলিট (বর্তমান সাপোর্ট)</div>
+                <div class="card-header">📞 সাপোর্ট কন্ট্রোল</div>
                 
-                <!-- বর্তমান সাপোর্ট লিস্ট (ডিফল্ট সাপোর্ট) -->
-                <div style="margin-bottom: 20px;">
-                    <h3 style="color: #ffda44; margin-bottom: 10px;">📋 বর্তমান সাপোর্ট (ডিফল্ট)</h3>
+                <!-- ডিফল্ট সাপোর্ট -->
+                <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,215,0,0.1); border-radius: 10px;">
+                    <h3 style="color: #ffda44;">📋 ডিফল্ট সাপোর্ট (এডিট/ডিলিট)</h3>
                     
-                    <!-- ইমেইল -->
-                    <div class="support-item" id="support-email">
-                        <div class="support-header">
-                            <div class="support-icon" style="background: #EA4335; color: white;">📧</div>
-                            <div class="support-info">
-                                <div class="support-name">ইমেইল</div>
-                                <div class="support-value">talkingmasud5511@gmail.com</div>
+                    <div id="default-support-list">
+                        <div class="support-item" id="support-email">
+                            <div class="support-header">
+                                <div class="support-icon" style="background: #EA4335; color: white;">📧</div>
+                                <div class="support-info">
+                                    <div class="support-name">ইমেইল</div>
+                                    <div class="support-value" id="support-email-value">talkingmasud5511@gmail.com</div>
+                                </div>
+                            </div>
+                            <div class="support-actions">
+                                <button class="small-btn btn-blue" onclick="editDefaultSupport('email')">✏️ এডিট</button>
+                                <button class="small-btn btn-red" onclick="deleteDefaultSupport('email')">❌ ডিলিট</button>
                             </div>
                         </div>
-                        <div class="support-actions">
-                            <button class="small-btn btn-blue" onclick="editDefaultSupport('email')">✏️ এডিট</button>
-                        </div>
-                    </div>
-                    
-                    <!-- WhatsApp -->
-                    <div class="support-item" id="support-whatsapp">
-                        <div class="support-header">
-                            <div class="support-icon" style="background: #25D366; color: white;">📱</div>
-                            <div class="support-info">
-                                <div class="support-name">WhatsApp</div>
-                                <div class="support-value">01910658737</div>
+                        
+                        <div class="support-item" id="support-whatsapp">
+                            <div class="support-header">
+                                <div class="support-icon" style="background: #25D366; color: white;">📱</div>
+                                <div class="support-info">
+                                    <div class="support-name">WhatsApp</div>
+                                    <div class="support-value" id="support-whatsapp-value">01910658737</div>
+                                </div>
+                            </div>
+                            <div class="support-actions">
+                                <button class="small-btn btn-blue" onclick="editDefaultSupport('whatsapp')">✏️ এডিট</button>
+                                <button class="small-btn btn-red" onclick="deleteDefaultSupport('whatsapp')">❌ ডিলিট</button>
                             </div>
                         </div>
-                        <div class="support-actions">
-                            <button class="small-btn btn-blue" onclick="editDefaultSupport('whatsapp')">✏️ এডিট</button>
-                        </div>
-                    </div>
-                    
-                    <!-- WhatsApp গ্রুপ -->
-                    <div class="support-item" id="support-whatsapp-group">
-                        <div class="support-header">
-                            <div class="support-icon" style="background: #25D366; color: white;">👥</div>
-                            <div class="support-info">
-                                <div class="support-name">WhatsApp গ্রুপ</div>
-                                <div class="support-value">https://chat.whatsapp.com/JvfihxThqMoLVFHLv9TVME</div>
+                        
+                        <div class="support-item" id="support-whatsapp-group">
+                            <div class="support-header">
+                                <div class="support-icon" style="background: #25D366; color: white;">👥</div>
+                                <div class="support-info">
+                                    <div class="support-name">WhatsApp গ্রুপ</div>
+                                    <div class="support-value" id="support-whatsapp-group-value">https://chat.whatsapp.com/JvfihxThqMoLVFHLv9TVME</div>
+                                </div>
+                            </div>
+                            <div class="support-actions">
+                                <button class="small-btn btn-blue" onclick="editDefaultSupport('whatsappGroup')">✏️ এডিট</button>
+                                <button class="small-btn btn-red" onclick="deleteDefaultSupport('whatsappGroup')">❌ ডিলিট</button>
                             </div>
                         </div>
-                        <div class="support-actions">
-                            <button class="small-btn btn-blue" onclick="editDefaultSupport('whatsapp-group')">✏️ এডিট</button>
-                        </div>
-                    </div>
-                    
-                    <!-- Telegram -->
-                    <div class="support-item" id="support-telegram">
-                        <div class="support-header">
-                            <div class="support-icon" style="background: #0088cc; color: white;">✈️</div>
-                            <div class="support-info">
-                                <div class="support-name">Telegram</div>
-                                <div class="support-value">https://t.me/+XF_oEofeAeEwMDI9</div>
+                        
+                        <div class="support-item" id="support-telegram">
+                            <div class="support-header">
+                                <div class="support-icon" style="background: #0088cc; color: white;">✈️</div>
+                                <div class="support-info">
+                                    <div class="support-name">Telegram</div>
+                                    <div class="support-value" id="support-telegram-value">https://t.me/+XF_oEofeAeEwMDI9</div>
+                                </div>
+                            </div>
+                            <div class="support-actions">
+                                <button class="small-btn btn-blue" onclick="editDefaultSupport('telegram')">✏️ এডিট</button>
+                                <button class="small-btn btn-red" onclick="deleteDefaultSupport('telegram')">❌ ডিলিট</button>
                             </div>
                         </div>
-                        <div class="support-actions">
-                            <button class="small-btn btn-blue" onclick="editDefaultSupport('telegram')">✏️ এডিট</button>
-                        </div>
-                    </div>
-                    
-                    <!-- YouTube -->
-                    <div class="support-item" id="support-youtube">
-                        <div class="support-header">
-                            <div class="support-icon" style="background: #FF0000; color: white;">▶️</div>
-                            <div class="support-info">
-                                <div class="support-name">YouTube</div>
-                                <div class="support-value">https://youtube.com/@tnmriyad</div>
+                        
+                        <div class="support-item" id="support-youtube">
+                            <div class="support-header">
+                                <div class="support-icon" style="background: #FF0000; color: white;">▶️</div>
+                                <div class="support-info">
+                                    <div class="support-name">YouTube</div>
+                                    <div class="support-value" id="support-youtube-value">https://youtube.com/@tnmriyad</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="support-actions">
-                            <button class="small-btn btn-blue" onclick="editDefaultSupport('youtube')">✏️ এডিট</button>
+                            <div class="support-actions">
+                                <button class="small-btn btn-blue" onclick="editDefaultSupport('youtube')">✏️ এডিট</button>
+                                <button class="small-btn btn-red" onclick="deleteDefaultSupport('youtube')">❌ ডিলিট</button>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- নতুন সাপোর্ট অ্যাড করার ফর্ম -->
-                <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+                <div style="margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
                     <h3 style="color: #ffda44; margin-bottom: 10px;">➕ নতুন সাপোর্ট অ্যাড করুন</h3>
                     <div class="row">
                         <div class="col">
@@ -1316,6 +1385,8 @@
                                 <option value="🌐">🌐 ওয়েবসাইট</option>
                                 <option value="📘">📘 ফেসবুক</option>
                                 <option value="📷">📷 ইন্সটাগ্রাম</option>
+                                <option value="🐦">🐦 টুইটার</option>
+                                <option value="💬">💬 ডিসকর্ড</option>
                             </select>
                         </div>
                         <div class="col">
@@ -1325,64 +1396,8 @@
                     <button class="glow-on-hover btn-orange" onclick="addNewSupport()">➕ নতুন সাপোর্ট অ্যাড করুন</button>
                 </div>
                 
-                <!-- ডিফল্ট সাপোর্ট এডিট করার ফর্ম (লুকানো) -->
-                <div id="edit-default-mode-container" style="display: none;" class="edit-mode">
-                    <div class="edit-mode-title">✏️ ডিফল্ট সাপোর্ট এডিট করুন</div>
-                    <input type="text" id="edit-default-value" placeholder="নতুন মান">
-                    <input type="hidden" id="edit-default-key">
-                    <div class="row">
-                        <div class="col">
-                            <button class="glow-on-hover btn-green" onclick="updateDefaultSupport()" style="width: 100%;">✅ আপডেট করুন</button>
-                        </div>
-                        <div class="col">
-                            <button class="glow-on-hover btn-red" onclick="cancelDefaultEdit()" style="width: 100%;">✖️ বাতিল</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- নতুন সাপোর্ট এডিট করার ফর্ম (লুকানো) -->
-                <div id="edit-new-mode-container" style="display: none;" class="edit-mode">
-                    <div class="edit-mode-title">✏️ নতুন সাপোর্ট এডিট করুন</div>
-                    <div class="row">
-                        <div class="col">
-                            <input type="text" id="edit-new-name" placeholder="সাপোর্টের নাম">
-                        </div>
-                        <div class="col">
-                            <input type="text" id="edit-new-value" placeholder="ঠিকানা/লিংক">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <select id="edit-new-icon">
-                                <option value="📧">📧 ইমেইল</option>
-                                <option value="📱">📱 WhatsApp</option>
-                                <option value="👥">👥 গ্রুপ</option>
-                                <option value="✈️">✈️ Telegram</option>
-                                <option value="▶️">▶️ YouTube</option>
-                                <option value="🌐">🌐 ওয়েবসাইট</option>
-                                <option value="📘">📘 ফেসবুক</option>
-                                <option value="📷">📷 ইন্সটাগ্রাম</option>
-                            </select>
-                        </div>
-                        <div class="col">
-                            <input type="color" id="edit-new-color" value="#25D366">
-                        </div>
-                    </div>
-                    <input type="hidden" id="edit-new-key">
-                    <div class="row">
-                        <div class="col">
-                            <button class="glow-on-hover btn-green" onclick="updateNewSupport()" style="width: 100%;">✅ আপডেট করুন</button>
-                        </div>
-                        <div class="col">
-                            <button class="glow-on-hover btn-red" onclick="cancelNewEdit()" style="width: 100%;">✖️ বাতিল</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card border-green">
-                <div class="card-header">📋 নতুন সাপোর্ট লিস্ট (এডিট/ডিলিট)</div>
-                <div id="new-support-list" style="max-height: 400px; overflow-y: auto;">
+                <!-- নতুন সাপোর্ট লিস্ট - এডিট/ডিলিট সহ -->
+                <div id="new-support-list" style="max-height: 300px; overflow-y: auto; margin-top: 15px;">
                     লোড হচ্ছে...
                 </div>
             </div>
@@ -1392,10 +1407,19 @@
         <div id="notice" class="section">
             <div class="card border-purple">
                 <div class="card-header">📢 নোটিশ কন্ট্রোল (৮টি অপশন)</div>
+                
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #ffda44;">নোটিশ প্রিভিউ</h3>
+                    <div class="notice-preview" id="notice-preview-main">
+                        📢 স্বাগতম! সব ম্যাচ চালু আছে। নিয়ম মেনে খেলুন।
+                        <span class="got-it">Got it</span>
+                    </div>
+                </div>
+                
                 <div class="row">
                     <div class="col">
                         <select id="notice-select">
-                            <option value="Main">🏠 হোম পেজ নোটিশ</option>
+                            <option value="Main">🏠 হোম পেজ নোটিশ (Main)</option>
                             <option value="SoloBermuda">🎯 সোলো বারমুডা</option>
                             <option value="DuoMatch1">👥 ডুও ১</option>
                             <option value="DuoMatch2">👥 ডুও ২</option>
@@ -1403,23 +1427,64 @@
                             <option value="CS2vs2">👥 ২vs২</option>
                             <option value="CS1vs1">⚔️ ১vs১</option>
                             <option value="FreeSolo">🎁 ফ্রি সোলো</option>
-                            <option value="Support">📞 সাপোর্ট</option>
+                            <option value="Registration">📝 রেজিস্ট্রেশন পেজ</option>
+                            <option value="Support">📞 সাপোর্ট পেজ</option>
                         </select>
                     </div>
                 </div>
                 <textarea id="notice-text" rows="4" placeholder="নোটিশ লিখুন..."></textarea>
                 <button class="glow-on-hover btn-purple" onclick="setNotice()">📌 নোটিশ আপডেট</button>
-            </div>
-            
-            <div class="card border-green">
-                <div class="card-header">📋 বর্তমান নোটিশ সমূহ</div>
-                <div id="notice-list" style="max-height: 300px; overflow-y: auto;">
-                    লোড হচ্ছে...
+                
+                <div style="margin-top: 20px;">
+                    <h3 style="color: #ffda44;">📋 বর্তমান নোটিশ সমূহ</h3>
+                    <div id="notice-list" style="max-height: 300px; overflow-y: auto;">
+                        লোড হচ্ছে...
+                    </div>
                 </div>
             </div>
         </div>
         
-        <!-- ========== সেকশন ৭: ডিজাইন কন্ট্রোল ========== -->
+        <!-- ========== সেকশন ৭: হেডার কন্ট্রোল ========== -->
+        <div id="header" class="section">
+            <div class="card border-yellow">
+                <div class="card-header">📝 হেডার কন্ট্রোল</div>
+                <div class="row">
+                    <div class="col">
+                        <label>হেডার টাইটেল</label>
+                        <input type="text" id="header-title" placeholder="টাইটেল" value="🎮 TNM RIYAD 2026">
+                    </div>
+                    <div class="col">
+                        <label>হেডার সাবটাইটেল</label>
+                        <input type="text" id="header-subtitle" placeholder="সাবটাইটেল" value="🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label>কালার ১</label>
+                        <input type="color" id="header-color1" value="#FF416C">
+                    </div>
+                    <div class="col">
+                        <label>কালার ২</label>
+                        <input type="color" id="header-color2" value="#FF4B2B">
+                    </div>
+                    <div class="col">
+                        <label>বর্ডার কালার</label>
+                        <input type="color" id="header-border" value="#FFD700">
+                    </div>
+                </div>
+                <button class="glow-on-hover btn-yellow" onclick="updateHeader()">✅ হেডার আপডেট করুন</button>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+                    <p style="color: #ffda44;">প্রিভিউ:</p>
+                    <div style="background: linear-gradient(135deg, #FF416C, #FF4B2B); padding: 15px; text-align: center; border-bottom: 3px solid #FFD700; border-radius: 10px;">
+                        <div style="font-size: 20px; font-weight: bold; color: white;">🎮 TNM RIYAD 2026</div>
+                        <div style="font-size: 14px; color: #FFD700;">🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ========== সেকশন ৮: ডিজাইন কন্ট্রোল ========== -->
         <div id="design" class="section">
             <div class="card border-gold">
                 <div class="card-header">🎯 থিম সিলেক্ট</div>
@@ -1468,20 +1533,9 @@
                 </div>
                 <button class="glow-on-hover btn-cyan" onclick="applyCustomColors()">অ্যাপ্লাই</button>
             </div>
-            
-            <div class="card border-yellow">
-                <div class="card-header">📝 হেডার</div>
-                <input type="text" id="header-title" placeholder="টাইটেল" value="🎮 TNM RIYAD 2026">
-                <input type="text" id="header-subtitle" placeholder="সাবটাইটেল" value="🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট">
-                <div class="row">
-                    <div class="col"><input type="color" id="header-color1" value="#FF416C"></div>
-                    <div class="col"><input type="color" id="header-color2" value="#FF4B2B"></div>
-                </div>
-                <button class="glow-on-hover btn-yellow" onclick="updateHeader()">আপডেট</button>
-            </div>
         </div>
         
-        <!-- ========== সেকশন ৮: এনিমেশন কন্ট্রোল ========== -->
+        <!-- ========== সেকশন ৯: এনিমেশন কন্ট্রোল ========== -->
         <div id="animation" class="section">
             <div class="animation-control-card" style="background: rgba(20,25,40,0.95); border-left: 8px solid #00ffff; border-radius: 15px; padding: 20px;">
                 <div class="card-header" style="color: #00ffff;">✨ এনিমেশন</div>
@@ -1540,7 +1594,7 @@
             </div>
         </div>
         
-        <!-- ========== সেকশন ৯: অ্যাপ ডাউনলোড কন্ট্রোল ========== -->
+        <!-- ========== সেকশন ১০: অ্যাপ ডাউনলোড কন্ট্রোল ========== -->
         <div id="app" class="section">
             <div class="card border-blue">
                 <div class="card-header">📱 অ্যাপ ডাউনলোড লিংক</div>
@@ -1554,7 +1608,7 @@
             </div>
         </div>
         
-        <!-- ========== সেকশন ১০: রিকোয়েস্ট লিস্ট ========== -->
+        <!-- ========== সেকশন ১১: রিকোয়েস্ট লিস্ট ========== -->
         <div id="requests" class="section">
             <div class="card border-blue">
                 <div class="card-header">📥 ডিপোজিট</div>
@@ -1575,6 +1629,183 @@
                 <div id="registration-list" style="max-height: 250px; overflow-y: auto;">
                     লোড হচ্ছে...
                 </div>
+            </div>
+        </div>
+
+        <!-- ========== নতুন সেকশন ১২: র্যাঙ্ক কন্ট্রোল ========== -->
+        <div id="rank-control" class="section">
+            <div class="card border-gold">
+                <div class="card-header">🏆 র্যাঙ্ক কন্ট্রোল</div>
+                
+                <!-- র্যাঙ্ক সেটিংস -->
+                <div style="margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+                    <h3 style="color: #ffda44;">📊 ইউজার অনুযায়ী র্যাঙ্ক (উইন অনুযায়ী)</h3>
+                    <p style="color: #aaa; margin-bottom: 15px;">নিচে প্রতিটি ইউজারের জয়ের সংখ্যা অনুযায়ী র্যাঙ্ক দেখানো হয়েছে।</p>
+                </div>
+                
+                <!-- র্যাঙ্ক অনুযায়ী ইউজার লিস্ট -->
+                <div id="rank-list" style="max-height: 400px; overflow-y: auto;">
+                    লোড হচ্ছে...
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== নতুন সেকশন ১৩: উইনিং কন্ট্রোল ========== -->
+        <div id="winning-control" class="section">
+            <div class="card border-green">
+                <div class="card-header">💰 ম্যাচ উইনিং কন্ট্রোল</div>
+                
+                <!-- খেলোয়াড় খুঁজে বের করার ফর্ম -->
+                <div style="margin-bottom: 20px; padding: 15px; background: rgba(76,175,80,0.1); border-radius: 10px;">
+                    <h3 style="color: #4CAF50;">📱 খেলোয়াড় খুঁজুন</h3>
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" id="winning-player-phone" placeholder="📱 খেলোয়াড়ের মোবাইল নম্বর">
+                        </div>
+                        <div class="col">
+                            <button class="glow-on-hover btn-green" onclick="findPlayerForWinning()">🔍 খুঁজুন</button>
+                        </div>
+                    </div>
+                    
+                    <div id="winning-player-details" style="display: none; margin-top: 15px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">
+                        <p style="color: #ffda44; font-size: 16px;" id="winning-player-name">-</p>
+                        <p style="color: #aaa;" id="winning-player-phone-display">-</p>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0;">
+                            <div style="text-align: center;">
+                                <p style="color: #38ef7d; font-size: 18px;" id="winning-player-balance">0</p>
+                                <p style="color: #aaa;">💰 ব্যালেন্স</p>
+                            </div>
+                            <div style="text-align: center;">
+                                <p style="color: #ffda44; font-size: 18px;" id="winning-player-wins">0</p>
+                                <p style="color: #aaa;">🏆 জয়</p>
+                            </div>
+                            <div style="text-align: center;">
+                                <p style="color: #00d2ff; font-size: 18px;" id="winning-player-matches">0</p>
+                                <p style="color: #aaa;">🎮 ম্যাচ</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- উইনিং দেওয়ার ফর্ম -->
+                <div style="padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+                    <h3 style="color: #ffda44;">🏆 উইনিং প্রাইজ দিন</h3>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <select id="winning-match-select">
+                                <option value="SoloBermuda">🎯 সোলো বারমুডা</option>
+                                <option value="DuoMatch1">👥 ডুও ১</option>
+                                <option value="DuoMatch2">👥 ডুও ২</option>
+                                <option value="CS4vs4">👥 ৪vs৪</option>
+                                <option value="CS2vs2">👥 ২vs২</option>
+                                <option value="CS1vs1">⚔️ ১vs১</option>
+                                <option value="FreeSolo">🎁 ফ্রি সোলো</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <input type="number" id="winning-prize" placeholder="🏆 জয়ের পুরস্কার (টাকা)">
+                        </div>
+                        <div class="col">
+                            <input type="number" id="winning-kill-bonus" placeholder="🔫 কিল বোনাস (টাকা)">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <input type="number" id="winning-total-kills" placeholder="🔢 মোট কিল সংখ্যা">
+                        </div>
+                        <div class="col">
+                            <input type="text" id="winning-position" placeholder="🥇 অবস্থান (১ম, ২য়, ইত্যাদি)">
+                        </div>
+                    </div>
+                    
+                    <button class="glow-on-hover btn-green" onclick="giveWinningPrize()">💰 উইনিং দিন</button>
+                </div>
+                
+                <!-- দেওয়া উইনিংয়ের ইতিহাস -->
+                <div style="margin-top: 20px;">
+                    <h3 style="color: #ffda44;">📋 দেওয়া উইনিংয়ের ইতিহাস</h3>
+                    <div id="winning-history" style="max-height: 300px; overflow-y: auto;">
+                        লোড হচ্ছে...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== নতুন সেকশন ১৪: নোটিফিকেশন কন্ট্রোল ========== -->
+        <div id="notification-control" class="section">
+            <div class="card border-purple">
+                <div class="card-header">📢 নোটিফিকেশন কন্ট্রোল</div>
+                
+                <!-- সব ইউজারে নোটিফিকেশন -->
+                <div style="margin-bottom: 20px; padding: 15px; background: rgba(156,39,176,0.1); border-radius: 10px;">
+                    <h3 style="color: #9C27B0;">📢 সব ইউজারে নোটিফিকেশন পাঠান</h3>
+                    <textarea id="notification-all-text" rows="4" placeholder="নোটিফিকেশন টেক্সট লিখুন..."></textarea>
+                    <button class="glow-on-hover btn-purple" onclick="sendNotificationToAll()">📢 সব ইউজারে পাঠান</button>
+                </div>
+                
+                <!-- নির্দিষ্ট নম্বরে নোটিফিকেশন -->
+                <div style="padding: 15px; background: rgba(33,150,243,0.1); border-radius: 10px;">
+                    <h3 style="color: #2196F3;">📱 নির্দিষ্ট নম্বরে নোটিফিকেশন পাঠান</h3>
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" id="notification-specific-phone" placeholder="📱 মোবাইল নম্বর">
+                        </div>
+                    </div>
+                    <textarea id="notification-specific-text" rows="4" placeholder="নোটিফিকেশন টেক্সট লিখুন..."></textarea>
+                    <button class="glow-on-hover btn-blue" onclick="sendNotificationToSpecific()">📱 নির্দিষ্ট নম্বরে পাঠান</button>
+                </div>
+                
+                <!-- পাঠানো নোটিফিকেশনের ইতিহাস -->
+                <div style="margin-top: 20px;">
+                    <h3 style="color: #ffda44;">📋 পাঠানো নোটিফিকেশন</h3>
+                    <div id="notification-history" style="max-height: 300px; overflow-y: auto;">
+                        লোড হচ্ছে...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== নতুন সেকশন ১৫: ম্যাচ ইমেজ কন্ট্রোল ========== -->
+        <div id="match-images" class="section">
+            <div class="card border-cyan">
+                <div class="card-header">🖼️ ম্যাচ ইমেজ কন্ট্রোল</div>
+                <p style="color: #aaa; margin-bottom: 15px;">প্রত্যেক ম্যাচের জন্য ছবির লিংক পরিবর্তন করুন।</p>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="color: #ffda44;">🎯 সোলো বারমুডা</label>
+                    <input type="text" id="icon-SoloBermuda" placeholder="ছবির লিংক" value="https://i.ibb.co.com/Gv57Crmh/free-fire-characters.jpg">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="color: #ffda44;">👥 ডুও ১</label>
+                    <input type="text" id="icon-DuoMatch1" placeholder="ছবির লিংক" value="https://i.ibb.co.com/rDgKsWm/duo-image.jpg">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="color: #ffda44;">👥 ডুও ২</label>
+                    <input type="text" id="icon-DuoMatch2" placeholder="ছবির লিংক" value="https://i.ibb.co.com/rDgKsWm/duo-image.jpg">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="color: #ffda44;">⚔️ ৪vs৪ ক্ল্যাশ</label>
+                    <input type="text" id="icon-CS4vs4" placeholder="ছবির লিংক" value="https://i.ibb.co.com/C57vzBfL/maxresdefault.jpg">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="color: #ffda44;">⚡ ২vs২ কাস্টম</label>
+                    <input type="text" id="icon-CS2vs2" placeholder="ছবির লিংক" value="https://i.ibb.co.com/nqdgm6jw/free-fire-735x400.jpg">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="color: #ffda44;">🥊 ১vs১ নকআউট</label>
+                    <input type="text" id="icon-CS1vs1" placeholder="ছবির লিংক" value="https://i.ibb.co.com/JW1Qh62T/screenshot.jpg">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="color: #ffda44;">🎁 ফ্রি সোলো</label>
+                    <input type="text" id="icon-FreeSolo" placeholder="ছবির লিংক" value="https://i.ibb.co.com/jPbw04PT/wp12125274.jpg">
+                </div>
+                
+                <button class="glow-on-hover btn-cyan" onclick="saveMatchIcons()">💾 সব ছবির লিংক সংরক্ষণ করুন</button>
             </div>
         </div>
     </div>
@@ -1600,16 +1831,6 @@
         let starsEnabled = true;
         let touchEnabled = true;
         let animationSpeed = 'normal';
-        
-        // ডিফল্ট সাপোর্ট ভেরিয়েবল
-        let defaultSupportEmail = "talkingmasud5511@gmail.com";
-        let defaultSupportWhatsapp = "01910658737";
-        let defaultSupportWhatsappGroup = "https://chat.whatsapp.com/JvfihxThqMoLVFHLv9TVME";
-        let defaultSupportTelegram = "https://t.me/+XF_oEofeAeEwMDI9";
-        let defaultSupportYoutube = "https://youtube.com/@tnmriyad";
-        
-        let currentEditingDefaultKey = null;
-        let currentEditingNewKey = null;
         
         // ========== এনিমেশন ফাংশন ==========
         function createRain(count = 60) {
@@ -1680,6 +1901,12 @@
                 loadLiveStatus();
                 loadAppDownloadLink();
                 loadNotices();
+                loadHeaderSettings();
+                loadRankList(); // র্যাঙ্ক লোড
+                loadWinningHistory(); // উইনিং ইতিহাস লোড
+                loadNotificationHistory(); // নোটিফিকেশন ইতিহাস লোড
+                loadDefaultSupportSettings(); // ডিফল্ট সাপোর্ট লোড
+                loadMatchIcons(); // ম্যাচ ইমেজ লোড
             } else {
                 document.getElementById('login-error').style.display = 'block';
                 setTimeout(() => {
@@ -1708,6 +1935,42 @@
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
             event.target.classList.add('active');
+            
+            // সেকশন চেঞ্জ হলে রিলোড
+            if (sectionId === 'rank-control') loadRankList();
+            if (sectionId === 'winning-control') loadWinningHistory();
+            if (sectionId === 'notification-control') loadNotificationHistory();
+            if (sectionId === 'match-images') loadMatchIcons(); // ম্যাচ ইমেজ লোড
+        }
+        
+        // ========== হেডার সেটিংস ==========
+        function loadHeaderSettings() {
+            db.ref('settings/header').once('value', (snap) => {
+                let header = snap.val();
+                if (header) {
+                    document.getElementById('header-title').value = header.title || '🎮 TNM RIYAD 2026';
+                    document.getElementById('header-subtitle').value = header.subtitle || '🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট';
+                    document.getElementById('header-color1').value = header.color1 || '#FF416C';
+                    document.getElementById('header-color2').value = header.color2 || '#FF4B2B';
+                    document.getElementById('header-border').value = header.border || '#FFD700';
+                }
+            });
+        }
+        
+        function updateHeader() {
+            let title = document.getElementById('header-title').value;
+            let subtitle = document.getElementById('header-subtitle').value;
+            let color1 = document.getElementById('header-color1').value;
+            let color2 = document.getElementById('header-color2').value;
+            let border = document.getElementById('header-border').value;
+            
+            db.ref('settings/header').set({
+                title: title,
+                subtitle: subtitle,
+                color1: color1,
+                color2: color2,
+                border: border
+            }).then(() => alert('✅ হেডার আপডেট!'));
         }
         
         // ========== অ্যাপ ডাউনলোড লিংক ==========
@@ -1748,6 +2011,13 @@
                 }
                 
                 document.getElementById('notice-list').innerHTML = html || '<p style="color: #888; padding: 15px; text-align: center;">কোনো নোটিশ নেই</p>';
+                
+                // মেইন নোটিশ প্রিভিউ আপডেট
+                if (notices.Main) {
+                    document.getElementById('notice-preview-main').innerHTML = '📢 ' + notices.Main + ' <span class="got-it">Got it</span>';
+                } else {
+                    document.getElementById('notice-preview-main').innerHTML = '📢 স্বাগতম! সব ম্যাচ চালু আছে। নিয়ম মেনে খেলুন। <span class="got-it">Got it</span>';
+                }
             });
         }
         
@@ -2189,7 +2459,54 @@
             }).then(() => alert('✅ উইথড্র সেটিংস আপডেট!'));
         }
         
-        // ========== নতুন সাপোর্ট কন্ট্রোল ==========
+        // ========== ডিফল্ট সাপোর্ট লোড ==========
+        function loadDefaultSupportSettings() {
+            db.ref('default_support').once('value', (snap) => {
+                let supports = snap.val() || {};
+                
+                document.getElementById('support-email-value').innerText = supports.email || 'talkingmasud5511@gmail.com';
+                document.getElementById('support-whatsapp-value').innerText = supports.whatsapp || '01910658737';
+                document.getElementById('support-whatsapp-group-value').innerText = supports.whatsappGroup || 'https://chat.whatsapp.com/JvfihxThqMoLVFHLv9TVME';
+                document.getElementById('support-telegram-value').innerText = supports.telegram || 'https://t.me/+XF_oEofeAeEwMDI9';
+                document.getElementById('support-youtube-value').innerText = supports.youtube || 'https://youtube.com/@tnmriyad';
+            });
+        }
+        
+        function editDefaultSupport(type) {
+            let currentValue = document.getElementById(`support-${type}-value`).innerText;
+            let newValue = prompt(`${type} এর নতুন মান দিন:`, currentValue);
+            if (!newValue) return;
+            
+            let update = {};
+            if (type === 'email') update.email = newValue;
+            else if (type === 'whatsapp') update.whatsapp = newValue;
+            else if (type === 'whatsappGroup') update.whatsappGroup = newValue;
+            else if (type === 'telegram') update.telegram = newValue;
+            else if (type === 'youtube') update.youtube = newValue;
+            
+            db.ref('default_support').update(update).then(() => {
+                alert('✅ সাপোর্ট আপডেট!');
+                document.getElementById(`support-${type}-value`).innerText = newValue;
+            });
+        }
+        
+        function deleteDefaultSupport(type) {
+            if (confirm(`${type} ডিলিট করবেন?`)) {
+                let update = {};
+                if (type === 'email') update.email = null;
+                else if (type === 'whatsapp') update.whatsapp = null;
+                else if (type === 'whatsappGroup') update.whatsappGroup = null;
+                else if (type === 'telegram') update.telegram = null;
+                else if (type === 'youtube') update.youtube = null;
+                
+                db.ref('default_support').update(update).then(() => {
+                    alert('✅ সাপোর্ট ডিলিট!');
+                    document.getElementById(`support-${type}-value`).innerText = 'ডিলিট করা হয়েছে';
+                });
+            }
+        }
+        
+        // ========== নতুন সাপোর্ট কন্ট্রোল (এডিট অপশন সহ) ==========
         function loadNewSupportList() {
             db.ref('supports').on('value', (snap) => {
                 let supports = snap.val() || {};
@@ -2207,8 +2524,8 @@
                                 </div>
                             </div>
                             <div class="support-actions">
-                                <button class="small-btn btn-blue" onclick="editNewSupport('${key}')">✏️ এডিট</button>
-                                <button class="small-btn btn-red" onclick="deleteNewSupport('${key}')">❌ ডিলিট</button>
+                                <button class="small-btn btn-blue" onclick="editSupport('${key}')">✏️ এডিট</button>
+                                <button class="small-btn btn-red" onclick="deleteSupport('${key}')">❌ ডিলিট</button>
                             </div>
                         </div>
                     `;
@@ -2251,133 +2568,38 @@
             });
         }
         
-        function editNewSupport(key) {
+        function editSupport(key) {
             db.ref('supports/' + key).once('value', (snap) => {
-                let s = snap.val();
-                if (s) {
-                    document.getElementById('edit-new-name').value = s.name;
-                    document.getElementById('edit-new-value').value = s.value;
-                    document.getElementById('edit-new-icon').value = s.icon;
-                    document.getElementById('edit-new-color').value = s.color;
-                    document.getElementById('edit-new-key').value = key;
+                let support = snap.val();
+                if (support) {
+                    let newName = prompt('নতুন নাম দিন:', support.name);
+                    if (!newName) return;
                     
-                    document.getElementById('edit-new-mode-container').style.display = 'block';
-                    currentEditingNewKey = key;
+                    let newValue = prompt('নতুন লিংক/ঠিকানা দিন:', support.value);
+                    if (!newValue) return;
                     
-                    document.getElementById('edit-new-mode-container').scrollIntoView({ behavior: 'smooth' });
+                    db.ref('supports/' + key).update({
+                        name: newName,
+                        value: newValue
+                    }).then(() => {
+                        alert('✅ সাপোর্ট আপডেট!');
+                    }).catch((error) => {
+                        alert('❌ সমস্যা: ' + error.message);
+                    });
+                } else {
+                    alert('❌ সাপোর্ট ডাটা পাওয়া যায়নি!');
                 }
             });
         }
         
-        function updateNewSupport() {
-            let key = document.getElementById('edit-new-key').value;
-            if (!key) {
-                alert('❌ এডিট করার জন্য সাপোর্ট সিলেক্ট করুন!');
-                return;
-            }
-            
-            let name = document.getElementById('edit-new-name').value;
-            let value = document.getElementById('edit-new-value').value;
-            let icon = document.getElementById('edit-new-icon').value;
-            let color = document.getElementById('edit-new-color').value;
-            
-            if (!name || !value) {
-                alert('❌ সব তথ্য দিন!');
-                return;
-            }
-            
-            db.ref('supports/' + key).update({
-                name: name,
-                value: value,
-                icon: icon,
-                color: color
-            }).then(() => {
-                alert('✅ সাপোর্ট আপডেট করা হয়েছে!');
-                cancelNewEdit();
-            }).catch((error) => {
-                alert('❌ সমস্যা: ' + error.message);
-            });
-        }
-        
-        function deleteNewSupport(key) {
-            if (confirm('এই সাপোর্ট ডিলিট করবেন?')) {
+        function deleteSupport(key) {
+            if (confirm('সাপোর্ট ডিলিট করবেন?')) {
                 db.ref('supports/' + key).remove().then(() => {
                     alert('✅ সাপোর্ট ডিলিট!');
-                    if (currentEditingNewKey === key) {
-                        cancelNewEdit();
-                    }
                 }).catch((error) => {
                     alert('❌ সমস্যা: ' + error.message);
                 });
             }
-        }
-        
-        function cancelNewEdit() {
-            currentEditingNewKey = null;
-            document.getElementById('edit-new-mode-container').style.display = 'none';
-            document.getElementById('edit-new-name').value = '';
-            document.getElementById('edit-new-value').value = '';
-            document.getElementById('edit-new-icon').value = '📧';
-            document.getElementById('edit-new-color').value = '#25D366';
-            document.getElementById('edit-new-key').value = '';
-        }
-        
-        // ========== ডিফল্ট সাপোর্ট এডিট ==========
-        function editDefaultSupport(type) {
-            let currentValue = '';
-            if (type === 'email') {
-                currentValue = defaultSupportEmail;
-            } else if (type === 'whatsapp') {
-                currentValue = defaultSupportWhatsapp;
-            } else if (type === 'whatsapp-group') {
-                currentValue = defaultSupportWhatsappGroup;
-            } else if (type === 'telegram') {
-                currentValue = defaultSupportTelegram;
-            } else if (type === 'youtube') {
-                currentValue = defaultSupportYoutube;
-            }
-            
-            document.getElementById('edit-default-value').value = currentValue;
-            document.getElementById('edit-default-key').value = type;
-            document.getElementById('edit-default-mode-container').style.display = 'block';
-            document.getElementById('edit-default-mode-container').scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        function updateDefaultSupport() {
-            let type = document.getElementById('edit-default-key').value;
-            let newValue = document.getElementById('edit-default-value').value;
-            
-            if (!newValue) {
-                alert('❌ মান দিন!');
-                return;
-            }
-            
-            // UI আপডেট
-            if (type === 'email') {
-                defaultSupportEmail = newValue;
-                document.querySelector('#support-email .support-value').innerText = newValue;
-            } else if (type === 'whatsapp') {
-                defaultSupportWhatsapp = newValue;
-                document.querySelector('#support-whatsapp .support-value').innerText = newValue;
-            } else if (type === 'whatsapp-group') {
-                defaultSupportWhatsappGroup = newValue;
-                document.querySelector('#support-whatsapp-group .support-value').innerText = newValue;
-            } else if (type === 'telegram') {
-                defaultSupportTelegram = newValue;
-                document.querySelector('#support-telegram .support-value').innerText = newValue;
-            } else if (type === 'youtube') {
-                defaultSupportYoutube = newValue;
-                document.querySelector('#support-youtube .support-value').innerText = newValue;
-            }
-            
-            alert('✅ ডিফল্ট সাপোর্ট আপডেট!');
-            cancelDefaultEdit();
-        }
-        
-        function cancelDefaultEdit() {
-            document.getElementById('edit-default-mode-container').style.display = 'none';
-            document.getElementById('edit-default-value').value = '';
-            document.getElementById('edit-default-key').value = '';
         }
         
         // ========== ডিজাইন কন্ট্রোল ==========
@@ -2434,20 +2656,6 @@
             db.ref('settings/design/theme').set(colors).then(() => {
                 alert('✅ কাস্টম কালার অ্যাপ্লাই!');
             });
-        }
-        
-        function updateHeader() {
-            let title = document.getElementById('header-title').value;
-            let subtitle = document.getElementById('header-subtitle').value;
-            let color1 = document.getElementById('header-color1').value;
-            let color2 = document.getElementById('header-color2').value;
-            
-            db.ref('settings/header').set({
-                title: title,
-                subtitle: subtitle,
-                color1: color1,
-                color2: color2
-            }).then(() => alert('✅ হেডার আপডেট!'));
         }
         
         function loadDesignSettings() {
@@ -2731,6 +2939,316 @@
             }
         }
         
+        // ========== র্যাঙ্ক কন্ট্রোল ফাংশন ==========
+        function loadRankList() {
+            db.ref('users').once('value', (snap) => {
+                let users = snap.val() || {};
+                let usersArray = [];
+                
+                for (let key in users) {
+                    usersArray.push({
+                        phone: key,
+                        name: users[key].name || 'N/A',
+                        wins: users[key].wins || 0,
+                        balance: users[key].balance || 0,
+                        matches: users[key].matches || 0,
+                        kills: users[key].kills || 0
+                    });
+                }
+                
+                // উইন অনুযায়ী সাজানো (বড় থেকে ছোট)
+                usersArray.sort((a, b) => b.wins - a.wins);
+                
+                let html = '';
+                usersArray.forEach((user, index) => {
+                    let rankEmoji = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🎯';
+                    let wins = user.wins;
+                    
+                    html += `
+                        <div class="rank-item">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <span class="rank-position">${rankEmoji} #${index + 1}</span> 
+                                    <span style="color: #ffda44;">${user.name}</span>
+                                </div>
+                                <div>
+                                    <span style="color: #38ef7d;">🏆 ${wins}</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #888; margin-top: 5px;">
+                                <span>📱 ${user.phone}</span>
+                                <span>💰 ${user.balance}</span>
+                                <span>🎮 ${user.matches}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                document.getElementById('rank-list').innerHTML = html || '<p style="color: #888; padding: 15px; text-align: center;">কোনো ইউজার নেই</p>';
+            });
+        }
+        
+        // ========== উইনিং কন্ট্রোল ফাংশন ==========
+        let currentWinningPlayer = null;
+        
+        function findPlayerForWinning() {
+            let phone = document.getElementById('winning-player-phone').value;
+            if (!phone) {
+                alert('❌ মোবাইল নম্বর দিন!');
+                return;
+            }
+            
+            db.ref('users/' + phone).once('value', (snap) => {
+                let user = snap.val();
+                if (user) {
+                    currentWinningPlayer = { phone: phone, ...user };
+                    
+                    document.getElementById('winning-player-details').style.display = 'block';
+                    document.getElementById('winning-player-name').innerText = user.name || 'N/A';
+                    document.getElementById('winning-player-phone-display').innerText = '📱 ' + phone;
+                    document.getElementById('winning-player-balance').innerText = user.balance || 0;
+                    document.getElementById('winning-player-wins').innerText = user.wins || 0;
+                    document.getElementById('winning-player-matches').innerText = user.matches || 0;
+                } else {
+                    alert('❌ ইউজার পাওয়া যায়নি!');
+                }
+            });
+        }
+        
+        function giveWinningPrize() {
+            if (!currentWinningPlayer) {
+                alert('❌ আগে খেলোয়াড় খুঁজুন!');
+                return;
+            }
+            
+            let match = document.getElementById('winning-match-select').value;
+            let prize = parseInt(document.getElementById('winning-prize').value);
+            let killBonus = parseInt(document.getElementById('winning-kill-bonus').value) || 0;
+            let totalKills = parseInt(document.getElementById('winning-total-kills').value) || 0;
+            let position = document.getElementById('winning-position').value;
+            
+            if (!prize && !killBonus) {
+                alert('❌ পুরস্কার বা কিল বোনাস দিন!');
+                return;
+            }
+            
+            let totalPrize = prize + (killBonus * totalKills);
+            let phone = currentWinningPlayer.phone;
+            
+            if (confirm(`${currentWinningPlayer.name} কে ${totalPrize} টাকা দিতে চান?`)) {
+                // ব্যালেন্স আপডেট
+                db.ref('users/' + phone + '/balance').transaction(current => (current || 0) + totalPrize);
+                db.ref('users/' + phone + '/wins').transaction(current => (current || 0) + 1);
+                // totalWinnings আপডেট (জয় করা মোট টাকা)
+                db.ref('users/' + phone + '/totalWinnings').transaction(current => (current || 0) + totalPrize);
+                
+                // উইনিং ইতিহাসে যোগ
+                let winningData = {
+                    playerPhone: phone,
+                    playerName: currentWinningPlayer.name,
+                    match: match,
+                    prize: prize,
+                    killBonus: killBonus,
+                    totalKills: totalKills,
+                    totalPrize: totalPrize,
+                    position: position,
+                    time: new Date().toLocaleString('bn-BD'),
+                    admin: 'ffbd123'
+                };
+                
+                db.ref('winnings/' + Date.now()).set(winningData);
+                
+                // ইউজারের ইতিহাসে যোগ
+                db.ref('history/' + phone).push({
+                    type: 'winning',
+                    match: match,
+                    prize: totalPrize,
+                    position: position,
+                    kills: totalKills,
+                    status: 'confirmed',
+                    time: new Date().toLocaleString('bn-BD')
+                });
+                
+                alert(`✅ ${totalPrize} টাকা ${currentWinningPlayer.name} কে দেওয়া হয়েছে!`);
+                
+                // ফর্ম রিসেট
+                document.getElementById('winning-prize').value = '';
+                document.getElementById('winning-kill-bonus').value = '';
+                document.getElementById('winning-total-kills').value = '';
+                document.getElementById('winning-position').value = '';
+                
+                loadWinningHistory();
+                loadRankList();
+            }
+        }
+        
+        function loadWinningHistory() {
+            db.ref('winnings').limitToLast(20).on('value', (snap) => {
+                let winnings = snap.val() || {};
+                let html = '';
+                
+                let winningsArray = [];
+                for (let key in winnings) {
+                    winningsArray.push({ id: key, ...winnings[key] });
+                }
+                
+                winningsArray.reverse().forEach(w => {
+                    html += `
+                        <div class="winning-player-item">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: #ffda44;">👤 ${w.playerName}</span>
+                                <span style="color: #38ef7d;">💰 ${w.totalPrize} টাকা</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-top: 5px;">
+                                <span>🎮 ${w.match}</span>
+                                <span>🥇 ${w.position || 'N/A'}</span>
+                                <span>🔫 ${w.totalKills || 0}</span>
+                            </div>
+                            <div style="font-size: 10px; color: #888; margin-top: 5px;">
+                                📱 ${w.playerPhone} | 🕐 ${w.time}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                document.getElementById('winning-history').innerHTML = html || '<p style="color: #888; padding: 15px; text-align: center;">কোনো উইনিং দেওয়া হয়নি</p>';
+            });
+        }
+        
+        // ========== নোটিফিকেশন কন্ট্রোল ফাংশন ==========
+        function sendNotificationToAll() {
+            let text = document.getElementById('notification-all-text').value;
+            if (!text) {
+                alert('❌ নোটিফিকেশন টেক্সট দিন!');
+                return;
+            }
+            
+            if (confirm(`সব ইউজারে "${text}" নোটিফিকেশন পাঠাবেন?`)) {
+                db.ref('users').once('value', (snap) => {
+                    let users = snap.val() || {};
+                    let count = 0;
+                    
+                    for (let phone in users) {
+                        db.ref('notifications/' + phone).push({
+                            text: text,
+                            time: new Date().toLocaleString('bn-BD'),
+                            read: false
+                        });
+                        count++;
+                    }
+                    
+                    // ইতিহাসে যোগ
+                    db.ref('notification_history/' + Date.now()).set({
+                        type: 'all',
+                        text: text,
+                        count: count,
+                        time: new Date().toLocaleString('bn-BD'),
+                        admin: 'ffbd123'
+                    });
+                    
+                    alert(`✅ ${count} জন ইউজারে নোটিফিকেশন পাঠানো হয়েছে!`);
+                    document.getElementById('notification-all-text').value = '';
+                    loadNotificationHistory();
+                });
+            }
+        }
+        
+        function sendNotificationToSpecific() {
+            let phone = document.getElementById('notification-specific-phone').value;
+            let text = document.getElementById('notification-specific-text').value;
+            
+            if (!phone || !text) {
+                alert('❌ মোবাইল নম্বর ও নোটিফিকেশন টেক্সট দিন!');
+                return;
+            }
+            
+            db.ref('users/' + phone).once('value', (snap) => {
+                if (snap.val()) {
+                    if (confirm(`${phone} নম্বরে "${text}" পাঠাবেন?`)) {
+                        db.ref('notifications/' + phone).push({
+                            text: text,
+                            time: new Date().toLocaleString('bn-BD'),
+                            read: false
+                        });
+                        
+                        // ইতিহাসে যোগ
+                        db.ref('notification_history/' + Date.now()).set({
+                            type: 'specific',
+                            phone: phone,
+                            text: text,
+                            time: new Date().toLocaleString('bn-BD'),
+                            admin: 'ffbd123'
+                        });
+                        
+                        alert(`✅ ${phone} নম্বরে নোটিফিকেশন পাঠানো হয়েছে!`);
+                        document.getElementById('notification-specific-phone').value = '';
+                        document.getElementById('notification-specific-text').value = '';
+                        loadNotificationHistory();
+                    }
+                } else {
+                    alert('❌ ইউজার পাওয়া যায়নি!');
+                }
+            });
+        }
+        
+        function loadNotificationHistory() {
+            db.ref('notification_history').limitToLast(20).on('value', (snap) => {
+                let notifications = snap.val() || {};
+                let html = '';
+                
+                let notifArray = [];
+                for (let key in notifications) {
+                    notifArray.push({ id: key, ...notifications[key] });
+                }
+                
+                notifArray.reverse().forEach(n => {
+                    html += `
+                        <div class="box" style="border-left-color: #9C27B0;">
+                            <div class="box-title">${n.type === 'all' ? '📢 সব ইউজারে' : '📱 নির্দিষ্ট নম্বরে'}</div>
+                            <div style="margin-bottom: 5px;">${n.text}</div>
+                            ${n.phone ? `<div style="color: #00ffcc;">📱 ${n.phone}</div>` : ''}
+                            ${n.count ? `<div style="color: #aaa;">👥 ${n.count} জন</div>` : ''}
+                            <div style="font-size: 10px; color: #888; margin-top: 5px;">🕐 ${n.time}</div>
+                        </div>
+                    `;
+                });
+                
+                document.getElementById('notification-history').innerHTML = html || '<p style="color: #888; padding: 15px; text-align: center;">কোনো নোটিফিকেশন পাঠানো হয়নি</p>';
+            });
+        }
+        
+        // ========== ম্যাচ ইমেজ কন্ট্রোল ফাংশন ==========
+        function loadMatchIcons() {
+            db.ref('match_icons').once('value', (snap) => {
+                let icons = snap.val() || {};
+                document.getElementById('icon-SoloBermuda').value = icons.SoloBermuda || 'https://i.ibb.co.com/Gv57Crmh/free-fire-characters.jpg';
+                document.getElementById('icon-DuoMatch1').value = icons.DuoMatch1 || 'https://i.ibb.co.com/rDgKsWm/duo-image.jpg';
+                document.getElementById('icon-DuoMatch2').value = icons.DuoMatch2 || 'https://i.ibb.co.com/rDgKsWm/duo-image.jpg';
+                document.getElementById('icon-CS4vs4').value = icons.CS4vs4 || 'https://i.ibb.co.com/C57vzBfL/maxresdefault.jpg';
+                document.getElementById('icon-CS2vs2').value = icons.CS2vs2 || 'https://i.ibb.co.com/nqdgm6jw/free-fire-735x400.jpg';
+                document.getElementById('icon-CS1vs1').value = icons.CS1vs1 || 'https://i.ibb.co.com/JW1Qh62T/screenshot.jpg';
+                document.getElementById('icon-FreeSolo').value = icons.FreeSolo || 'https://i.ibb.co.com/jPbw04PT/wp12125274.jpg';
+            });
+        }
+        
+        function saveMatchIcons() {
+            let icons = {
+                SoloBermuda: document.getElementById('icon-SoloBermuda').value,
+                DuoMatch1: document.getElementById('icon-DuoMatch1').value,
+                DuoMatch2: document.getElementById('icon-DuoMatch2').value,
+                CS4vs4: document.getElementById('icon-CS4vs4').value,
+                CS2vs2: document.getElementById('icon-CS2vs2').value,
+                CS1vs1: document.getElementById('icon-CS1vs1').value,
+                FreeSolo: document.getElementById('icon-FreeSolo').value
+            };
+            
+            db.ref('match_icons').set(icons).then(() => {
+                alert('✅ সব ম্যাচের ছবির লিংক সংরক্ষণ করা হয়েছে!');
+            }).catch((error) => {
+                alert('❌ সমস্যা: ' + error.message);
+            });
+        }
+        
         function loadAllAdminData() {
             db.ref('users').on('value', (s) => {
                 let c = 0; s.forEach(() => c++);
@@ -2775,6 +3293,12 @@
                 loadLiveStatus();
                 loadAppDownloadLink();
                 loadNotices();
+                loadHeaderSettings();
+                loadRankList();
+                loadWinningHistory();
+                loadNotificationHistory();
+                loadDefaultSupportSettings();
+                loadMatchIcons(); // ম্যাচ ইমেজ লোড
             }
         };
     </script>
