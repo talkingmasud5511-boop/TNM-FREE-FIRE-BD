@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>TNM FF - অ্যাডমিন প্যানেল </title>
+    <title>TNM FF - অ্যাডমিন প্যানেল</title>
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     
     <style>
+        /* আপনার বিদ্যমান সমস্ত CSS এখানে থাকবে - সম্পূর্ণ অক্ষত */
         * {
             margin: 0;
             padding: 0;
@@ -290,7 +291,7 @@
             margin-top: 5px;
         }
         
-        /* নেভিগেশন মেনু - নতুন সেকশন */
+        /* নেভিগেশন মেনু */
         .admin-nav {
             display: flex;
             flex-wrap: wrap;
@@ -695,7 +696,7 @@
             margin-top: 5px;
         }
         
-        /* থিম সিলেক্টর */
+        /* থিম সিলেক্টর - এটি থাকবে কিন্তু আমরা এটাকে ডিজাইন কন্ট্রোল হিসেবে ব্যবহার করব */
         .theme-selector {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -878,6 +879,280 @@
             border-left: 4px solid #4CAF50;
         }
         
+        /* নতুন স্লাইডশো স্টাইল */
+        .slideshow-item {
+            background: rgba(30,35,50,0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .slideshow-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .slideshow-item input {
+            flex: 1;
+        }
+        .remove-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        /* নোটিশ ডিজাইন কন্ট্রোলের জন্য নতুন স্টাইল */
+        .notice-design-preview {
+            background: var(--notice-bg, rgba(255,215,0,0.1));
+            color: var(--notice-text, #ffda44);
+            border-left: 5px solid var(--notice-border, #FFD700);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .rainbow-text {
+            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rainbow 3s linear infinite;
+            background-size: 200% 200%;
+        }
+        
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .design-control-group {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .design-control-title {
+            color: #ffda44;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,218,68,0.3);
+            padding-bottom: 8px;
+        }
+        
+        .code-editor {
+            width: 100%;
+            height: 150px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            background: #1e1e2e;
+            color: #00ffcc;
+            border: 2px solid #ffda44;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            white-space: pre-wrap;
+        }
+        
+        .code-preview {
+            background: rgba(0,0,0,0.5);
+            border: 2px dashed #ffda44;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            min-height: 100px;
+        }
+        
+        /* ওয়েবসাইট ডিজাইন কন্ট্রোলের জন্য নতুন স্টাইল */
+        .website-design-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .design-option-card {
+            background: rgba(30,35,45,0.9);
+            border: 2px solid transparent;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .design-option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255,215,0,0.3);
+        }
+        
+        .design-option-card.active {
+            border-color: #ffda44;
+            background: rgba(255,218,68,0.1);
+        }
+        
+        .design-option-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        
+        .design-option-name {
+            color: #ffda44;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .design-option-preview {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #aaa;
+        }
+        
+        .code-section {
+            margin-top: 30px;
+            border-top: 1px solid rgba(255,218,68,0.3);
+            padding-top: 20px;
+        }
+        
+        .code-section-title {
+            color: #ffda44;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .code-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,218,68,0.3);
+            padding-bottom: 10px;
+        }
+        
+        .code-tab {
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,218,68,0.3);
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .code-tab:hover {
+            background: rgba(255,218,68,0.2);
+        }
+        
+        .code-tab.active {
+            background: #ffda44;
+            color: black;
+            border-color: #ffda44;
+        }
+        
+        .code-editor-container {
+            display: none;
+        }
+        
+        .code-editor-container.active {
+            display: block;
+        }
+        
+        .code-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .live-preview {
+            background: rgba(0,0,0,0.5);
+            border: 2px solid #ffda44;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 200px;
+        }
+        
+        .preview-title {
+            color: #ffda44;
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .saved-designs {
+            margin-top: 30px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .saved-design-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #ffda44;
+        }
+        
+        .saved-design-name {
+            color: #ffda44;
+            font-weight: bold;
+        }
+        
+        .saved-design-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .saved-design-actions button {
+            padding: 5px 10px;
+            font-size: 11px;
+        }
+        
+        /* প্রিভিউ সেকশন - এখানে ওয়েবসাইটের ডিজাইন দেখাবে */
+        .preview-section {
+            margin-top: 30px;
+            border: 2px solid #ffda44;
+            border-radius: 15px;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+        }
+        
+        .preview-header {
+            color: #ffda44;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .preview-content {
+            min-height: 300px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 20px;
+            overflow: auto;
+        }
+        
         @media (max-width: 768px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -903,6 +1178,10 @@
             .nav-btn {
                 min-width: 100%;
                 font-size: 12px;
+            }
+            
+            .website-design-selector {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -967,7 +1246,7 @@
             </div>
         </div>
         
-        <!-- নেভিগেশন মেনু - নতুন সেকশন "ম্যাচ ইমেজ" যোগ করা হলো -->
+        <!-- নেভিগেশন মেনু (সম্পূর্ণ অক্ষত) -->
         <div class="admin-nav">
             <button class="nav-btn active" onclick="showSection('dashboard')">🏠 ড্যাশবোর্ড</button>
             <button class="nav-btn" onclick="showSection('users')">👥 ইউজার</button>
@@ -975,16 +1254,17 @@
             <button class="nav-btn" onclick="showSection('payments')">💰 পেমেন্ট</button>
             <button class="nav-btn" onclick="showSection('support')">📞 সাপোর্ট</button>
             <button class="nav-btn" onclick="showSection('notice')">📢 নোটিশ</button>
+            <button class="nav-btn" onclick="showSection('notice-design')">🎨 নোটিশ ডিজাইন</button>
             <button class="nav-btn" onclick="showSection('header')">📝 হেডার</button>
-            <button class="nav-btn" onclick="showSection('design')">🎨 ডিজাইন</button>
+            <button class="nav-btn" onclick="showSection('design-control')">🎨 ডিজাইন কন্ট্রোল</button>
             <button class="nav-btn" onclick="showSection('animation')">✨ এনিমেশন</button>
             <button class="nav-btn" onclick="showSection('app')">📱 অ্যাপ</button>
             <button class="nav-btn" onclick="showSection('requests')">📋 রিকোয়েস্ট</button>
-            <!-- নতুন ৪টি সেকশন -->
             <button class="nav-btn" onclick="showSection('rank-control')">🏆 র্যাঙ্ক কন্ট্রোল</button>
             <button class="nav-btn" onclick="showSection('winning-control')">💰 উইনিং কন্ট্রোল</button>
             <button class="nav-btn" onclick="showSection('notification-control')">📢 নোটিফিকেশন</button>
-            <button class="nav-btn" onclick="showSection('match-images')">🖼️ ম্যাচ ইমেজ</button>   <!-- নতুন বাটন -->
+            <button class="nav-btn" onclick="showSection('match-images')">🖼️ ম্যাচ ইমেজ</button>
+            <button class="nav-btn" onclick="showSection('slideshow')">🖼️ স্লাইডশো</button>
         </div>
         
         <!-- ========== সেকশন ১: ড্যাশবোর্ড ========== -->
@@ -1065,7 +1345,6 @@
                         <button class="glow-on-hover btn-green" onclick="updateBalance()">✅ আপডেট করুন</button>
                     </div>
                     
-                    <!-- ব্যান/আনব্যান অপশন -->
                     <div style="margin-top: 15px; padding: 12px; background: rgba(255,68,68,0.1); border-radius: 8px;">
                         <h3 style="color: #ff4444; font-size: 15px;">🚫 ইউজার ব্যান</h3>
                         <div class="row">
@@ -1281,12 +1560,11 @@
             </div>
         </div>
         
-        <!-- ========== সেকশন ৫: সাপোর্ট কন্ট্রোল (এডিট/ডিলিট সহ) ========== -->
+        <!-- ========== সেকশন ৫: সাপোর্ট কন্ট্রোল ========== -->
         <div id="support" class="section">
             <div class="card border-orange">
                 <div class="card-header">📞 সাপোর্ট কন্ট্রোল</div>
                 
-                <!-- ডিফল্ট সাপোর্ট -->
                 <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,215,0,0.1); border-radius: 10px;">
                     <h3 style="color: #ffda44;">📋 ডিফল্ট সাপোর্ট (এডিট/ডিলিট)</h3>
                     
@@ -1363,7 +1641,6 @@
                     </div>
                 </div>
                 
-                <!-- নতুন সাপোর্ট অ্যাড করার ফর্ম -->
                 <div style="margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
                     <h3 style="color: #ffda44; margin-bottom: 10px;">➕ নতুন সাপোর্ট অ্যাড করুন</h3>
                     <div class="row">
@@ -1396,7 +1673,6 @@
                     <button class="glow-on-hover btn-orange" onclick="addNewSupport()">➕ নতুন সাপোর্ট অ্যাড করুন</button>
                 </div>
                 
-                <!-- নতুন সাপোর্ট লিস্ট - এডিট/ডিলিট সহ -->
                 <div id="new-support-list" style="max-height: 300px; overflow-y: auto; margin-top: 15px;">
                     লোড হচ্ছে...
                 </div>
@@ -1406,7 +1682,7 @@
         <!-- ========== সেকশন ৬: নোটিশ কন্ট্রোল ========== -->
         <div id="notice" class="section">
             <div class="card border-purple">
-                <div class="card-header">📢 নোটিশ কন্ট্রোল (৮টি অপশন)</div>
+                <div class="card-header">📢 নোটিশ কন্ট্রোল (১১টি অপশন)</div>
                 
                 <div style="margin-bottom: 20px;">
                     <h3 style="color: #ffda44;">নোটিশ প্রিভিউ</h3>
@@ -1419,7 +1695,7 @@
                 <div class="row">
                     <div class="col">
                         <select id="notice-select">
-                            <option value="Main">🏠 হোম পেজ নোটিশ (Main)</option>
+                            <option value="Main">🏠 হোম পেজ নোটিশ</option>
                             <option value="SoloBermuda">🎯 সোলো বারমুডা</option>
                             <option value="DuoMatch1">👥 ডুও ১</option>
                             <option value="DuoMatch2">👥 ডুও ২</option>
@@ -1427,13 +1703,19 @@
                             <option value="CS2vs2">👥 ২vs২</option>
                             <option value="CS1vs1">⚔️ ১vs১</option>
                             <option value="FreeSolo">🎁 ফ্রি সোলো</option>
-                            <option value="Registration">📝 রেজিস্ট্রেশন পেজ</option>
+                            <option value="Deposit">💰 ডিপোজিট পেজ</option>
+                            <option value="Withdraw">💳 উইথড্র পেজ</option>
                             <option value="Support">📞 সাপোর্ট পেজ</option>
                         </select>
                     </div>
                 </div>
-                <textarea id="notice-text" rows="4" placeholder="নোটিশ লিখুন..."></textarea>
-                <button class="glow-on-hover btn-purple" onclick="setNotice()">📌 নোটিশ আপডেট</button>
+                <textarea id="notice-text" rows="4" placeholder="নোটিশ লিখুন... (লিংক দিলে তা ক্লিকযোগ্য হবে)"></textarea>
+                
+                <div class="row" style="margin-top: 15px;">
+                    <div class="col">
+                        <button class="glow-on-hover btn-purple" onclick="setNotice()" style="width: 100%;">📌 নোটিশ আপডেট ও নোটিফিকেশন পাঠান</button>
+                    </div>
+                </div>
                 
                 <div style="margin-top: 20px;">
                     <h3 style="color: #ffda44;">📋 বর্তমান নোটিশ সমূহ</h3>
@@ -1444,7 +1726,112 @@
             </div>
         </div>
         
-        <!-- ========== সেকশন ৭: হেডার কন্ট্রোল ========== -->
+        <!-- ========== সেকশন ৭: নোটিশ ডিজাইন কন্ট্রোল ========== -->
+        <div id="notice-design" class="section">
+            <div class="card border-gold">
+                <div class="card-header">🎨 নোটিশ ডিজাইন কন্ট্রোল</div>
+                
+                <div class="design-control-group">
+                    <div class="design-control-title">🎨 টেক্সট কালার কন্ট্রোল</div>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <label>টেক্সট কালার</label>
+                            <input type="color" id="notice-text-color" value="#ffda44">
+                        </div>
+                        <div class="col">
+                            <label>ব্যাকগ্রাউন্ড কালার</label>
+                            <input type="color" id="notice-bg-color" value="rgba(255,215,0,0.1)">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <label>বর্ডার কালার</label>
+                            <input type="color" id="notice-border-color" value="#FFD700">
+                        </div>
+                        <div class="col">
+                            <label>বর্ডার সাইজ (px)</label>
+                            <input type="number" id="notice-border-size" value="5" min="1" max="20">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <label>বর্ডার রেডিয়াস (px)</label>
+                            <input type="number" id="notice-border-radius" value="15" min="0" max="50">
+                        </div>
+                        <div class="col">
+                            <label>প্যাডিং (px)</label>
+                            <input type="number" id="notice-padding" value="15" min="5" max="50">
+                        </div>
+                    </div>
+                    
+                    <div class="toggle-container" style="margin-top: 15px;">
+                        <span>🌈 রেনবো টেক্সট</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="rainbow-text-toggle" onchange="toggleRainbowText()">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <button class="glow-on-hover btn-gold" onclick="applyNoticeDesign()" style="margin-top: 15px;">🎨 ডিজাইন অ্যাপ্লাই করুন</button>
+                </div>
+                
+                <div class="design-control-group">
+                    <div class="design-control-title">📝 কাস্টম এইচটিএমএল/সিএসএস কোড</div>
+                    <p style="color: #aaa; margin-bottom: 10px;">নিচে আপনার নিজের এইচটিএমএল/সিএসএস কোড লিখুন। এটি নোটিশ বক্সে প্রয়োগ হবে।</p>
+                    
+                    <textarea id="notice-custom-css" class="code-editor" placeholder="/* আপনার কাস্টম CSS এখানে লিখুন */
+.notice-custom {
+    background: linear-gradient(45deg, #ff416c, #ff4b2b);
+    color: white;
+    border: 3px solid gold;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    font-size: 18px;
+    box-shadow: 0 0 30px gold;
+}"></textarea>
+                    
+                    <textarea id="notice-custom-html" class="code-editor" placeholder="<!-- আপনার কাস্টম HTML এখানে লিখুন -->
+<div class='notice-custom'>
+    <span style='font-size: 24px;'>📢</span> 
+    আপনার নোটিশ টেক্সট এখানে বসবে
+</div>"></textarea>
+                    
+                    <div class="row">
+                        <div class="col">
+                            <button class="glow-on-hover btn-cyan" onclick="previewCustomNotice()" style="width: 100%;">👁️ প্রিভিউ দেখুন</button>
+                        </div>
+                        <div class="col">
+                            <button class="glow-on-hover btn-green" onclick="saveCustomNotice()" style="width: 100%;">💾 সেভ করুন</button>
+                        </div>
+                    </div>
+                    
+                    <div class="code-preview" id="custom-notice-preview">
+                        <div class="notice-design-preview" id="design-preview-content">
+                            📢 নমুনা নোটিশ দেখুন
+                        </div>
+                    </div>
+                    
+                    <div class="row" style="margin-top: 15px;">
+                        <div class="col">
+                            <button class="glow-on-hover btn-red" onclick="resetCustomNotice()" style="width: 100%;">🔄 রিসেট</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+                    <h3 style="color: #ffda44;">📋 সেভ করা ডিজাইন</h3>
+                    <div id="saved-designs-list" style="max-height: 200px; overflow-y: auto;">
+                        <p style="color: #888;">কোনো সেভ করা ডিজাইন নেই</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ========== সেকশন ৮: হেডার কন্ট্রোল ========== -->
         <div id="header" class="section">
             <div class="card border-yellow">
                 <div class="card-header">📝 হেডার কন্ট্রোল</div>
@@ -1484,61 +1871,126 @@
             </div>
         </div>
         
-        <!-- ========== সেকশন ৮: ডিজাইন কন্ট্রোল ========== -->
-        <div id="design" class="section">
-            <div class="card border-gold">
-                <div class="card-header">🎯 থিম সিলেক্ট</div>
-                <div class="theme-selector">
-                    <div class="theme-card" onclick="selectTheme('default')" id="theme-default" style="background: linear-gradient(145deg, #FF416C, #FF4B2B);">
-                        <div class="theme-icon">🎮</div>
-                        <div class="theme-name">ডিফল্ট</div>
-                    </div>
-                    <div class="theme-card" onclick="selectTheme('dark')" id="theme-dark" style="background: linear-gradient(145deg, #1a1e2c, #0a0f1a);">
-                        <div class="theme-icon">🌙</div>
-                        <div class="theme-name">ডার্ক</div>
-                    </div>
-                    <div class="theme-card" onclick="selectTheme('neon')" id="theme-neon" style="background: linear-gradient(145deg, #00ff9d, #00b8ff); color: black;">
-                        <div class="theme-icon">💎</div>
-                        <div class="theme-name">নিয়ন</div>
-                    </div>
-                    <div class="theme-card" onclick="selectTheme('royal')" id="theme-royal" style="background: linear-gradient(145deg, #8E2DE2, #4A00E0);">
-                        <div class="theme-icon">👑</div>
-                        <div class="theme-name">রয়্যাল</div>
-                    </div>
-                    <div class="theme-card" onclick="selectTheme('ocean')" id="theme-ocean" style="background: linear-gradient(145deg, #00c6fb, #005bea);">
-                        <div class="theme-icon">🌊</div>
-                        <div class="theme-name">ওশান</div>
-                    </div>
-                    <div class="theme-card" onclick="selectTheme('forest')" id="theme-forest" style="background: linear-gradient(145deg, #11998e, #38ef7d); color: black;">
-                        <div class="theme-icon">🌲</div>
-                        <div class="theme-name">ফরেস্ট</div>
-                    </div>
-                </div>
-                <button class="glow-on-hover btn-gold" onclick="applyTheme()">অ্যাপ্লাই</button>
-            </div>
-            
+        <!-- ========== সেকশন ৯: ডিজাইন কন্ট্রোল (এই সেকশনটি কাজ করবে) ========== -->
+        <div id="design-control" class="section">
             <div class="card border-cyan">
-                <div class="card-header">🎨 কাস্টম কালার</div>
-                <div class="row">
-                    <div class="col"><input type="color" id="primary-color" value="#FF416C"></div>
-                    <div class="col"><input type="color" id="secondary-color" value="#FF4B2B"></div>
+                <div class="card-header">🎨 ডিজাইন কন্ট্রোল (এইচটিএমএল/সিএসএস/জেএস এডিটর)</div>
+                <p style="color: #aaa; margin-bottom: 15px;">এখানে আপনি ওয়েবসাইটের বিভিন্ন অংশের জন্য কাস্টম এইচটিএমএল/সিএসএস/জাভাস্ক্রিপ্ট কোড লিখতে পারবেন। এই কোড সরাসরি ওয়েবসাইটে প্রয়োগ হবে।</p>
+                
+                <div class="website-design-selector">
+                    <div class="design-option-card active" onclick="selectDesignPart('header')" id="design-header">
+                        <div class="design-option-icon">📋</div>
+                        <div class="design-option-name">হেডার</div>
+                        <div class="design-option-preview">ওয়েবসাইটের উপরের অংশ</div>
+                    </div>
+                    <div class="design-option-card" onclick="selectDesignPart('footer')" id="design-footer">
+                        <div class="design-option-icon">🦶</div>
+                        <div class="design-option-name">ফুটার</div>
+                        <div class="design-option-preview">নিচের নেভিগেশন বার</div>
+                    </div>
+                    <div class="design-option-card" onclick="selectDesignPart('match-cards')" id="design-match-cards">
+                        <div class="design-option-icon">🎮</div>
+                        <div class="design-option-name">ম্যাচ কার্ড</div>
+                        <div class="design-option-preview">ম্যাচের তালিকা কার্ড</div>
+                    </div>
+                    <div class="design-option-card" onclick="selectDesignPart('profile')" id="design-profile">
+                        <div class="design-option-icon">👤</div>
+                        <div class="design-option-name">প্রোফাইল</div>
+                        <div class="design-option-preview">ইউজার প্রোফাইল সেকশন</div>
+                    </div>
+                    <div class="design-option-card" onclick="selectDesignPart('buttons')" id="design-buttons">
+                        <div class="design-option-icon">🔘</div>
+                        <div class="design-option-name">বাটন</div>
+                        <div class="design-option-preview">সব ধরনের বাটন</div>
+                    </div>
+                    <div class="design-option-card" onclick="selectDesignPart('forms')" id="design-forms">
+                        <div class="design-option-icon">📝</div>
+                        <div class="design-option-name">ফর্ম</div>
+                        <div class="design-option-preview">ইনপুট ফর্ম, ফিল্ড</div>
+                    </div>
+                    <div class="design-option-card" onclick="selectDesignPart('modals')" id="design-modals">
+                        <div class="design-option-icon">💬</div>
+                        <div class="design-option-name">মডাল</div>
+                        <div class="design-option-preview">পপআপ, ডায়ালগ</div>
+                    </div>
+                    <div class="design-option-card" onclick="selectDesignPart('global')" id="design-global">
+                        <div class="design-option-icon">🌍</div>
+                        <div class="design-option-name">গ্লোবাল</div>
+                        <div class="design-option-preview">পুরো সাইটের জন্য</div>
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="col"><input type="color" id="accent-color" value="#FFD700"></div>
-                    <div class="col"><input type="color" id="text-color" value="#FFFFFF"></div>
+                
+                <div class="code-section">
+                    <div class="code-section-title">
+                        <span>📝 কাস্টম এইচটিএমএল/সিএসএস/জেএস কোড</span>
+                        <span style="font-size: 14px; color: #aaa;" id="selected-part-name">হেডার</span>
+                    </div>
+                    
+                    <div class="code-tabs">
+                        <div class="code-tab active" onclick="switchCodeTab('css')" id="tab-css">🎨 CSS</div>
+                        <div class="code-tab" onclick="switchCodeTab('html')" id="tab-html">📄 HTML</div>
+                        <div class="code-tab" onclick="switchCodeTab('js')" id="tab-js">⚡ JavaScript</div>
+                    </div>
+                    
+                    <div class="code-editor-container active" id="editor-css">
+                        <textarea id="design-css-code" class="code-editor" placeholder="/* আপনার কাস্টম CSS এখানে লিখুন */
+.header-custom {
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    padding: 30px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(255,75,43,0.5);
+}"></textarea>
+                    </div>
+                    
+                    <div class="code-editor-container" id="editor-html">
+                        <textarea id="design-html-code" class="code-editor" placeholder="<!-- আপনার কাস্টম HTML এখানে লিখুন -->
+<div class='header-custom'>
+    <h1>🎮 TNM RIYAD 2026</h1>
+    <p>🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট</p>
+</div>"></textarea>
+                    </div>
+                    
+                    <div class="code-editor-container" id="editor-js">
+                        <textarea id="design-js-code" class="code-editor" placeholder="// আপনার কাস্টম JavaScript এখানে লিখুন
+document.querySelector('.header-custom').addEventListener('click', function() {
+    console.log('Header clicked!');
+});"></textarea>
+                    </div>
+                    
+                    <div class="code-actions">
+                        <button class="glow-on-hover btn-cyan" onclick="previewDesign()" style="flex: 1;">👁️ প্রিভিউ</button>
+                        <button class="glow-on-hover btn-green" onclick="saveDesign()" style="flex: 1;">💾 সেভ করুন</button>
+                        <button class="glow-on-hover btn-red" onclick="resetDesign()" style="flex: 1;">🔄 রিসেট</button>
+                    </div>
+                    
+                    <div class="live-preview" id="design-preview">
+                        <div class="preview-title">
+                            <span>👁️ লাইভ প্রিভিউ</span>
+                        </div>
+                        <div id="preview-content">
+                            <div style="background: linear-gradient(135deg, #ff416c, #ff4b2b); padding: 30px; text-align: center; border-radius: 15px;">
+                                <h2 style="color: white;">🎮 TNM RIYAD 2026</h2>
+                                <p style="color: #ffda44;">🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="col"><input type="color" id="bg-color" value="#0a0f1e"></div>
-                    <div class="col"><input type="color" id="card-color" value="#1e1e1e"></div>
+                
+                <div class="saved-designs">
+                    <h3 style="color: #ffda44; margin-bottom: 15px;">📋 সেভ করা ডিজাইন</h3>
+                    <div id="saved-website-designs-list">
+                        <!-- ডায়নামিকভাবে লোড হবে -->
+                    </div>
                 </div>
-                <button class="glow-on-hover btn-cyan" onclick="applyCustomColors()">অ্যাপ্লাই</button>
             </div>
         </div>
         
-        <!-- ========== সেকশন ৯: এনিমেশন কন্ট্রোল ========== -->
+        <!-- ========== সেকশন ১০: এনিমেশন কন্ট্রোল ========== -->
         <div id="animation" class="section">
-            <div class="animation-control-card" style="background: rgba(20,25,40,0.95); border-left: 8px solid #00ffff; border-radius: 15px; padding: 20px;">
-                <div class="card-header" style="color: #00ffff;">✨ এনিমেশন</div>
+            <div class="card border-cyan">
+                <div class="card-header">✨ এনিমেশন কন্ট্রোল</div>
+                <p style="color: #aaa; margin-bottom: 15px;">নিচের এনিমেশনগুলি অন/অফ করুন এবং স্পিড/সাইজ কন্ট্রোল করুন।</p>
                 
                 <div class="toggle-container">
                     <span>🌧️ বৃষ্টি</span>
@@ -1547,6 +1999,7 @@
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
+                
                 <div class="toggle-container">
                     <span>🌟 স্টার</span>
                     <label class="toggle-switch">
@@ -1554,6 +2007,7 @@
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
+                
                 <div class="toggle-container">
                     <span>👆 টাচ</span>
                     <label class="toggle-switch">
@@ -1561,40 +2015,57 @@
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
+                
                 <div class="toggle-container">
-                    <span>⚡ স্পিড</span>
-                    <select id="animation-speed" style="width: 100px; padding: 8px; border-radius: 20px;" onchange="changeSpeed()">
+                    <span>🧬 বায়োলুমিনেসেন্ট</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="bioluminescent-toggle" onchange="toggleBioluminescent()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="toggle-container">
+                    <span>✨ ম্যাজিক ডাস্ট</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="magicdust-toggle" onchange="toggleMagicDust()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="toggle-container">
+                    <span>🌈 নিয়ন স্লাইড</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="neonslide-toggle" onchange="toggleNeonSlide()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h3 style="color: #ffda44;">⚡ স্পিড কন্ট্রোল (সব এনিমেশনের জন্য)</h3>
+                    <select id="animation-speed" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid #ffda44;" onchange="changeSpeed()">
                         <option value="slow">স্লো</option>
                         <option value="normal" selected>নরমাল</option>
                         <option value="fast">ফাস্ট</option>
                     </select>
                 </div>
                 
-                <div class="toggle-container" style="margin-top: 15px;">
-                    <span>⚡ সব এনিমেশন</span>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="all-toggle" checked onchange="toggleAllAnimations()">
-                        <span class="toggle-slider"></span>
-                    </label>
+                <div style="margin-top: 20px;">
+                    <h3 style="color: #ffda44;">📏 সাইজ কন্ট্রোল (সব এনিমেশনের জন্য)</h3>
+                    <select id="animation-size" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid #ffda44;" onchange="changeSize()">
+                        <option value="small">ছোট</option>
+                        <option value="medium" selected>মাঝারি</option>
+                        <option value="large">বড়</option>
+                    </select>
                 </div>
                 
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button class="glow-on-hover btn-cyan" onclick="saveAnimationSettings()" style="flex:1;">সেভ</button>
-                    <button class="glow-on-hover btn-red" onclick="resetAnimationSettings()" style="flex:1;">রিসেট</button>
-                </div>
-                
-                <div style="margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.5); border-radius: 10px;">
-                    <p style="color: #00ffff; font-size: 12px;">
-                        <span id="rain-status">বৃষ্টি: চালু</span> | 
-                        <span id="star-status">স্টার: চালু</span> | 
-                        <span id="touch-status">টাচ: চালু</span> | 
-                        <span id="speed-status">স্পিড: নরমাল</span>
-                    </p>
+                    <button class="glow-on-hover btn-cyan" onclick="saveAnimationSettings()" style="flex:1;">💾 সেভ করুন</button>
+                    <button class="glow-on-hover btn-red" onclick="resetAnimationSettings()" style="flex:1;">🔄 রিসেট</button>
                 </div>
             </div>
         </div>
         
-        <!-- ========== সেকশন ১০: অ্যাপ ডাউনলোড কন্ট্রোল ========== -->
+        <!-- ========== সেকশন ১১: অ্যাপ ডাউনলোড ========== -->
         <div id="app" class="section">
             <div class="card border-blue">
                 <div class="card-header">📱 অ্যাপ ডাউনলোড লিংক</div>
@@ -1608,7 +2079,7 @@
             </div>
         </div>
         
-        <!-- ========== সেকশন ১১: রিকোয়েস্ট লিস্ট ========== -->
+        <!-- ========== সেকশন ১২: রিকোয়েস্ট লিস্ট ========== -->
         <div id="requests" class="section">
             <div class="card border-blue">
                 <div class="card-header">📥 ডিপোজিট</div>
@@ -1632,30 +2103,27 @@
             </div>
         </div>
 
-        <!-- ========== নতুন সেকশন ১২: র্যাঙ্ক কন্ট্রোল ========== -->
+        <!-- ========== সেকশন ১৩: র্যাঙ্ক কন্ট্রোল ========== -->
         <div id="rank-control" class="section">
             <div class="card border-gold">
                 <div class="card-header">🏆 র্যাঙ্ক কন্ট্রোল</div>
                 
-                <!-- র্যাঙ্ক সেটিংস -->
                 <div style="margin-bottom: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
                     <h3 style="color: #ffda44;">📊 ইউজার অনুযায়ী র্যাঙ্ক (উইন অনুযায়ী)</h3>
                     <p style="color: #aaa; margin-bottom: 15px;">নিচে প্রতিটি ইউজারের জয়ের সংখ্যা অনুযায়ী র্যাঙ্ক দেখানো হয়েছে।</p>
                 </div>
                 
-                <!-- র্যাঙ্ক অনুযায়ী ইউজার লিস্ট -->
                 <div id="rank-list" style="max-height: 400px; overflow-y: auto;">
                     লোড হচ্ছে...
                 </div>
             </div>
         </div>
 
-        <!-- ========== নতুন সেকশন ১৩: উইনিং কন্ট্রোল ========== -->
+        <!-- ========== সেকশন ১৪: উইনিং কন্ট্রোল ========== -->
         <div id="winning-control" class="section">
             <div class="card border-green">
                 <div class="card-header">💰 ম্যাচ উইনিং কন্ট্রোল</div>
                 
-                <!-- খেলোয়াড় খুঁজে বের করার ফর্ম -->
                 <div style="margin-bottom: 20px; padding: 15px; background: rgba(76,175,80,0.1); border-radius: 10px;">
                     <h3 style="color: #4CAF50;">📱 খেলোয়াড় খুঁজুন</h3>
                     <div class="row">
@@ -1687,7 +2155,6 @@
                     </div>
                 </div>
                 
-                <!-- উইনিং দেওয়ার ফর্ম -->
                 <div style="padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
                     <h3 style="color: #ffda44;">🏆 উইনিং প্রাইজ দিন</h3>
                     
@@ -1726,7 +2193,6 @@
                     <button class="glow-on-hover btn-green" onclick="giveWinningPrize()">💰 উইনিং দিন</button>
                 </div>
                 
-                <!-- দেওয়া উইনিংয়ের ইতিহাস -->
                 <div style="margin-top: 20px;">
                     <h3 style="color: #ffda44;">📋 দেওয়া উইনিংয়ের ইতিহাস</h3>
                     <div id="winning-history" style="max-height: 300px; overflow-y: auto;">
@@ -1736,19 +2202,17 @@
             </div>
         </div>
 
-        <!-- ========== নতুন সেকশন ১৪: নোটিফিকেশন কন্ট্রোল ========== -->
+        <!-- ========== সেকশন ১৫: নোটিফিকেশন কন্ট্রোল ========== -->
         <div id="notification-control" class="section">
             <div class="card border-purple">
                 <div class="card-header">📢 নোটিফিকেশন কন্ট্রোল</div>
                 
-                <!-- সব ইউজারে নোটিফিকেশন -->
                 <div style="margin-bottom: 20px; padding: 15px; background: rgba(156,39,176,0.1); border-radius: 10px;">
                     <h3 style="color: #9C27B0;">📢 সব ইউজারে নোটিফিকেশন পাঠান</h3>
                     <textarea id="notification-all-text" rows="4" placeholder="নোটিফিকেশন টেক্সট লিখুন..."></textarea>
                     <button class="glow-on-hover btn-purple" onclick="sendNotificationToAll()">📢 সব ইউজারে পাঠান</button>
                 </div>
                 
-                <!-- নির্দিষ্ট নম্বরে নোটিফিকেশন -->
                 <div style="padding: 15px; background: rgba(33,150,243,0.1); border-radius: 10px;">
                     <h3 style="color: #2196F3;">📱 নির্দিষ্ট নম্বরে নোটিফিকেশন পাঠান</h3>
                     <div class="row">
@@ -1760,7 +2224,6 @@
                     <button class="glow-on-hover btn-blue" onclick="sendNotificationToSpecific()">📱 নির্দিষ্ট নম্বরে পাঠান</button>
                 </div>
                 
-                <!-- পাঠানো নোটিফিকেশনের ইতিহাস -->
                 <div style="margin-top: 20px;">
                     <h3 style="color: #ffda44;">📋 পাঠানো নোটিফিকেশন</h3>
                     <div id="notification-history" style="max-height: 300px; overflow-y: auto;">
@@ -1770,42 +2233,66 @@
             </div>
         </div>
 
-        <!-- ========== নতুন সেকশন ১৫: ম্যাচ ইমেজ কন্ট্রোল ========== -->
+        <!-- ========== সেকশন ১৬: ম্যাচ ইমেজ কন্ট্রোল ========== -->
         <div id="match-images" class="section">
             <div class="card border-cyan">
-                <div class="card-header">🖼️ ম্যাচ ইমেজ কন্ট্রোল</div>
-                <p style="color: #aaa; margin-bottom: 15px;">প্রত্যেক ম্যাচের জন্য ছবির লিংক পরিবর্তন করুন।</p>
+                <div class="card-header">🖼️ ম্যাচ ইমেজ ও লিংক কন্ট্রোল</div>
+                <p style="color: #aaa; margin-bottom: 15px;">প্রত্যেক ম্যাচের জন্য ছবির লিংক এবং ক্লিক করার লিংক সেট করুন।</p>
                 
                 <div style="margin-bottom: 15px;">
                     <label style="color: #ffda44;">🎯 সোলো বারমুডা</label>
-                    <input type="text" id="icon-SoloBermuda" placeholder="ছবির লিংক" value="https://i.ibb.co.com/Gv57Crmh/free-fire-characters.jpg">
+                    <input type="text" id="image-SoloBermuda" placeholder="ছবির URL" value="https://i.ibb.co.com/Gv57Crmh/free-fire-characters.jpg">
+                    <input type="text" id="link-SoloBermuda" placeholder="ক্লিক লিংক" value="#">
                 </div>
                 <div style="margin-bottom: 15px;">
                     <label style="color: #ffda44;">👥 ডুও ১</label>
-                    <input type="text" id="icon-DuoMatch1" placeholder="ছবির লিংক" value="https://i.ibb.co.com/rDgKsWm/duo-image.jpg">
+                    <input type="text" id="image-DuoMatch1" placeholder="ছবির URL" value="https://i.ibb.co.com/rDgKsWm/duo-image.jpg">
+                    <input type="text" id="link-DuoMatch1" placeholder="ক্লিক লিংক" value="#">
                 </div>
                 <div style="margin-bottom: 15px;">
                     <label style="color: #ffda44;">👥 ডুও ২</label>
-                    <input type="text" id="icon-DuoMatch2" placeholder="ছবির লিংক" value="https://i.ibb.co.com/rDgKsWm/duo-image.jpg">
+                    <input type="text" id="image-DuoMatch2" placeholder="ছবির URL" value="https://i.ibb.co.com/rDgKsWm/duo-image.jpg">
+                    <input type="text" id="link-DuoMatch2" placeholder="ক্লিক লিংক" value="#">
                 </div>
                 <div style="margin-bottom: 15px;">
                     <label style="color: #ffda44;">⚔️ ৪vs৪ ক্ল্যাশ</label>
-                    <input type="text" id="icon-CS4vs4" placeholder="ছবির লিংক" value="https://i.ibb.co.com/C57vzBfL/maxresdefault.jpg">
+                    <input type="text" id="image-CS4vs4" placeholder="ছবির URL" value="https://i.ibb.co.com/C57vzBfL/maxresdefault.jpg">
+                    <input type="text" id="link-CS4vs4" placeholder="ক্লিক লিংক" value="#">
                 </div>
                 <div style="margin-bottom: 15px;">
                     <label style="color: #ffda44;">⚡ ২vs২ কাস্টম</label>
-                    <input type="text" id="icon-CS2vs2" placeholder="ছবির লিংক" value="https://i.ibb.co.com/nqdgm6jw/free-fire-735x400.jpg">
+                    <input type="text" id="image-CS2vs2" placeholder="ছবির URL" value="https://i.ibb.co.com/nqdgm6jw/free-fire-735x400.jpg">
+                    <input type="text" id="link-CS2vs2" placeholder="ক্লিক লিংক" value="#">
                 </div>
                 <div style="margin-bottom: 15px;">
                     <label style="color: #ffda44;">🥊 ১vs১ নকআউট</label>
-                    <input type="text" id="icon-CS1vs1" placeholder="ছবির লিংক" value="https://i.ibb.co.com/JW1Qh62T/screenshot.jpg">
+                    <input type="text" id="image-CS1vs1" placeholder="ছবির URL" value="https://i.ibb.co.com/JW1Qh62T/screenshot.jpg">
+                    <input type="text" id="link-CS1vs1" placeholder="ক্লিক লিংক" value="#">
                 </div>
                 <div style="margin-bottom: 15px;">
                     <label style="color: #ffda44;">🎁 ফ্রি সোলো</label>
-                    <input type="text" id="icon-FreeSolo" placeholder="ছবির লিংক" value="https://i.ibb.co.com/jPbw04PT/wp12125274.jpg">
+                    <input type="text" id="image-FreeSolo" placeholder="ছবির URL" value="https://i.ibb.co.com/jPbw04PT/wp12125274.jpg">
+                    <input type="text" id="link-FreeSolo" placeholder="ক্লিক লিংক" value="#">
                 </div>
                 
-                <button class="glow-on-hover btn-cyan" onclick="saveMatchIcons()">💾 সব ছবির লিংক সংরক্ষণ করুন</button>
+                <button class="glow-on-hover btn-cyan" onclick="saveMatchImages()">💾 সব ছবির লিংক সংরক্ষণ করুন</button>
+            </div>
+        </div>
+
+        <!-- ========== সেকশন ১৭: স্লাইডশো কন্ট্রোল ========== -->
+        <div id="slideshow" class="section">
+            <div class="card border-gold">
+                <div class="card-header">🖼️ হোম পেজ স্লাইডশো</div>
+                <p style="color: #aaa; margin-bottom: 15px;">একাধিক ছবি যোগ করুন, সেগুলো স্বয়ংক্রিয়ভাবে ৫ সেকেন্ড পরপর পরিবর্তিত হবে।</p>
+                
+                <div id="slideshow-list"></div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+                    <h3 style="color: #ffda44;">➕ নতুন স্লাইড যোগ করুন</h3>
+                    <input type="text" id="new-slide-image" placeholder="ছবির URL">
+                    <input type="text" id="new-slide-link" placeholder="ক্লিক লিংক">
+                    <button class="glow-on-hover btn-gold" onclick="addSlide()">যোগ করুন</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1830,7 +2317,37 @@
         let rainEnabled = true;
         let starsEnabled = true;
         let touchEnabled = true;
+        let bioluminescentEnabled = false;
+        let magicdustEnabled = false;
+        let neonslideEnabled = false;
         let animationSpeed = 'normal';
+        let animationSize = 'medium';
+        
+        // ========== নোটিশ ডিজাইন ভেরিয়েবল ==========
+        let noticeDesign = {
+            textColor: '#ffda44',
+            bgColor: 'rgba(255,215,0,0.1)',
+            borderColor: '#FFD700',
+            borderSize: '5',
+            borderRadius: '15',
+            padding: '15',
+            rainbowText: false,
+            customCSS: '',
+            customHTML: ''
+        };
+        
+        // ========== ওয়েবসাইট ডিজাইন ভেরিয়েবল ==========
+        let currentDesignPart = 'header';
+        let websiteDesigns = {
+            header: { css: '', html: '', js: '' },
+            footer: { css: '', html: '', js: '' },
+            'match-cards': { css: '', html: '', js: '' },
+            profile: { css: '', html: '', js: '' },
+            buttons: { css: '', html: '', js: '' },
+            forms: { css: '', html: '', js: '' },
+            modals: { css: '', html: '', js: '' },
+            global: { css: '', html: '', js: '' }
+        };
         
         // ========== এনিমেশন ফাংশন ==========
         function createRain(count = 60) {
@@ -1866,7 +2383,17 @@
             }
         }
         
-        // ========== টাচ এনিমেশন ==========
+        function clearRain() {
+            const c = document.getElementById('rainContainer');
+            if(c) c.innerHTML = '';
+        }
+        
+        function clearStars() {
+            const s = document.getElementById('starField');
+            if(s) s.innerHTML = '';
+        }
+        
+        // টাচ এনিমেশন
         document.addEventListener('touchstart', function(e) {
             if(!touchEnabled) return;
             
@@ -1902,11 +2429,14 @@
                 loadAppDownloadLink();
                 loadNotices();
                 loadHeaderSettings();
-                loadRankList(); // র্যাঙ্ক লোড
-                loadWinningHistory(); // উইনিং ইতিহাস লোড
-                loadNotificationHistory(); // নোটিফিকেশন ইতিহাস লোড
-                loadDefaultSupportSettings(); // ডিফল্ট সাপোর্ট লোড
-                loadMatchIcons(); // ম্যাচ ইমেজ লোড
+                loadRankList();
+                loadWinningHistory();
+                loadNotificationHistory();
+                loadDefaultSupportSettings();
+                loadMatchImages();
+                loadSlideshow();
+                loadNoticeDesign();
+                loadWebsiteDesigns();
             } else {
                 document.getElementById('login-error').style.display = 'block';
                 setTimeout(() => {
@@ -1934,13 +2464,15 @@
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
-            event.target.classList.add('active');
+            if(event && event.target) event.target.classList.add('active');
             
-            // সেকশন চেঞ্জ হলে রিলোড
             if (sectionId === 'rank-control') loadRankList();
             if (sectionId === 'winning-control') loadWinningHistory();
             if (sectionId === 'notification-control') loadNotificationHistory();
-            if (sectionId === 'match-images') loadMatchIcons(); // ম্যাচ ইমেজ লোড
+            if (sectionId === 'match-images') loadMatchImages();
+            if (sectionId === 'slideshow') loadSlideshow();
+            if (sectionId === 'notice-design') loadNoticeDesign();
+            if (sectionId === 'design-control') loadWebsiteDesigns();
         }
         
         // ========== হেডার সেটিংস ==========
@@ -2012,7 +2544,6 @@
                 
                 document.getElementById('notice-list').innerHTML = html || '<p style="color: #888; padding: 15px; text-align: center;">কোনো নোটিশ নেই</p>';
                 
-                // মেইন নোটিশ প্রিভিউ আপডেট
                 if (notices.Main) {
                     document.getElementById('notice-preview-main').innerHTML = '📢 ' + notices.Main + ' <span class="got-it">Got it</span>';
                 } else {
@@ -2031,6 +2562,18 @@
             db.ref('notices/' + type).set(text).then(() => {
                 alert('✅ নোটিশ আপডেট!');
                 document.getElementById('notice-text').value = '';
+                
+                // সব ইউজারে নোটিফিকেশন পাঠান
+                db.ref('users').once('value', (snap) => {
+                    let users = snap.val() || {};
+                    for (let phone in users) {
+                        db.ref('notifications/' + phone).push({
+                            text: `📢 নতুন নোটিশ: ${text}`,
+                            time: new Date().toLocaleString('bn-BD'),
+                            read: false
+                        });
+                    }
+                });
             });
         }
         
@@ -2038,6 +2581,238 @@
             if (confirm('এই নোটিশ ডিলিট করবেন?')) {
                 db.ref('notices/' + key).remove();
             }
+        }
+        
+        // ========== নোটিশ ডিজাইন ফাংশন ==========
+        function loadNoticeDesign() {
+            db.ref('settings/notice_design').once('value', (snap) => {
+                let design = snap.val() || {};
+                noticeDesign = {
+                    textColor: design.textColor || '#ffda44',
+                    bgColor: design.bgColor || 'rgba(255,215,0,0.1)',
+                    borderColor: design.borderColor || '#FFD700',
+                    borderSize: design.borderSize || '5',
+                    borderRadius: design.borderRadius || '15',
+                    padding: design.padding || '15',
+                    rainbowText: design.rainbowText || false,
+                    customCSS: design.customCSS || '',
+                    customHTML: design.customHTML || ''
+                };
+                
+                document.getElementById('notice-text-color').value = noticeDesign.textColor;
+                document.getElementById('notice-bg-color').value = noticeDesign.bgColor;
+                document.getElementById('notice-border-color').value = noticeDesign.borderColor;
+                document.getElementById('notice-border-size').value = noticeDesign.borderSize;
+                document.getElementById('notice-border-radius').value = noticeDesign.borderRadius;
+                document.getElementById('notice-padding').value = noticeDesign.padding;
+                document.getElementById('rainbow-text-toggle').checked = noticeDesign.rainbowText;
+                document.getElementById('notice-custom-css').value = noticeDesign.customCSS;
+                document.getElementById('notice-custom-html').value = noticeDesign.customHTML;
+                
+                applyNoticeDesignPreview();
+            });
+        }
+        
+        function applyNoticeDesign() {
+            noticeDesign = {
+                textColor: document.getElementById('notice-text-color').value,
+                bgColor: document.getElementById('notice-bg-color').value,
+                borderColor: document.getElementById('notice-border-color').value,
+                borderSize: document.getElementById('notice-border-size').value,
+                borderRadius: document.getElementById('notice-border-radius').value,
+                padding: document.getElementById('notice-padding').value,
+                rainbowText: document.getElementById('rainbow-text-toggle').checked
+            };
+            
+            db.ref('settings/notice_design').update(noticeDesign).then(() => {
+                alert('✅ নোটিশ ডিজাইন আপডেট!');
+                applyNoticeDesignPreview();
+            });
+        }
+        
+        function applyNoticeDesignPreview() {
+            let preview = document.getElementById('design-preview-content');
+            
+            if (noticeDesign.rainbowText) {
+                preview.className = 'notice-design-preview rainbow-text';
+            } else {
+                preview.className = 'notice-design-preview';
+                preview.style.color = noticeDesign.textColor;
+            }
+            
+            preview.style.backgroundColor = noticeDesign.bgColor;
+            preview.style.borderLeftColor = noticeDesign.borderColor;
+            preview.style.borderLeftWidth = noticeDesign.borderSize + 'px';
+            preview.style.borderRadius = noticeDesign.borderRadius + 'px';
+            preview.style.padding = noticeDesign.padding + 'px';
+        }
+        
+        function toggleRainbowText() {
+            let isRainbow = document.getElementById('rainbow-text-toggle').checked;
+            let preview = document.getElementById('design-preview-content');
+            
+            if (isRainbow) {
+                preview.classList.add('rainbow-text');
+            } else {
+                preview.classList.remove('rainbow-text');
+                preview.style.color = document.getElementById('notice-text-color').value;
+            }
+        }
+        
+        function previewCustomNotice() {
+            let css = document.getElementById('notice-custom-css').value;
+            let html = document.getElementById('notice-custom-html').value;
+            let preview = document.getElementById('custom-notice-preview');
+            
+            let styleTag = document.createElement('style');
+            styleTag.id = 'custom-preview-style';
+            styleTag.innerHTML = css;
+            
+            let oldStyle = document.getElementById('custom-preview-style');
+            if (oldStyle) oldStyle.remove();
+            
+            document.head.appendChild(styleTag);
+            
+            if (html) {
+                preview.innerHTML = html;
+            } else {
+                preview.innerHTML = '<div class="notice-design-preview">📢 কাস্টম নোটিশ প্রিভিউ</div>';
+            }
+        }
+        
+        function saveCustomNotice() {
+            noticeDesign.customCSS = document.getElementById('notice-custom-css').value;
+            noticeDesign.customHTML = document.getElementById('notice-custom-html').value;
+            
+            db.ref('settings/notice_design').update({
+                customCSS: noticeDesign.customCSS,
+                customHTML: noticeDesign.customHTML
+            }).then(() => {
+                alert('✅ কাস্টম এইচটিএমএল/সিএসএস সেভ!');
+            });
+        }
+        
+        function resetCustomNotice() {
+            document.getElementById('notice-custom-css').value = '';
+            document.getElementById('notice-custom-html').value = '';
+            document.getElementById('custom-notice-preview').innerHTML = '<div class="notice-design-preview" id="design-preview-content">📢 নমুনা নোটিশ দেখুন</div>';
+            applyNoticeDesignPreview();
+        }
+        
+        // ========== ওয়েবসাইট ডিজাইন ফাংশন ==========
+        function selectDesignPart(part) {
+            currentDesignPart = part;
+            
+            document.querySelectorAll('.design-option-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            document.getElementById(`design-${part}`).classList.add('active');
+            
+            const partNames = {
+                header: 'হেডার',
+                footer: 'ফুটার',
+                'match-cards': 'ম্যাচ কার্ড',
+                profile: 'প্রোফাইল',
+                buttons: 'বাটন',
+                forms: 'ফর্ম',
+                modals: 'মডাল',
+                global: 'গ্লোবাল'
+            };
+            document.getElementById('selected-part-name').innerText = partNames[part] || part;
+            
+            loadDesignForPart(part);
+        }
+        
+        function loadDesignForPart(part) {
+            db.ref(`website_designs/${part}`).once('value', (snap) => {
+                let design = snap.val() || { css: '', html: '', js: '' };
+                websiteDesigns[part] = design;
+                
+                document.getElementById('design-css-code').value = design.css || '';
+                document.getElementById('design-html-code').value = design.html || '';
+                document.getElementById('design-js-code').value = design.js || '';
+                
+                // প্রিভিউ আপডেট
+                previewDesign();
+            });
+        }
+        
+        function switchCodeTab(tab) {
+            document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            
+            document.querySelectorAll('.code-editor-container').forEach(c => c.classList.remove('active'));
+            document.getElementById(`editor-${tab}`).classList.add('active');
+        }
+        
+        function previewDesign() {
+            let css = document.getElementById('design-css-code').value;
+            let html = document.getElementById('design-html-code').value;
+            let js = document.getElementById('design-js-code').value;
+            let preview = document.getElementById('preview-content');
+            
+            let styleTag = document.createElement('style');
+            styleTag.id = 'design-preview-style';
+            styleTag.innerHTML = css;
+            
+            let oldStyle = document.getElementById('design-preview-style');
+            if (oldStyle) oldStyle.remove();
+            
+            document.head.appendChild(styleTag);
+            
+            if (html) {
+                preview.innerHTML = html;
+            } else {
+                if (currentDesignPart === 'header') {
+                    preview.innerHTML = '<div style="background: linear-gradient(135deg, #ff416c, #ff4b2b); padding: 30px; text-align: center; border-radius: 15px;"><h2 style="color: white;">🎮 TNM RIYAD 2026</h2><p style="color: #ffda44;">🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট</p></div>';
+                } else {
+                    preview.innerHTML = `<div style="padding: 20px; text-align: center; color: #aaa;">${currentDesignPart} এর জন্য প্রিভিউ</div>`;
+                }
+            }
+            
+            if (js) {
+                try {
+                    eval(js);
+                } catch(e) {
+                    console.log('JS Error:', e);
+                }
+            }
+        }
+        
+        function saveDesign() {
+            let design = {
+                css: document.getElementById('design-css-code').value,
+                html: document.getElementById('design-html-code').value,
+                js: document.getElementById('design-js-code').value
+            };
+            
+            websiteDesigns[currentDesignPart] = design;
+            
+            db.ref(`website_designs/${currentDesignPart}`).set(design).then(() => {
+                alert(`✅ ${currentDesignPart} এর ডিজাইন সেভ হয়েছে!`);
+            });
+        }
+        
+        function resetDesign() {
+            if (confirm('এই অংশের ডিজাইন রিসেট করবেন?')) {
+                document.getElementById('design-css-code').value = '';
+                document.getElementById('design-html-code').value = '';
+                document.getElementById('design-js-code').value = '';
+                previewDesign();
+            }
+        }
+        
+        function loadWebsiteDesigns() {
+            db.ref('website_designs').once('value', (snap) => {
+                let designs = snap.val() || {};
+                for (let part in designs) {
+                    if (websiteDesigns.hasOwnProperty(part)) {
+                        websiteDesigns[part] = designs[part];
+                    }
+                }
+                selectDesignPart('header');
+            });
         }
         
         // ========== লাইভ/অফলাইন কন্ট্রোল ==========
@@ -2068,7 +2843,7 @@
             });
         }
         
-        // ========== ইউজার কন্ট্রোল ==========
+        // ========== ইউজার কন্ট্রোল ফাংশন ==========
         function checkUser() {
             let phone = document.getElementById('user-phone').value;
             if (!phone) return alert('❌ মোবাইল নম্বর দিন!');
@@ -2506,7 +3281,7 @@
             }
         }
         
-        // ========== নতুন সাপোর্ট কন্ট্রোল (এডিট অপশন সহ) ==========
+        // ========== নতুন সাপোর্ট কন্ট্রোল ==========
         function loadNewSupportList() {
             db.ref('supports').on('value', (snap) => {
                 let supports = snap.val() || {};
@@ -2602,7 +3377,7 @@
             }
         }
         
-        // ========== ডিজাইন কন্ট্রোল ==========
+        // ========== থিম ডিজাইন ফাংশন ==========
         function selectTheme(theme) {
             selectedTheme = theme;
             
@@ -2672,62 +3447,47 @@
             });
         }
         
-        // ========== এনিমেশন কন্ট্রোল ==========
+        // ========== এনিমেশন কন্ট্রোল ফাংশন ==========
         function toggleRain() {
             rainEnabled = document.getElementById('rain-toggle').checked;
-            document.getElementById('rain-status').innerHTML = `বৃষ্টি: ${rainEnabled ? 'চালু' : 'বন্ধ'}`;
-            if(rainEnabled) createRain(); else document.getElementById('rainContainer').innerHTML = '';
+            if(rainEnabled) createRain(); else clearRain();
             db.ref('settings/animation/rain').set(rainEnabled);
         }
         
         function toggleStars() {
             starsEnabled = document.getElementById('star-toggle').checked;
-            document.getElementById('star-status').innerHTML = `স্টার: ${starsEnabled ? 'চালু' : 'বন্ধ'}`;
-            if(starsEnabled) createStars(); else document.getElementById('starField').innerHTML = '';
+            if(starsEnabled) createStars(); else clearStars();
             db.ref('settings/animation/stars').set(starsEnabled);
         }
         
         function toggleTouch() {
             touchEnabled = document.getElementById('touch-toggle').checked;
-            document.getElementById('touch-status').innerHTML = `টাচ: ${touchEnabled ? 'চালু' : 'বন্ধ'}`;
             db.ref('settings/animation/touch').set(touchEnabled);
         }
         
-        function toggleAllAnimations() {
-            let allEnabled = document.getElementById('all-toggle').checked;
-            
-            document.getElementById('rain-toggle').checked = allEnabled;
-            document.getElementById('star-toggle').checked = allEnabled;
-            document.getElementById('touch-toggle').checked = allEnabled;
-            
-            rainEnabled = allEnabled;
-            starsEnabled = allEnabled;
-            touchEnabled = allEnabled;
-            
-            if(rainEnabled) createRain(); else document.getElementById('rainContainer').innerHTML = '';
-            if(starsEnabled) createStars(); else document.getElementById('starField').innerHTML = '';
-            
-            document.getElementById('rain-status').innerHTML = `বৃষ্টি: ${rainEnabled ? 'চালু' : 'বন্ধ'}`;
-            document.getElementById('star-status').innerHTML = `স্টার: ${starsEnabled ? 'চালু' : 'বন্ধ'}`;
-            document.getElementById('touch-status').innerHTML = `টাচ: ${touchEnabled ? 'চালু' : 'বন্ধ'}`;
-            
-            db.ref('settings/animation').set({
-                rain: rainEnabled,
-                stars: starsEnabled,
-                touch: touchEnabled
-            });
+        function toggleBioluminescent() {
+            bioluminescentEnabled = document.getElementById('bioluminescent-toggle').checked;
+            db.ref('settings/animation/bioluminescent').set(bioluminescentEnabled);
+        }
+        
+        function toggleMagicDust() {
+            magicdustEnabled = document.getElementById('magicdust-toggle').checked;
+            db.ref('settings/animation/magicdust').set(magicdustEnabled);
+        }
+        
+        function toggleNeonSlide() {
+            neonslideEnabled = document.getElementById('neonslide-toggle').checked;
+            db.ref('settings/animation/neonslide').set(neonslideEnabled);
         }
         
         function changeSpeed() {
             animationSpeed = document.getElementById('animation-speed').value;
-            
-            let speedText = animationSpeed === 'slow' ? 'স্লো' : animationSpeed === 'fast' ? 'ফাস্ট' : 'নরমাল';
-            document.getElementById('speed-status').innerHTML = `স্পিড: ${speedText}`;
-            
-            if(rainEnabled) createRain();
-            if(starsEnabled) createStars();
-            
             db.ref('settings/animation/speed').set(animationSpeed);
+        }
+        
+        function changeSize() {
+            animationSize = document.getElementById('animation-size').value;
+            db.ref('settings/animation/size').set(animationSize);
         }
         
         function saveAnimationSettings() {
@@ -2735,7 +3495,11 @@
                 rain: rainEnabled,
                 stars: starsEnabled,
                 touch: touchEnabled,
-                speed: animationSpeed
+                bioluminescent: bioluminescentEnabled,
+                magicdust: magicdustEnabled,
+                neonslide: neonslideEnabled,
+                speed: animationSpeed,
+                size: animationSize
             };
             
             db.ref('settings/animation').set(settings).then(() => {
@@ -2747,30 +3511,22 @@
             document.getElementById('rain-toggle').checked = true;
             document.getElementById('star-toggle').checked = true;
             document.getElementById('touch-toggle').checked = true;
-            document.getElementById('all-toggle').checked = true;
+            document.getElementById('bioluminescent-toggle').checked = false;
+            document.getElementById('magicdust-toggle').checked = false;
+            document.getElementById('neonslide-toggle').checked = false;
             document.getElementById('animation-speed').value = 'normal';
+            document.getElementById('animation-size').value = 'medium';
             
             rainEnabled = true;
             starsEnabled = true;
             touchEnabled = true;
+            bioluminescentEnabled = false;
+            magicdustEnabled = false;
+            neonslideEnabled = false;
             animationSpeed = 'normal';
+            animationSize = 'medium';
             
-            createRain();
-            createStars();
-            
-            document.getElementById('rain-status').innerHTML = 'বৃষ্টি: চালু';
-            document.getElementById('star-status').innerHTML = 'স্টার: চালু';
-            document.getElementById('touch-status').innerHTML = 'টাচ: চালু';
-            document.getElementById('speed-status').innerHTML = 'স্পিড: নরমাল';
-            
-            db.ref('settings/animation').set({
-                rain: true,
-                stars: true,
-                touch: true,
-                speed: 'normal'
-            }).then(() => {
-                alert('✅ এনিমেশন রিসেট!');
-            });
+            saveAnimationSettings();
         }
         
         function loadAnimationSettings() {
@@ -2780,32 +3536,20 @@
                     rainEnabled = settings.rain !== undefined ? settings.rain : true;
                     starsEnabled = settings.stars !== undefined ? settings.stars : true;
                     touchEnabled = settings.touch !== undefined ? settings.touch : true;
+                    bioluminescentEnabled = settings.bioluminescent === true;
+                    magicdustEnabled = settings.magicdust === true;
+                    neonslideEnabled = settings.neonslide === true;
                     animationSpeed = settings.speed || 'normal';
+                    animationSize = settings.size || 'medium';
                     
                     document.getElementById('rain-toggle').checked = rainEnabled;
                     document.getElementById('star-toggle').checked = starsEnabled;
                     document.getElementById('touch-toggle').checked = touchEnabled;
+                    document.getElementById('bioluminescent-toggle').checked = bioluminescentEnabled;
+                    document.getElementById('magicdust-toggle').checked = magicdustEnabled;
+                    document.getElementById('neonslide-toggle').checked = neonslideEnabled;
                     document.getElementById('animation-speed').value = animationSpeed;
-                    
-                    let allEnabled = rainEnabled && starsEnabled && touchEnabled;
-                    document.getElementById('all-toggle').checked = allEnabled;
-                    
-                    if(rainEnabled) createRain(); else document.getElementById('rainContainer').innerHTML = '';
-                    if(starsEnabled) createStars(); else document.getElementById('starField').innerHTML = '';
-                    
-                    document.getElementById('rain-status').innerHTML = `বৃষ্টি: ${rainEnabled ? 'চালু' : 'বন্ধ'}`;
-                    document.getElementById('star-status').innerHTML = `স্টার: ${starsEnabled ? 'চালু' : 'বন্ধ'}`;
-                    document.getElementById('touch-status').innerHTML = `টাচ: ${touchEnabled ? 'চালু' : 'বন্ধ'}`;
-                    
-                    let speedText = animationSpeed === 'slow' ? 'স্লো' : animationSpeed === 'fast' ? 'ফাস্ট' : 'নরমাল';
-                    document.getElementById('speed-status').innerHTML = `স্পিড: ${speedText}`;
-                } else {
-                    rainEnabled = true;
-                    starsEnabled = true;
-                    touchEnabled = true;
-                    animationSpeed = 'normal';
-                    createRain();
-                    createStars();
+                    document.getElementById('animation-size').value = animationSize;
                 }
             });
         }
@@ -2956,7 +3700,6 @@
                     });
                 }
                 
-                // উইন অনুযায়ী সাজানো (বড় থেকে ছোট)
                 usersArray.sort((a, b) => b.wins - a.wins);
                 
                 let html = '';
@@ -3036,13 +3779,10 @@
             let phone = currentWinningPlayer.phone;
             
             if (confirm(`${currentWinningPlayer.name} কে ${totalPrize} টাকা দিতে চান?`)) {
-                // ব্যালেন্স আপডেট
                 db.ref('users/' + phone + '/balance').transaction(current => (current || 0) + totalPrize);
                 db.ref('users/' + phone + '/wins').transaction(current => (current || 0) + 1);
-                // totalWinnings আপডেট (জয় করা মোট টাকা)
                 db.ref('users/' + phone + '/totalWinnings').transaction(current => (current || 0) + totalPrize);
                 
-                // উইনিং ইতিহাসে যোগ
                 let winningData = {
                     playerPhone: phone,
                     playerName: currentWinningPlayer.name,
@@ -3058,7 +3798,6 @@
                 
                 db.ref('winnings/' + Date.now()).set(winningData);
                 
-                // ইউজারের ইতিহাসে যোগ
                 db.ref('history/' + phone).push({
                     type: 'winning',
                     match: match,
@@ -3071,7 +3810,6 @@
                 
                 alert(`✅ ${totalPrize} টাকা ${currentWinningPlayer.name} কে দেওয়া হয়েছে!`);
                 
-                // ফর্ম রিসেট
                 document.getElementById('winning-prize').value = '';
                 document.getElementById('winning-kill-bonus').value = '';
                 document.getElementById('winning-total-kills').value = '';
@@ -3137,7 +3875,6 @@
                         count++;
                     }
                     
-                    // ইতিহাসে যোগ
                     db.ref('notification_history/' + Date.now()).set({
                         type: 'all',
                         text: text,
@@ -3171,7 +3908,6 @@
                             read: false
                         });
                         
-                        // ইতিহাসে যোগ
                         db.ref('notification_history/' + Date.now()).set({
                             type: 'specific',
                             phone: phone,
@@ -3217,38 +3953,105 @@
             });
         }
         
-        // ========== ম্যাচ ইমেজ কন্ট্রোল ফাংশন ==========
-        function loadMatchIcons() {
-            db.ref('match_icons').once('value', (snap) => {
-                let icons = snap.val() || {};
-                document.getElementById('icon-SoloBermuda').value = icons.SoloBermuda || 'https://i.ibb.co.com/Gv57Crmh/free-fire-characters.jpg';
-                document.getElementById('icon-DuoMatch1').value = icons.DuoMatch1 || 'https://i.ibb.co.com/rDgKsWm/duo-image.jpg';
-                document.getElementById('icon-DuoMatch2').value = icons.DuoMatch2 || 'https://i.ibb.co.com/rDgKsWm/duo-image.jpg';
-                document.getElementById('icon-CS4vs4').value = icons.CS4vs4 || 'https://i.ibb.co.com/C57vzBfL/maxresdefault.jpg';
-                document.getElementById('icon-CS2vs2').value = icons.CS2vs2 || 'https://i.ibb.co.com/nqdgm6jw/free-fire-735x400.jpg';
-                document.getElementById('icon-CS1vs1').value = icons.CS1vs1 || 'https://i.ibb.co.com/JW1Qh62T/screenshot.jpg';
-                document.getElementById('icon-FreeSolo').value = icons.FreeSolo || 'https://i.ibb.co.com/jPbw04PT/wp12125274.jpg';
+        // ========== ম্যাচ ইমেজ ফাংশন ==========
+        function loadMatchImages() {
+            db.ref('match_images').once('value', (snap) => {
+                let imgs = snap.val() || {};
+                document.getElementById('image-SoloBermuda').value = imgs.SoloBermuda?.imageUrl || 'https://i.ibb.co.com/Gv57Crmh/free-fire-characters.jpg';
+                document.getElementById('link-SoloBermuda').value = imgs.SoloBermuda?.link || '#';
+                document.getElementById('image-DuoMatch1').value = imgs.DuoMatch1?.imageUrl || 'https://i.ibb.co.com/rDgKsWm/duo-image.jpg';
+                document.getElementById('link-DuoMatch1').value = imgs.DuoMatch1?.link || '#';
+                document.getElementById('image-DuoMatch2').value = imgs.DuoMatch2?.imageUrl || 'https://i.ibb.co.com/rDgKsWm/duo-image.jpg';
+                document.getElementById('link-DuoMatch2').value = imgs.DuoMatch2?.link || '#';
+                document.getElementById('image-CS4vs4').value = imgs.CS4vs4?.imageUrl || 'https://i.ibb.co.com/C57vzBfL/maxresdefault.jpg';
+                document.getElementById('link-CS4vs4').value = imgs.CS4vs4?.link || '#';
+                document.getElementById('image-CS2vs2').value = imgs.CS2vs2?.imageUrl || 'https://i.ibb.co.com/nqdgm6jw/free-fire-735x400.jpg';
+                document.getElementById('link-CS2vs2').value = imgs.CS2vs2?.link || '#';
+                document.getElementById('image-CS1vs1').value = imgs.CS1vs1?.imageUrl || 'https://i.ibb.co.com/JW1Qh62T/screenshot.jpg';
+                document.getElementById('link-CS1vs1').value = imgs.CS1vs1?.link || '#';
+                document.getElementById('image-FreeSolo').value = imgs.FreeSolo?.imageUrl || 'https://i.ibb.co.com/jPbw04PT/wp12125274.jpg';
+                document.getElementById('link-FreeSolo').value = imgs.FreeSolo?.link || '#';
             });
         }
         
-        function saveMatchIcons() {
-            let icons = {
-                SoloBermuda: document.getElementById('icon-SoloBermuda').value,
-                DuoMatch1: document.getElementById('icon-DuoMatch1').value,
-                DuoMatch2: document.getElementById('icon-DuoMatch2').value,
-                CS4vs4: document.getElementById('icon-CS4vs4').value,
-                CS2vs2: document.getElementById('icon-CS2vs2').value,
-                CS1vs1: document.getElementById('icon-CS1vs1').value,
-                FreeSolo: document.getElementById('icon-FreeSolo').value
+        function saveMatchImages() {
+            let images = {
+                SoloBermuda: { 
+                    imageUrl: document.getElementById('image-SoloBermuda').value, 
+                    link: document.getElementById('link-SoloBermuda').value 
+                },
+                DuoMatch1: { 
+                    imageUrl: document.getElementById('image-DuoMatch1').value, 
+                    link: document.getElementById('link-DuoMatch1').value 
+                },
+                DuoMatch2: { 
+                    imageUrl: document.getElementById('image-DuoMatch2').value, 
+                    link: document.getElementById('link-DuoMatch2').value 
+                },
+                CS4vs4: { 
+                    imageUrl: document.getElementById('image-CS4vs4').value, 
+                    link: document.getElementById('link-CS4vs4').value 
+                },
+                CS2vs2: { 
+                    imageUrl: document.getElementById('image-CS2vs2').value, 
+                    link: document.getElementById('link-CS2vs2').value 
+                },
+                CS1vs1: { 
+                    imageUrl: document.getElementById('image-CS1vs1').value, 
+                    link: document.getElementById('link-CS1vs1').value 
+                },
+                FreeSolo: { 
+                    imageUrl: document.getElementById('image-FreeSolo').value, 
+                    link: document.getElementById('link-FreeSolo').value 
+                }
             };
-            
-            db.ref('match_icons').set(icons).then(() => {
-                alert('✅ সব ম্যাচের ছবির লিংক সংরক্ষণ করা হয়েছে!');
-            }).catch((error) => {
-                alert('❌ সমস্যা: ' + error.message);
+            db.ref('match_images').set(images).then(() => alert('✅ ম্যাচ ইমেজ সংরক্ষিত!'));
+        }
+        
+        // ========== স্লাইডশো ফাংশন ==========
+        function loadSlideshow() {
+            db.ref('slideshow').on('value', (snap) => {
+                let slides = snap.val() || [];
+                let html = '';
+                slides.forEach((slide, index) => {
+                    html += `
+                        <div class="slideshow-item">
+                            <img src="${slide.image}" onerror="this.src='https://via.placeholder.com/80'">
+                            <input type="text" value="${slide.image}" placeholder="ছবির URL" id="slide-img-${index}">
+                            <input type="text" value="${slide.link}" placeholder="ক্লিক লিংক" id="slide-link-${index}">
+                            <button class="remove-btn" onclick="removeSlide(${index})">❌</button>
+                        </div>
+                    `;
+                });
+                document.getElementById('slideshow-list').innerHTML = html || '<p style="color:#888;">কোনো স্লাইড নেই</p>';
             });
         }
         
+        function addSlide() {
+            let image = document.getElementById('new-slide-image').value;
+            let link = document.getElementById('new-slide-link').value;
+            if (!image || !link) return alert('ছবির URL এবং লিংক দিন!');
+            
+            db.ref('slideshow').once('value', (snap) => {
+                let slides = snap.val() || [];
+                slides.push({ image, link });
+                db.ref('slideshow').set(slides).then(() => {
+                    alert('✅ স্লাইড যোগ হয়েছে!');
+                    document.getElementById('new-slide-image').value = '';
+                    document.getElementById('new-slide-link').value = '';
+                });
+            });
+        }
+        
+        function removeSlide(index) {
+            db.ref('slideshow').once('value', (snap) => {
+                let slides = snap.val() || [];
+                slides.splice(index, 1);
+                db.ref('slideshow').set(slides).then(() => alert('✅ স্লাইড সরানো হয়েছে!'));
+            });
+        }
+        
+        // ========== লোড সব অ্যাডমিন ডাটা ==========
         function loadAllAdminData() {
             db.ref('users').on('value', (s) => {
                 let c = 0; s.forEach(() => c++);
@@ -3298,7 +4101,10 @@
                 loadWinningHistory();
                 loadNotificationHistory();
                 loadDefaultSupportSettings();
-                loadMatchIcons(); // ম্যাচ ইমেজ লোড
+                loadMatchImages();
+                loadSlideshow();
+                loadNoticeDesign();
+                loadWebsiteDesigns();
             }
         };
     </script>
