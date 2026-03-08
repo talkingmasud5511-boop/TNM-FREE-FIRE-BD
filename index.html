@@ -12,6 +12,7 @@
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -21,7 +22,7 @@
             font-family: 'Poppins', sans-serif;
         }
         
-        /* ===== গ্লোবাল থিম ভেরিয়েবল (পুরো সাইট কন্ট্রোল) ===== */
+        /* ===== গ্লোবাল থিম ভেরিয়েবল ===== */
         :root {
             --primary-color: #FF416C;
             --secondary-color: #FF4B2B;
@@ -127,7 +128,7 @@
             100% { opacity: 0; transform: translateY(100vh) translateX(100px) rotate(360deg); }
         }
         
-        /* ===== টাচ স্টার (আগের মতো ফিরিয়ে দেওয়া) ===== */
+        /* ===== টাচ স্টার ===== */
         .touch-star {
             position: fixed;
             width: 30px;
@@ -315,528 +316,386 @@
             display: none;
         }
         
-        /* অথ পেইজ */
-        .auth-container {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 20px;
-            background: radial-gradient(circle at 50% 50%, #1a0f2a, #0a0612);
-            position: relative;
-            z-index: 10;
-        }
-        
-        .auth-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 3px solid var(--accent-color);
-            border-radius: 40px;
-            padding: 40px 30px;
-            max-width: 450px;
-            margin: 0 auto;
+        /* ===== নতুন লগইন ক্যানভাস ===== */
+        #fire-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-        }
-        
-        /* ট্যাব মেনু */
-        .tabs {
-            display: flex;
-            overflow-x: auto;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 60px;
-            padding: 10px;
-            margin: 20px 15px;
-            gap: 10px;
-            border: 2px solid rgba(255,215,0,0.3);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            position: relative;
-            z-index: 20;
-        }
-        
-        .tab {
-            padding: 14px 20px;
-            background: transparent;
-            border: none;
-            color: white;
-            font-weight: 600;
-            border-radius: 50px;
-            white-space: nowrap;
-            transition: all 0.3s;
-            font-size: 14px;
-            flex: 1;
-            cursor: pointer;
-        }
-        
-        .tab.active {
-            background: linear-gradient(45deg, var(--accent-color), #FFA500);
-            color: black;
-            box-shadow: 0 5px 25px var(--glow-color);
-        }
-        
-        /* সেকশন */
-        .section {
-            display: none;
-            padding: 15px;
-            animation: fadeIn 0.5s;
-            position: relative;
-            z-index: 10;
-        }
-        
-        .section.active {
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
             display: block;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* ম্যাচ কার্ড */
-        .match-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(255, 215, 0, 0.5);
-            border-radius: 35px;
-            padding: 25px;
-            margin-bottom: 30px;
+        /* ===== নতুন লগইন কার্ড ===== */
+        #auth-page {
             position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            transition: all 0.4s;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
         
-        .match-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent-color);
-        }
-        
-        .match-title {
-            font-size: 24px;
-            font-weight: 800;
-            background: linear-gradient(45deg, var(--accent-color), #FFA500);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-        
-        /* টাইমার */
-        .timer {
-            background: rgba(0, 255, 204, 0.1);
-            border: 2px solid #00ffcc;
-            border-radius: 50px;
-            padding: 12px 20px;
-            color: #00ffcc;
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 15px;
-            display: inline-block;
-            box-shadow: 0 0 20px rgba(0,255,204,0.3);
-            animation: timerPulse 2s infinite;
-        }
-        
-        @keyframes timerPulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(0,255,204,0.3); }
-            50% { box-shadow: 0 0 40px rgba(0,255,204,0.6); }
-        }
-        
-        /* লাইভ ব্যাজ */
-        .live-badge {
-            background: #ff4444;
-            color: white;
-            padding: 6px 20px;
-            border-radius: 50px;
-            font-size: 12px;
-            display: inline-block;
-            box-shadow: 0 0 20px rgba(255,68,68,0.5);
-            animation: livePulse 1s infinite;
-            cursor: pointer;
-        }
-        
-        .live-badge.offline {
-            background: #888;
-            animation: none;
-            box-shadow: none;
-        }
-        
-        @keyframes livePulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
-        }
-        
-        .per-kill {
-            background: rgba(76, 175, 80, 0.15);
-            border: 2px solid #4CAF50;
-            border-radius: 50px;
-            padding: 8px 18px;
-            color: #4CAF50;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        
-        .prize-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background: rgba(0,0,0,0.4);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid rgba(255,215,0,0.2);
-        }
-        
-        .prize-table td {
-            padding: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            color: white;
-        }
-        
-        .reg-names {
-            font-size: 14px;
-            color: #00ffcc;
-            background: rgba(0,0,0,0.6);
+        .login-card {
+            background: rgba(20, 20, 20, 0.85);
+            padding: 40px;
+            border-radius: 15px;
+            width: 380px;
+            border: 2px solid #ff4500;
+            box-shadow: 0 0 30px #ff4500bb;
+            text-align: center;
             backdrop-filter: blur(5px);
-            padding: 15px;
-            border-radius: 20px;
-            margin-top: 15px;
-            max-height: 100px;
-            overflow-y: auto;
-            border: 1px solid var(--accent-color);
-        }
-        
-        /* প্রোফাইল */
-        .profile-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 2px solid var(--accent-color);
-            border-radius: 35px;
-            padding: 30px;
-            text-align: center;
-        }
-        
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 5px solid var(--accent-color);
-            margin: 0 auto 20px;
-            object-fit: cover;
-            box-shadow: 0 0 50px var(--glow-color);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .profile-avatar:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 70px var(--accent-color);
-        }
-        
-        /* গুগল ফটোস */
-        .photo-upload {
-            margin-top: 15px;
-            padding: 15px;
-            background: linear-gradient(45deg, #4285F4, #34A853, #FBBC05, #EA4335);
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: white;
-            font-weight: 600;
-            text-align: center;
             position: relative;
-            overflow: hidden;
         }
         
-        .photo-upload::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
+        .login-card h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #ff4500;
+            text-shadow: 3px 3px 2px #000;
+        }
+        
+        .login-card .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .login-card .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            color: #bbb;
+        }
+        
+        .login-card .input-group input {
             width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: btnShine 3s infinite;
+            padding: 12px;
+            background: rgba(26, 26, 26, 0.9);
+            border: 1px solid #333;
+            color: white;
+            border-radius: 5px;
+            outline: none;
+            transition: 0.3s;
         }
         
-        .photo-upload:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(66,133,244,0.4);
+        .login-card .input-group input:focus {
+            border-color: #ff4500;
+            box-shadow: 0 0 10px #ff450055;
         }
         
-        .photo-upload input {
+        .login-card .ff-logo {
+            font-weight: 900;
+            font-style: italic;
+            color: #fff;
+            margin-bottom: 10px;
+            display: block;
+            opacity: 0.7;
+        }
+        
+        .toggle-link {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #888;
+        }
+        
+        .toggle-link span {
+            color: #ff4500;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        /* ===== টার্মিনাল ওভারলে ===== */
+        #terminal-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20000;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 2rem;
+            border: 1px solid #0F0;
+            box-shadow: 0 0 20px #0F0, inset 0 0 10px #0F0;
+            width: 80%;
+            max-width: 600px;
+            text-align: left;
+            border-radius: 5px;
             display: none;
         }
         
-        /* ব্যালেন্স বক্স */
-        .balance-box {
-            background: linear-gradient(145deg, #1e1e2e, #2a2a3a);
-            padding: 20px;
-            border-radius: 20px;
-            border: 2px solid var(--accent-color);
+        #typing-text {
+            color: #0F0;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            text-shadow: 0 0 5px #0F0;
+            white-space: pre-wrap;
         }
         
-        /* স্ট্যাটাস ব্যাজ */
-        .status-badge {
+        .cursor {
             display: inline-block;
-            padding: 5px 15px;
+            width: 10px;
+            height: 1.2rem;
+            background-color: #0F0;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+        
+        .btn-access {
+            margin-top: 20px;
+            display: none;
+            padding: 10px 20px;
+            background: transparent;
+            color: #0F0;
+            border: 1px solid #0F0;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-access:hover {
+            background: #0F0;
+            color: #000;
+            box-shadow: 0 0 15px #0F0;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        /* ===== ম্যাট্রিক্স ক্যানভাস ===== */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 19999;
+            display: none;
+            pointer-events: none;
+        }
+        
+        /* ===== ফুলস্ক্রিন বাটন ===== */
+        #fullscreen-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 20001;
+            padding: 8px 15px;
+            font-family: 'Courier New', Courier, monospace;
+            background: transparent;
+            color: #0F0;
+            border: 1px solid #0F0;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            display: none;
+        }
+        
+        #fullscreen-btn:hover {
+            opacity: 1;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        
+        /* ===== নতুন এনিমেশন ক্যানভাস ===== */
+        .animation-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+        .animation-canvas.active {
+            display: block;
+        }
+        #bioluminescentCanvas { z-index: 9999; }
+        #magicdustCanvas { z-index: 9998; }
+        #neonslideCanvas { z-index: 9997; }
+        #nebulaCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            display: none;
+            pointer-events: none;
+        }
+        
+        /* ===== ওয়ার্প ওভারলে ===== */
+        .warp-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 21000;
+            transition: opacity 0.5s ease-in;
+        }
+        .warp-overlay.active {
+            opacity: 1;
+        }
+        
+        /* ===== নোটিফিকেশন পারমিশন বাটন ===== */
+        .notif-permission-btn {
+            position: fixed;
+            bottom: 100px;
+            right: 10px;
+            background: var(--accent-color);
+            color: black;
+            padding: 10px 15px;
             border-radius: 50px;
             font-size: 12px;
             font-weight: bold;
+            cursor: pointer;
+            z-index: 10001;
+            display: none;
         }
         
-        .status-pending {
-            background: #FF9800;
-            color: black;
-        }
-        
-        .status-paid {
-            background: #4CAF50;
+        /* ===== নোটিফিকেশন ব্যাজ ও মডাল ===== */
+        .notification-badge {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: #ff4444;
             color: white;
-        }
-        
-        .status-confirmed {
-            background: #2196F3;
-            color: white;
-        }
-        
-        /* সাপোর্ট লিংক */
-        .support-link {
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
-            gap: 20px;
-            padding: 15px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
-            margin-bottom: 15px;
-            transition: all 0.3s;
-            text-decoration: none;
-            color: white;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid white;
+            z-index: 1001;
+            cursor: pointer;
         }
         
-        .support-link:hover {
-            background: rgba(255,215,0,0.15);
-            transform: translateX(5px);
-        }
-        
-        /* রুম মডাল */
-        .room-modal {
+        .notification-modal {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
-            max-width: 450px;
-            background: rgba(20, 25, 40, 0.98);
-            backdrop-filter: blur(30px);
-            border: 4px solid var(--accent-color);
-            border-radius: 40px;
-            padding: 40px;
-            z-index: 10002;
-            display: none;
-            box-shadow: 0 0 100px var(--glow-color);
-        }
-        
-        .room-modal.active {
-            display: block;
-            animation: modalGlow 2s infinite;
-        }
-        
-        @keyframes modalGlow {
-            0%, 100% { box-shadow: 0 0 50px var(--glow-color); }
-            50% { box-shadow: 0 0 100px var(--accent-color); }
-        }
-        
-        /* ইতিহাস কার্ড */
-        .history-card {
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(10px);
-            padding: 18px;
-            margin-top: 12px;
-            border-radius: 20px;
-            border-left: 8px solid;
-            border: 2px solid rgba(255,255,255,0.1);
-            transition: all 0.3s;
-        }
-        
-        .history-card:hover {
-            transform: translateX(5px);
-            border-color: var(--accent-color);
-        }
-        
-        /* নিচের নেভিগেশন */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: rgba(17, 17, 17, 0.95);
-            backdrop-filter: blur(20px);
-            display: flex;
-            justify-content: space-around;
-            padding: 15px 0;
-            border-top: 3px solid var(--accent-color);
-            z-index: 1000;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
-        }
-        
-        .nav-item {
-            color: #aaa;
-            text-decoration: none;
-            font-size: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-weight: 600;
-        }
-        
-        .nav-item.active {
-            color: var(--accent-color);
-            background: rgba(255,215,0,0.15);
-            transform: translateY(-5px);
-        }
-        
-        /* ফর্ম ইনপুট */
-        input, select, textarea {
-            width: 100%;
-            padding: 18px;
-            margin: 12px 0;
-            border-radius: 50px;
-            border: 2px solid rgba(255,215,0,0.5);
-            background: rgba(0,0,0,0.7);
-            color: white;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            border-color: #00ffcc;
-            box-shadow: 0 0 30px rgba(0,255,204,0.4);
-            outline: none;
-        }
-        
-        /* ========== নোটিশ সিস্টেম ========== */
-        .notice-container {
-            margin: 15px;
-            position: relative;
-        }
-        
-        .main-notice {
-            background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
-            padding: 18px 45px 18px 18px;
-            border-radius: 25px;
-            border: 2px solid white;
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            animation: noticePulse 2s infinite;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(255,75,43,0.5);
-        }
-        
-        .main-notice:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 40px rgba(255,75,43,0.8);
-        }
-        
-        @keyframes noticePulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(255,75,43,0.5); }
-            50% { box-shadow: 0 0 40px rgba(255,75,43,0.8); }
-        }
-        
-        .notice-got-it {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.3);
-            color: white;
-            border: 2px solid white;
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            z-index: 10;
-        }
-        
-        .notice-got-it:hover {
-            background: white;
-            color: var(--primary-color);
-        }
-        
-        .notice-got-it.clicked {
-            display: none;
-        }
-        
-        .notice-minimized {
-            background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
-            padding: 8px 15px;
-            border-radius: 50px;
-            margin: 15px;
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            border: 2px solid white;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: none;
-            box-shadow: 0 5px 20px rgba(255,75,43,0.3);
-        }
-        
-        .notice-minimized:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255,75,43,0.6);
-        }
-        
-        .notice-minimized.active {
-            display: block;
-        }
-        
-        /* ম্যাচ নোটিশ - প্রতিটি ম্যাচের জন্য */
-        .match-notice {
-            background: rgba(255,255,255,0.1);
-            border-left: 5px solid var(--accent-color);
-            border-radius: 15px;
-            padding: 12px 15px;
-            margin-bottom: 20px;
-            color: white;
-            font-weight: 500;
-            font-size: 14px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,215,0,0.3);
-        }
-        
-        /* রেজিস্ট্রেশন পেজে ম্যাচ স্পেসিফিক নোটিশ */
-        .registration-notice {
-            background: rgba(255,215,0,0.1);
-            border-left: 8px solid var(--accent-color);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
-            color: var(--accent-color);
-            font-weight: bold;
-            font-size: 16px;
-            backdrop-filter: blur(5px);
-            border: 1px solid var(--accent-color);
-            text-align: center;
-        }
-        
-        /* উইথড্র পিন সেটিংস */
-        .pin-settings {
-            background: rgba(255,215,0,0.1);
-            border: 2px solid var(--accent-color);
+            max-width: 380px;
+            background: #1e1e2e;
+            border: 3px solid var(--accent-color);
             border-radius: 20px;
             padding: 20px;
-            margin: 20px 0;
+            z-index: 10001;
+            display: none;
+        }
+        .notification-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--accent-color);
         }
         
-        /* ========== সেটিংস আইকন ========== */
+        /* ===== হোয়াটসঅ্যাপ স্টাইলের নোটিফিকেশন ===== */
+        .notification-whatsapp {
+            position: fixed;
+            top: 60px;
+            right: 15px;
+            max-width: 350px;
+            width: 90%;
+            background: #075E54;
+            border-radius: 15px 15px 5px 15px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 20002;
+            display: none;
+            animation: slideInNotification 0.3s ease;
+            border-left: 5px solid #25D366;
+        }
+        
+        .notification-whatsapp.active {
+            display: block;
+        }
+        
+        @keyframes slideInNotification {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification-whatsapp-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .notification-whatsapp-icon {
+            width: 40px;
+            height: 40px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .notification-whatsapp-title {
+            font-weight: bold;
+            color: #25D366;
+            font-size: 16px;
+        }
+        
+        .notification-whatsapp-time {
+            color: rgba(255,255,255,0.7);
+            font-size: 11px;
+            margin-left: auto;
+        }
+        
+        .notification-whatsapp-body {
+            color: white;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 5px 0;
+            word-wrap: break-word;
+        }
+        
+        .notification-whatsapp-footer {
+            margin-top: 10px;
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .notification-whatsapp-close {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .notification-whatsapp-close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        /* ===== সেটিংস প্যানেল ===== */
         .settings-corner {
             position: fixed;
             bottom: 80px;
@@ -918,7 +777,6 @@
             margin-bottom: 10px;
         }
         
-        /* টগল সুইচ */
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -972,7 +830,7 @@
             padding: 8px 0;
         }
         
-        /* ===== নতুন: এনিমেশন স্পিড কন্ট্রোল ===== */
+        /* স্পিড ও সাইজ সিলেক্টর */
         .speed-selector, .size-selector {
             display: flex;
             gap: 10px;
@@ -1072,46 +930,542 @@
             box-shadow: 0 5px 20px rgba(0,210,255,0.4);
         }
         
-        /* নোটিফিকেশন ব্যাজ */
-        .notification-badge {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            background: #ff4444;
-            color: white;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
+        /* ===== ট্যাব মেনু ===== */
+        .tabs {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            border: 2px solid white;
-            z-index: 1001;
+            overflow-x: auto;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 60px;
+            padding: 10px;
+            margin: 20px 15px;
+            gap: 10px;
+            border: 2px solid rgba(255,215,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 20;
+        }
+        
+        .tab {
+            padding: 14px 20px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 50px;
+            white-space: nowrap;
+            transition: all 0.3s;
+            font-size: 14px;
+            flex: 1;
             cursor: pointer;
         }
         
-        /* নোটিফিকেশন মডাল */
-        .notification-modal {
+        .tab.active {
+            background: linear-gradient(45deg, var(--accent-color), #FFA500);
+            color: black;
+            box-shadow: 0 5px 25px var(--glow-color);
+        }
+        
+        /* ===== সেকশন ===== */
+        .section {
+            display: none;
+            padding: 15px;
+            animation: fadeIn 0.5s;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ===== ম্যাচ কার্ড ===== */
+        .match-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            border-radius: 35px;
+            padding: 25px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            transition: all 0.4s;
+        }
+        
+        .match-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+        }
+        
+        .match-title {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--accent-color), #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .timer {
+            background: rgba(0, 255, 204, 0.1);
+            border: 2px solid #00ffcc;
+            border-radius: 50px;
+            padding: 12px 20px;
+            color: #00ffcc;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: inline-block;
+            box-shadow: 0 0 20px rgba(0,255,204,0.3);
+            animation: timerPulse 2s infinite;
+        }
+        
+        @keyframes timerPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(0,255,204,0.3); }
+            50% { box-shadow: 0 0 40px rgba(0,255,204,0.6); }
+        }
+        
+        .live-badge {
+            background: #ff4444;
+            color: white;
+            padding: 6px 20px;
+            border-radius: 50px;
+            font-size: 12px;
+            display: inline-block;
+            box-shadow: 0 0 20px rgba(255,68,68,0.5);
+            animation: livePulse 1s infinite;
+            cursor: pointer;
+        }
+        
+        .live-badge.offline {
+            background: #888;
+            animation: none;
+            box-shadow: none;
+        }
+        
+        @keyframes livePulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .per-kill {
+            background: rgba(76, 175, 80, 0.15);
+            border: 2px solid #4CAF50;
+            border-radius: 50px;
+            padding: 8px 18px;
+            color: #4CAF50;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .prize-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(0,0,0,0.4);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,215,0,0.2);
+        }
+        
+        .prize-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .reg-names {
+            font-size: 14px;
+            color: #00ffcc;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 20px;
+            margin-top: 15px;
+            max-height: 100px;
+            overflow-y: auto;
+            border: 1px solid var(--accent-color);
+        }
+        
+        /* ===== প্রোফাইল ===== */
+        .profile-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--accent-color);
+            border-radius: 35px;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid var(--accent-color);
+            margin: 0 auto 20px;
+            object-fit: cover;
+            box-shadow: 0 0 50px var(--glow-color);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .profile-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 70px var(--accent-color);
+        }
+        
+        .photo-upload {
+            margin-top: 15px;
+            padding: 15px;
+            background: linear-gradient(45deg, #4285F4, #34A853, #FBBC05, #EA4335);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .photo-upload::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: btnShine 3s infinite;
+        }
+        
+        .photo-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(66,133,244,0.4);
+        }
+        
+        .photo-upload input {
+            display: none;
+        }
+        
+        .balance-box {
+            background: linear-gradient(145deg, #1e1e2e, #2a2a3a);
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid var(--accent-color);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            background: #FF9800;
+            color: black;
+        }
+        
+        .status-paid {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .status-confirmed {
+            background: #2196F3;
+            color: white;
+        }
+        
+        /* ===== সাপোর্ট লিংক ===== */
+        .support-link {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .support-link:hover {
+            background: rgba(255,215,0,0.15);
+            transform: translateX(5px);
+        }
+        
+        /* ===== রুম মডাল ===== */
+        .room-modal {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 90%;
-            max-width: 380px;
-            background: #1e1e2e;
-            border: 3px solid var(--accent-color);
+            max-width: 450px;
+            background: rgba(20, 25, 40, 0.98);
+            backdrop-filter: blur(30px);
+            border: 4px solid var(--accent-color);
+            border-radius: 40px;
+            padding: 40px;
+            z-index: 10002;
+            display: none;
+            box-shadow: 0 0 100px var(--glow-color);
+        }
+        
+        .room-modal.active {
+            display: block;
+            animation: modalGlow 2s infinite;
+        }
+        
+        @keyframes modalGlow {
+            0%, 100% { box-shadow: 0 0 50px var(--glow-color); }
+            50% { box-shadow: 0 0 100px var(--accent-color); }
+        }
+        
+        /* ===== ইতিহাস কার্ড ===== */
+        .history-card {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            padding: 18px;
+            margin-top: 12px;
             border-radius: 20px;
-            padding: 20px;
-            z-index: 10001;
+            border-left: 8px solid;
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        
+        .history-card:hover {
+            transform: translateX(5px);
+            border-color: var(--accent-color);
+        }
+        
+        /* ===== নিচের নেভিগেশন ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(17, 17, 17, 0.95);
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 3px solid var(--accent-color);
+            z-index: 1000;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .nav-item {
+            color: #aaa;
+            text-decoration: none;
+            font-size: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+        
+        .nav-item.active {
+            color: var(--accent-color);
+            background: rgba(255,215,0,0.15);
+            transform: translateY(-5px);
+        }
+        
+        /* ===== ফর্ম ইনপুট ===== */
+        input, select, textarea {
+            width: 100%;
+            padding: 18px;
+            margin: 12px 0;
+            border-radius: 50px;
+            border: 2px solid rgba(255,215,0,0.5);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #00ffcc;
+            box-shadow: 0 0 30px rgba(0,255,204,0.4);
+            outline: none;
+        }
+        
+        /* ===== নোটিশ সিস্টেম ===== */
+        .notice-container {
+            margin: 15px;
+            position: relative;
+        }
+        
+        .main-notice {
+            background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
+            padding: 18px 45px 18px 18px;
+            border-radius: 25px;
+            border: 2px solid white;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            animation: noticePulse 2s infinite;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(255,75,43,0.5);
+        }
+        
+        .main-notice:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(255,75,43,0.8);
+        }
+        
+        @keyframes noticePulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255,75,43,0.5); }
+            50% { box-shadow: 0 0 40px rgba(255,75,43,0.8); }
+        }
+        
+        .notice-got-it {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.3);
+            color: white;
+            border: 2px solid white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .notice-got-it:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        .notice-got-it.clicked {
             display: none;
         }
-        .notification-item {
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-left: 4px solid var(--accent-color);
+        
+        .notice-minimized {
+            background: linear-gradient(145deg, var(--primary-color), var(--secondary-color));
+            padding: 8px 15px;
+            border-radius: 50px;
+            margin: 15px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: none;
+            box-shadow: 0 5px 20px rgba(255,75,43,0.3);
+        }
+        
+        .notice-minimized:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255,75,43,0.6);
+        }
+        
+        .notice-minimized.active {
+            display: block;
+        }
+        
+        /* ===== রেজিস্ট্রেশন পৃষ্ঠার নোটিশ ===== */
+        .registration-notice {
+            background: rgba(255,215,0,0.1);
+            border-left: 8px solid var(--accent-color);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 16px;
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--accent-color);
+            text-align: center;
+        }
+        
+        /* ===== উইথড্র পিন সেটিংস ===== */
+        .pin-settings {
+            background: rgba(255,215,0,0.1);
+            border: 2px solid var(--accent-color);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        /* ===== স্লাইডশো ===== */
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border-radius: 20px;
+        }
+        .slideshow-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease;
+            background-size: cover;
+            background-position: center;
+            cursor: pointer;
+        }
+        .slideshow-slide.active {
+            opacity: 1;
+        }
+        
+        /* ===== ম্যাচ ইমেজে ক্লিক লিংকের জন্য ===== */
+        .match-card a {
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .match-card img {
+            pointer-events: auto;
+        }
+        
+        /* ===== ডিপোজিট/উইথড্র/সাপোর্ট পেজে নোটিশের জন্য ===== */
+        #depositNotice, #withdrawNotice, #supportNotice {
+            background: rgba(255,215,0,0.1);
+            border-left: 5px solid var(--accent-color);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 16px;
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--accent-color);
+            text-align: center;
+        }
+        
+        /* ===== লিংক স্টাইল ===== */
+        a {
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        a[target="_blank"] {
+            cursor: pointer;
         }
         
         @media (max-width: 768px) {
@@ -1125,16 +1479,45 @@
                 font-size: 10px;
                 padding: 6px 12px;
             }
+            .login-card { width: 90%; padding: 20px; }
         }
     </style>
 </head>
 <body>
-    <!-- অ্যাপ ডাউনলোড বাটন -->
-    <a id="app-download-link" href="https://www.mediafire.com/file/qcnpve9mykukmfo/TNM_FF.apk/file" class="app-download-btn" target="_blank">
+    <!-- ফায়ার ক্যানভাস (শুধু লগইন পৃষ্ঠায় দেখা যাবে) -->
+    <canvas id="fire-canvas"></canvas>
+    
+    <!-- ম্যাট্রিক্স ক্যানভাস (টার্মিনালের জন্য) -->
+    <canvas id="matrixCanvas"></canvas>
+    
+    <!-- টার্মিনাল ওভারলে -->
+    <div id="terminal-overlay">
+        <div id="typing-text"></div><span class="cursor"></span>
+        <br>
+        <button class="btn-access glow-on-hover btn-join" onclick="accessGranted()">Grant Access Account</button>
+    </div>
+    
+    <!-- ফুলস্ক্রিন বাটন (টার্মিনালের জন্য) -->
+    <button id="fullscreen-btn" onclick="enterFullScreen()">[ ] Go Full Screen</button>
+    
+    <!-- নতুন অ্যানিমেশন ক্যানভাস (নেবুলা, বায়োলুমিনেসেন্ট ইত্যাদি) -->
+    <canvas id="nebulaCanvas"></canvas>
+    <canvas id="bioluminescentCanvas" class="animation-canvas"></canvas>
+    <canvas id="magicdustCanvas" class="animation-canvas"></canvas>
+    <canvas id="neonslideCanvas" class="animation-canvas"></canvas>
+    
+    <!-- ওয়ার্প ওভারলে -->
+    <div class="warp-overlay" id="warpOverlay"></div>
+    
+    <!-- নোটিফিকেশন পারমিশন বাটন -->
+    <div class="notif-permission-btn" id="notifPermissionBtn" onclick="requestNotificationPermission()">🔔 নোটিফিকেশন চালু করুন</div>
+    
+    <!-- অ্যাপ ডাউনলোড বাটন (সঠিক লিংক সহ) -->
+    <a id="app-download-link" href="https://www.mediafire.com/file/qcnpve9mykukmfo/TNM_FF.apk/file" class="app-download-btn" target="_blank" rel="noopener noreferrer">
         <span>📱</span> TNM FF APP
     </a>
     
-    <!-- এনিমেশন -->
+    <!-- এনিমেশন (বৃষ্টি, তারা) -->
     <div class="gaming-bg"></div>
     <div class="rain-container" id="rainContainer"></div>
     <div class="star-field" id="starField"></div>
@@ -1174,8 +1557,28 @@
                     <span class="toggle-slider"></span>
                 </label>
             </div>
+            <div class="toggle-container">
+                <span>🧬 বায়োলুমিনেসেন্ট</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="bioluminescent-toggle" onchange="toggleBioluminescent()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="toggle-container">
+                <span>✨ ম্যাজিক ডাস্ট</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="magicdust-toggle" onchange="toggleMagicDust()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="toggle-container">
+                <span>🌈 নিয়ন স্লাইড</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="neonslide-toggle" onchange="toggleNeonSlide()">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
             
-            <!-- নতুন: স্পিড কন্ট্রোল -->
             <div class="settings-title" style="margin-top: 10px;">⚡ স্পিড কন্ট্রোল</div>
             <div class="speed-selector">
                 <div class="speed-option" onclick="setAnimationSpeed('slow')" id="speed-slow">স্লো</div>
@@ -1183,7 +1586,6 @@
                 <div class="speed-option" onclick="setAnimationSpeed('fast')" id="speed-fast">ফাস্ট</div>
             </div>
             
-            <!-- নতুন: সাইজ কন্ট্রোল -->
             <div class="settings-title" style="margin-top: 10px;">📏 সাইজ কন্ট্রোল</div>
             <div class="size-selector">
                 <div class="size-option" onclick="setAnimationSize('small')" id="size-small">ছোট</div>
@@ -1192,7 +1594,7 @@
             </div>
         </div>
         
-        <!-- থিম সিলেক্টর (পুরো সাইটের জন্য) -->
+        <!-- থিম সিলেক্টর -->
         <div class="settings-item">
             <div class="settings-title">🎨 প্রিসেট থিম</div>
             <div class="theme-selector">
@@ -1205,7 +1607,7 @@
             </div>
         </div>
         
-        <!-- কাস্টম কালার (পুরো সাইটের জন্য) -->
+        <!-- কাস্টম কালার -->
         <div class="settings-item">
             <div class="settings-title">🎨 কাস্টম কালার</div>
             <div class="color-option">
@@ -1242,44 +1644,64 @@
         <button onclick="closeNotificationModal()" style="width:100%; background:var(--accent-color); border:none; padding:12px; border-radius:50px; font-weight:bold; cursor:pointer;">✅ ঠিক আছে</button>
     </div>
     
-    <!-- ========== অথ পেইজ ========== -->
-    <div id="auth-page" style="display: block;">
-        <div class="auth-container">
-            <div class="auth-card">
-                <div style="color: var(--accent-color); font-size: 32px; font-weight: 800; text-align: center; margin-bottom: 10px;">🎮 TNM RIYAD</div>
-                <div style="color: var(--accent-color); text-align: center; margin-bottom: 30px; font-size: 18px;">TOURNAMENT 2026</div>
-                
-                <!-- লগইন -->
-                <div id="login-box">
-                    <h2 style="color: var(--accent-color); margin-bottom: 25px; text-align: center;">🔐 লগইন</h2>
-                    <input type="text" id="login-phone" placeholder="📱 মোবাইল নম্বর">
-                    <input type="password" id="login-pass" placeholder="🔑 পাসওয়ার্ড">
-                    <button class="glow-on-hover btn-join" onclick="loginUser()">লগইন করুন</button>
-                    <p onclick="toggleAuth()" style="text-align:center; color: var(--accent-color); cursor: pointer; margin-top: 25px;">নতুন একাউন্ট? সাইন আপ করুন</p>
+    <!-- ===== হোয়াটসঅ্যাপ স্টাইল নোটিফিকেশন কন্টেইনার ===== -->
+    <div class="notification-whatsapp" id="whatsappNotification">
+        <div class="notification-whatsapp-header">
+            <div class="notification-whatsapp-icon">📢</div>
+            <div class="notification-whatsapp-title">TNM FF নোটিফিকেশন</div>
+            <div class="notification-whatsapp-time" id="whatsappNotificationTime">এখনই</div>
+        </div>
+        <div class="notification-whatsapp-body" id="whatsappNotificationBody">
+            আপনার নোটিফিকেশন এখানে দেখাবে
+        </div>
+        <div class="notification-whatsapp-footer">
+            <button class="notification-whatsapp-close" onclick="closeWhatsappNotification()">বন্ধ করুন</button>
+        </div>
+    </div>
+    
+    <!-- ========== নতুন অথ পেইজ (লগইন/সাইনআপ) ========== -->
+    <div id="auth-page">
+        <div class="login-card">
+            <span class="ff-logo">FREE FIRE TURNAMENT</span>
+            <h2 id="form-title">Sign In</h2>
+            
+            <div id="extra-fields" style="display: none;">
+                <div class="input-group">
+                    <label>Player ID / Username</label>
+                    <input type="text" id="reg-name" placeholder="Enter Nickname">
                 </div>
-                
-                <!-- সাইনআপ -->
-                <div id="signup-box" style="display: none;">
-                    <h2 style="color: var(--accent-color); margin-bottom: 25px; text-align: center;">📝 সাইন আপ</h2>
-                    <input type="text" id="reg-user-name" placeholder="👤 আপনার নাম">
-                    <input type="text" id="reg-user-phone" placeholder="📱 মোবাইল নম্বর">
-                    <input type="password" id="reg-user-pass" placeholder="🔑 পাসওয়ার্ড">
-                    <button class="glow-on-hover btn-join" onclick="signupUser()">সাইন আপ করুন</button>
-                    <p onclick="toggleAuth()" style="text-align:center; color: var(--accent-color); cursor: pointer; margin-top: 25px;">একাউন্ট আছে? লগইন করুন</p>
-                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Email / Phone</label>
+                <input type="text" id="login-phone" placeholder="Enter Email or Phone">
+            </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="login-pass" placeholder="••••••••">
+            </div>
+
+            <button class="glow-on-hover btn-join" id="main-btn" onclick="handleAuth()">Login Now</button>
+
+            <div class="toggle-link">
+                <p id="toggle-text">Don't have an account? <span onclick="toggleForm()">Sign Up</span></p>
             </div>
         </div>
     </div>
     
     <!-- ========== মেইন অ্যাপ ========== -->
     <div id="main-app" style="display: none;">
-        <!-- হেডার - থিম কন্ট্রোলের সাথে আপডেট হবে -->
+        <!-- স্লাইডশো কন্টেইনার -->
+        <div class="slideshow-container" id="slideshowContainer"></div>
+        
+        <!-- হেডার -->
         <div id="main-header" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); padding: 25px 20px; text-align: center; border-bottom: 3px solid var(--accent-color);">
             <div id="header-title" style="font-size: 28px; font-weight: 800; color: white; text-shadow: 0 0 20px rgba(255,215,0,0.8);">🎮 TNM RIYAD 2026</div>
             <div id="header-subtitle" style="font-size: 16px; color: var(--accent-color); margin-top: 5px;">🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট</div>
         </div>
         
-        <!-- ========== হোম পেজের নোটিশ ========== -->
+        <!-- হোম পেজের নোটিশ -->
         <div class="notice-container">
             <div id="mainNotice" class="main-notice" onclick="expandNotice()">
                 📢 স্বাগতম! সব ম্যাচ চালু আছে। নিয়ম মেনে খেলুন।
@@ -1302,11 +1724,13 @@
         
         <!-- ========== হোম ========== -->
         <div id="home" class="section active">
-            <!-- ম্যাচ 1: সোলো বারমুডা (ছবি: Gv57Crmh) -->
+            <!-- ম্যাচ 1: সোলো বারমুডা -->
             <div class="match-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <img src="https://i.ibb.co.com/Gv57Crmh/free-fire-characters.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="সোলো">
+                        <a href="#" target="_blank" id="match1-link" rel="noopener noreferrer" onclick="return openLink(this)">
+                            <img src="https://i.ibb.co.com/Gv57Crmh/free-fire-characters.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="সোলো" id="match1-img">
+                        </a>
                         <div>
                             <div class="match-title">সোলো বারমুডা #<span id="match1Number">01</span></div>
                             <span class="live-badge" id="live-SoloBermuda">🔴 লাইভ</span>
@@ -1333,11 +1757,13 @@
                 <div class="reg-names" id="list-SoloBermuda">👥 নিবন্ধিত: লোড হচ্ছে...</div>
             </div>
             
-            <!-- ম্যাচ 2: ডুও ১ (ছবি: rDgKsWm) -->
+            <!-- ম্যাচ 2: ডুও ১ -->
             <div class="match-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <img src="https://i.ibb.co.com/rDgKsWm/duo-image.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="ডুও">
+                        <a href="#" target="_blank" id="match2-link" rel="noopener noreferrer" onclick="return openLink(this)">
+                            <img src="https://i.ibb.co.com/rDgKsWm/duo-image.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="ডুও" id="match2-img">
+                        </a>
                         <div>
                             <div class="match-title">ডুও ১ #<span id="match2Number">01</span></div>
                             <span class="live-badge" id="live-DuoMatch1">🔴 লাইভ</span>
@@ -1364,11 +1790,13 @@
                 <div class="reg-names" id="list-DuoMatch1">👥 নিবন্ধিত: লোড হচ্ছে...</div>
             </div>
             
-            <!-- ম্যাচ 3: ডুও ২ (ছবি: rDgKsWm) -->
+            <!-- ম্যাচ 3: ডুও ২ -->
             <div class="match-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <img src="https://i.ibb.co.com/rDgKsWm/duo-image.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="ডুও২">
+                        <a href="#" target="_blank" id="match3-link" rel="noopener noreferrer" onclick="return openLink(this)">
+                            <img src="https://i.ibb.co.com/rDgKsWm/duo-image.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="ডুও২" id="match3-img">
+                        </a>
                         <div>
                             <div class="match-title">ডুও ২ #<span id="match3Number">01</span></div>
                             <span class="live-badge" id="live-DuoMatch2">🔴 লাইভ</span>
@@ -1395,11 +1823,13 @@
                 <div class="reg-names" id="list-DuoMatch2">👥 নিবন্ধিত: লোড হচ্ছে...</div>
             </div>
             
-            <!-- ম্যাচ 4: ৪vs৪ ক্ল্যাশ (ছবি: C57vzBfL) -->
+            <!-- ম্যাচ 4: ৪vs৪ ক্ল্যাশ -->
             <div class="match-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <img src="https://i.ibb.co.com/C57vzBfL/maxresdefault.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="৪vs৪">
+                        <a href="#" target="_blank" id="match4-link" rel="noopener noreferrer" onclick="return openLink(this)">
+                            <img src="https://i.ibb.co.com/C57vzBfL/maxresdefault.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="৪vs৪" id="match4-img">
+                        </a>
                         <div>
                             <div class="match-title">৪vs৪ ক্ল্যাশ #<span id="match4Number">01</span></div>
                             <span class="live-badge" id="live-CS4vs4">🔴 লাইভ</span>
@@ -1427,11 +1857,13 @@
                 <div class="reg-names" id="list-CS4vs4">👥 নিবন্ধিত: লোড হচ্ছে...</div>
             </div>
             
-            <!-- ম্যাচ 5: ২vs২ কাস্টম (ছবি: nqdgm6jw) -->
+            <!-- ম্যাচ 5: ২vs২ কাস্টম -->
             <div class="match-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <img src="https://i.ibb.co.com/nqdgm6jw/free-fire-735x400.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="২vs২">
+                        <a href="#" target="_blank" id="match5-link" rel="noopener noreferrer" onclick="return openLink(this)">
+                            <img src="https://i.ibb.co.com/nqdgm6jw/free-fire-735x400.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="২vs২" id="match5-img">
+                        </a>
                         <div>
                             <div class="match-title">২vs২ কাস্টম #<span id="match5Number">01</span></div>
                             <span class="live-badge" id="live-CS2vs2">🔴 লাইভ</span>
@@ -1458,11 +1890,13 @@
                 <div class="reg-names" id="list-CS2vs2">👥 নিবন্ধিত: লোড হচ্ছে...</div>
             </div>
             
-            <!-- ম্যাচ 6: ১vs১ নকআউট (ছবি: JW1Qh62T) -->
+            <!-- ম্যাচ 6: ১vs১ নকআউট -->
             <div class="match-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <img src="https://i.ibb.co.com/JW1Qh62T/screenshot.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="১vs১">
+                        <a href="#" target="_blank" id="match6-link" rel="noopener noreferrer" onclick="return openLink(this)">
+                            <img src="https://i.ibb.co.com/JW1Qh62T/screenshot.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="১vs১" id="match6-img">
+                        </a>
                         <div>
                             <div class="match-title">১ VS ১ নকআউট</div>
                             <span style="color: #ff4444; font-size: 14px;">IT'S TIME TO KNOCKOUT</span>
@@ -1485,11 +1919,13 @@
                 <div class="reg-names" id="list-CS1vs1">👥 নিবন্ধিত: লোড হচ্ছে...</div>
             </div>
             
-            <!-- ম্যাচ 7: ফ্রি সোলো (ছবি: jPbw04PT) -->
+            <!-- ম্যাচ 7: ফ্রি সোলো -->
             <div class="match-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <div style="display: flex; gap: 15px; align-items: center;">
-                        <img src="https://i.ibb.co.com/jPbw04PT/wp12125274.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="ফ্রি">
+                        <a href="#" target="_blank" id="match7-link" rel="noopener noreferrer" onclick="return openLink(this)">
+                            <img src="https://i.ibb.co.com/jPbw04PT/wp12125274.jpg" style="width: 80px; height: 80px; border-radius: 15px; border: 3px solid var(--accent-color); object-fit: cover;" alt="ফ্রি" id="match7-img">
+                        </a>
                         <div>
                             <div class="match-title">ফ্রি সোলো #<span id="match7Number">01</span></div>
                             <span class="live-badge" style="background: #4CAF50;" id="live-FreeSolo">🟢 ফ্রি</span>
@@ -1556,6 +1992,8 @@
             <div style="background: var(--card-bg); border: 2px solid #2196F3; border-radius: 35px; padding: 25px;">
                 <h2 style="color: #2196F3; margin-bottom: 25px; text-align: center;">💰 ডিপোজিট</h2>
                 
+                <div id="depositNotice" class="deposit-notice"></div>
+                
                 <div style="background: rgba(33,150,243,0.1); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 2px solid #2196F3;">
                     <p style="color: var(--accent-color);">🏦 ব্যক্তিগত অ্যাকাউন্ট</p>
                     <div style="display: flex; align-items: center; justify-content: space-between; margin: 15px 0;">
@@ -1593,6 +2031,8 @@
         <div id="withdraw" class="section">
             <div style="background: var(--card-bg); border: 2px solid #4CAF50; border-radius: 35px; padding: 25px;">
                 <h2 style="color: #4CAF50; margin-bottom: 25px; text-align: center;">💳 উইথড্র</h2>
+                
+                <div id="withdrawNotice" class="withdraw-notice"></div>
                 
                 <div style="background: rgba(76,175,80,0.1); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 2px solid #4CAF50;">
                     <p style="color: var(--accent-color);">📌 উত্তোলন লিমিট ও চার্জ</p>
@@ -1679,6 +2119,8 @@
             <div style="background: var(--card-bg); border: 2px solid var(--accent-color); border-radius: 35px; padding: 25px;">
                 <h2 style="color: var(--accent-color); margin-bottom: 25px; text-align: center;">📞 সাপোর্ট</h2>
                 
+                <div id="supportNotice" class="support-notice"></div>
+                
                 <div style="margin-bottom: 20px; padding: 15px; background: rgba(255,152,0,0.1); border-radius: 20px; border: 1px solid #FF9800;">
                     <p style="color: #FF9800; font-weight: bold;">⚠️ গুরুত্বপূর্ণ নোটিশ</p>
                     <p style="color: white;" id="support-notice">উইথড্র চার্জ: ৫ টাকা</p>
@@ -1690,22 +2132,22 @@
                     <div><p style="color: var(--accent-color);">ইমেইল</p><p style="color: #00ffcc;" id="support-email">talkingmasud5511@gmail.com</p></div>
                 </a>
                 
-                <a href="https://wa.me/8801910658737" class="support-link" id="support-whatsapp-link">
+                <a href="https://wa.me/8801910658737" class="support-link" id="support-whatsapp-link" target="_blank" rel="noopener noreferrer">
                     <div style="background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">📱</div>
                     <div><p style="color: var(--accent-color);">WhatsApp</p><p style="color: #00ffcc;" id="support-whatsapp">01910658737</p></div>
                 </a>
                 
-                <a href="https://chat.whatsapp.com/JvfihxThqMoLVFHLv9TVME" class="support-link" id="support-whatsapp-group-link">
+                <a href="https://chat.whatsapp.com/JvfihxThqMoLVFHLv9TVME" class="support-link" id="support-whatsapp-group-link" target="_blank" rel="noopener noreferrer">
                     <div style="background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">👥</div>
                     <div><p style="color: var(--accent-color);">WhatsApp গ্রুপ</p><p style="color: #00ffcc;" id="support-whatsapp-group">জয়েন করুন</p></div>
                 </a>
                 
-                <a href="https://t.me/+XF_oEofeAeEwMDI9" class="support-link" id="support-telegram-link">
+                <a href="https://t.me/+XF_oEofeAeEwMDI9" class="support-link" id="support-telegram-link" target="_blank" rel="noopener noreferrer">
                     <div style="background: #0088cc; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">✈️</div>
                     <div><p style="color: var(--accent-color);">Telegram</p><p style="color: #00ffcc;" id="support-telegram">জয়েন করুন</p></div>
                 </a>
                 
-                <a href="https://youtube.com/@tnmriyad" class="support-link" id="support-youtube-link">
+                <a href="https://youtube.com/@tnmriyad" class="support-link" id="support-youtube-link" target="_blank" rel="noopener noreferrer">
                     <div style="background: #FF0000; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">▶️</div>
                     <div><p style="color: var(--accent-color);">YouTube</p><p style="color: #00ffcc;" id="support-youtube">সাবস্ক্রাইব</p></div>
                 </a>
@@ -1773,53 +2215,559 @@
         const auth = firebase.auth();
         const db = firebase.database();
         
-        // ========== গ্লোবাল ==========
+        // ========== গ্লোবাল ভেরিয়েবল ==========
         let currentUser = null;
         let baseFee = 0;
         let withdrawPin = localStorage.getItem('withdrawPin') || '1234';
         let currentMatchForRegistration = '';
         
-        // ========== এনিমেশন কন্ট্রোল ভেরিয়েবল ==========
-        let rainEnabled = true;
-        let starsEnabled = true;
-        let touchEnabled = true;
-        let animationSpeed = 'normal';
-        let animationSize = 'medium';
-        
-        // ========== নোটিশ স্টেট ==========
+        // এনিমেশন ভেরিয়েবল
+        let rainEnabled = true, starsEnabled = true, touchEnabled = true;
+        let bioluminescentEnabled = false, magicdustEnabled = false, neonslideEnabled = false;
+        let animationSpeed = 'normal', animationSize = 'medium';
         let noticeMinimized = false;
         
-        // ========== নোটিশ ফাংশন ==========
-        function minimizeNotice() {
-            document.getElementById('mainNotice').style.display = 'none';
-            document.getElementById('minimizedNotice').classList.add('active');
-            noticeMinimized = true;
-            localStorage.setItem('noticeMinimized', 'true');
+        // ওয়েবসাইট ডিজাইন ভেরিয়েবল
+        let websiteDesigns = {
+            header: { css: '', html: '', js: '' },
+            footer: { css: '', html: '', js: '' },
+            'match-cards': { css: '', html: '', js: '' },
+            profile: { css: '', html: '', js: '' },
+            buttons: { css: '', html: '', js: '' },
+            forms: { css: '', html: '', js: '' },
+            modals: { css: '', html: '', js: '' },
+            global: { css: '', html: '', js: '' }
+        };
+        
+        // ========== লিংক ওপেন করার ফাংশন (ফিক্স) ==========
+        window.openLink = function(linkElement) {
+            if (linkElement && linkElement.href && linkElement.href !== '#') {
+                window.open(linkElement.href, '_blank', 'noopener,noreferrer');
+                return false; // prevent default
+            }
+            return true; // allow default if href is '#'
+        };
+        
+        // অ্যাপ ডাউনলোড লিংকের জন্য আলাদা ইভেন্ট
+        document.getElementById('app-download-link').addEventListener('click', function(e) {
+            // লিংক ওপেন হবে (ডিফল্ট বিহেভিয়ার)
+            console.log('App download link clicked');
+        });
+        
+        // ========== হোয়াটসঅ্যাপ স্টাইল নোটিফিকেশন ফাংশন ==========
+        window.showWhatsappNotification = function(title, message, duration = 5000) {
+            const notif = document.getElementById('whatsappNotification');
+            const body = document.getElementById('whatsappNotificationBody');
+            const timeEl = document.getElementById('whatsappNotificationTime');
+            
+            // টাইটেল আপডেট
+            document.querySelector('.notification-whatsapp-title').innerText = title || 'TNM FF নোটিফিকেশন';
+            
+            // মেসেজ আপডেট
+            body.innerText = message;
+            
+            // সময় আপডেট
+            const now = new Date();
+            const timeString = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+            timeEl.innerText = timeString;
+            
+            // দেখাও
+            notif.classList.add('active');
+            
+            // অটো হাইড
+            if (duration > 0) {
+                setTimeout(() => {
+                    closeWhatsappNotification();
+                }, duration);
+            }
+        };
+        
+        window.closeWhatsappNotification = function() {
+            document.getElementById('whatsappNotification').classList.remove('active');
+        };
+        
+        // ========== নতুন লগইন টগল ==========
+        let isLogin = true;
+        function toggleForm() {
+            const title = document.getElementById('form-title');
+            const extraFields = document.getElementById('extra-fields');
+            const btn = document.getElementById('main-btn');
+            const toggleText = document.getElementById('toggle-text');
+
+            if (isLogin) {
+                title.innerText = "Sign Up";
+                extraFields.style.display = "block";
+                btn.innerText = "Create Account";
+                toggleText.innerHTML = 'Already have an account? <span onclick="toggleForm()">Sign In</span>';
+            } else {
+                title.innerText = "Sign In";
+                extraFields.style.display = "none";
+                btn.innerText = "Login Now";
+                toggleText.innerHTML = 'Don\'t have an account? <span onclick="toggleForm()">Sign Up</span>';
+            }
+            isLogin = !isLogin;
         }
         
-        function expandNotice() {
-            document.getElementById('mainNotice').style.display = 'block';
-            document.getElementById('minimizedNotice').classList.remove('active');
-            noticeMinimized = false;
-            localStorage.setItem('noticeMinimized', 'false');
+        // ========== ফায়ার পার্টিকেল এনিমেশন ==========
+        const fireCanvas = document.getElementById('fire-canvas');
+        const fireCtx = fireCanvas.getContext('2d');
+        let fireParticles = [];
+        
+        function initFireCanvas() {
+            fireCanvas.width = window.innerWidth;
+            fireCanvas.height = window.innerHeight;
+            fireParticles = [];
+            for (let i = 0; i < 70; i++) {
+                fireParticles.push(new FireParticle());
+            }
         }
         
-        // ========== এনিমেশন ফাংশন (স্পিড ও সাইজ কন্ট্রোল সহ) ==========
+        class FireParticle {
+            constructor() {
+                this.x = Math.random() * fireCanvas.width;
+                this.y = fireCanvas.height + Math.random() * 100;
+                this.speed = Math.random() * 2 + 1;
+                this.size = Math.random() * 4 + 1;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.01 + 0.005;
+                this.color = this.getRandomColor();
+            }
+            getRandomColor() {
+                const colors = ['#ff4500', '#ff8c00', '#ffd700', '#ff0000'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+            update() {
+                this.y -= this.speed;
+                this.alpha -= this.decay;
+                if (this.alpha <= 0 || this.y < -10) {
+                    this.y = fireCanvas.height + Math.random() * 100;
+                    this.x = Math.random() * fireCanvas.width;
+                    this.alpha = 1;
+                    this.speed = Math.random() * 2 + 1;
+                    this.size = Math.random() * 4 + 1;
+                    this.color = this.getRandomColor();
+                }
+            }
+            draw() {
+                fireCtx.globalAlpha = this.alpha;
+                fireCtx.beginPath();
+                fireCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                fireCtx.fillStyle = this.color;
+                fireCtx.fill();
+            }
+        }
+        
+        function animateFire() {
+            if (document.getElementById('auth-page').style.display !== 'none') {
+                fireCtx.clearRect(0, 0, fireCanvas.width, fireCanvas.height);
+                fireParticles.forEach(p => { p.update(); p.draw(); });
+            }
+            requestAnimationFrame(animateFire);
+        }
+        initFireCanvas();
+        animateFire();
+        window.addEventListener('resize', initFireCanvas);
+        
+        // ========== ম্যাট্রিক্স রেইন (টার্মিনালের জন্য) ==========
+        const matrixCanvas = document.getElementById('matrixCanvas');
+        const matrixCtx = matrixCanvas.getContext('2d');
+        let matrixInterval;
+        
+        function startMatrix() {
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
+            const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン';
+            const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const nums = '0123456789';
+            const alphabet = katakana + latin + nums;
+            const fontSize = 13;
+            const columns = matrixCanvas.width / fontSize;
+            const drops = [];
+            for (let x = 0; x < columns; x++) drops[x] = 1;
+            
+            function drawMatrix() {
+                matrixCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+                matrixCtx.fillStyle = '#0F0';
+                matrixCtx.font = fontSize + 'px monospace';
+                for (let i = 0; i < drops.length; i++) {
+                    const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                    matrixCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
+                }
+            }
+            matrixInterval = setInterval(drawMatrix, 15);
+        }
+        
+        function stopMatrix() {
+            if (matrixInterval) clearInterval(matrixInterval);
+            matrixCtx.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+        }
+        
+        // ========== টার্মিনাল টাইপিং ==========
+        const terminalOverlay = document.getElementById('terminal-overlay');
+        const typingText = document.getElementById('typing-text');
+        const accessBtn = document.querySelector('.btn-access');
+        const messages = [
+            "Initializing connection...",
+            "SAFE Activity...",
+            "Access: AUTHORIZED...",
+            "ACTIVE: ACCOUNT DONE...",
+            "Welcome back, YOUR ACCOUNT."
+        ];
+        let msgIndex = 0, charIndex = 0, typingTimer;
+        
+        function startTyping() {
+            terminalOverlay.style.display = 'block';
+            matrixCanvas.style.display = 'block';
+            document.getElementById('fullscreen-btn').style.display = 'block';
+            startMatrix();
+            msgIndex = 0; charIndex = 0;
+            typeWriter();
+        }
+        
+        function typeWriter() {
+            if (msgIndex < messages.length) {
+                if (charIndex < messages[msgIndex].length) {
+                    let fullContent = "";
+                    for (let i = 0; i < msgIndex; i++) fullContent += messages[i] + "<br>";
+                    fullContent += messages[msgIndex].substring(0, charIndex + 1);
+                    typingText.innerHTML = fullContent;
+                    charIndex++;
+                    typingTimer = setTimeout(typeWriter, 50);
+                } else {
+                    msgIndex++;
+                    charIndex = 0;
+                    typingTimer = setTimeout(typeWriter, 500);
+                }
+            } else {
+                accessBtn.style.display = "inline-block";
+            }
+        }
+        
+        function stopTyping() {
+            if (typingTimer) clearTimeout(typingTimer);
+            terminalOverlay.style.display = 'none';
+            matrixCanvas.style.display = 'none';
+            document.getElementById('fullscreen-btn').style.display = 'none';
+            stopMatrix();
+        }
+        
+        // ========== ওয়ার্প এনিমেশন ==========
+        const warpOverlay = document.getElementById('warpOverlay');
+        function startWarp() {
+            warpOverlay.classList.add('active');
+            setTimeout(() => {
+                warpOverlay.classList.remove('active');
+            }, 2000);
+        }
+        
+        function accessGranted() {
+            stopTyping();
+            startWarp();
+            setTimeout(() => {
+                document.getElementById('main-app').style.display = 'block';
+                document.getElementById('auth-page').style.display = 'none';
+                document.getElementById('fire-canvas').style.display = 'none';
+                loadAllData();
+                requestNotificationPermission();
+                applyAllWebsiteDesigns();
+            }, 2000);
+        }
+        
+        // ========== ফুলস্ক্রিন ফাংশন ==========
+        function enterFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(e => console.error(e));
+            }
+        }
+        document.addEventListener('fullscreenchange', () => {
+            const btn = document.getElementById('fullscreen-btn');
+            btn.style.display = document.fullscreenElement ? 'none' : 'block';
+        });
+        
+        // ========== অথ হ্যান্ডলার ==========
+        function handleAuth() {
+            const phone = document.getElementById('login-phone').value;
+            const pass = document.getElementById('login-pass').value;
+            if (!phone || !pass) return alert('❌ সব তথ্য দিন!');
+            
+            if (isLogin) {
+                // লগইন
+                loginUser(phone, pass);
+            } else {
+                // সাইনআপ
+                const name = document.getElementById('reg-name').value;
+                if (!name) return alert('❌ আপনার নাম দিন!');
+                signupUser(name, phone, pass);
+            }
+        }
+        
+        function signupUser(name, phone, pass) {
+            if (phone.length !== 11 || !phone.startsWith('01')) return alert('❌ সঠিক নম্বর দিন!');
+            const email = phone + "@tnm.app";
+            auth.createUserWithEmailAndPassword(email, pass)
+                .then(() => {
+                    const userData = {
+                        name: name,
+                        phone: phone,
+                        balance: 0,
+                        wins: 0,
+                        matches: 0,
+                        kills: 0,
+                        totalWinnings: 0,
+                        joinDate: new Date().toLocaleString('bn-BD')
+                    };
+                    db.ref('users/' + phone).set(userData).then(() => {
+                        localStorage.setItem('user', JSON.stringify(userData));
+                        currentUser = userData;
+                        startTyping();
+                    });
+                })
+                .catch(error => alert('❌ সমস্যা: ' + error.message));
+        }
+        
+        function loginUser(phone, pass) {
+            const email = phone + "@tnm.app";
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(() => {
+                    db.ref('users/' + phone).once('value', snap => {
+                        let userData = snap.val();
+                        if (userData) {
+                            localStorage.setItem('user', JSON.stringify(userData));
+                            currentUser = userData;
+                            startTyping();
+                        }
+                    });
+                })
+                .catch(error => alert('❌ ভুল তথ্য! ' + error.message));
+        }
+        
+        window.logoutUser = () => {
+            auth.signOut().then(() => {
+                localStorage.removeItem('user');
+                location.reload();
+            });
+        };
+        
+        // ========== অটো লগইন ==========
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                let email = user.email;
+                let phone = email ? email.replace('@tnm.app', '') : null;
+                if (phone) {
+                    db.ref('users/' + phone).once('value', snap => {
+                        let userData = snap.val();
+                        if (userData) {
+                            localStorage.setItem('user', JSON.stringify(userData));
+                            currentUser = userData;
+                            document.getElementById('auth-page').style.display = 'none';
+                            document.getElementById('main-app').style.display = 'block';
+                            document.getElementById('fire-canvas').style.display = 'none';
+                            updateProfileUI();
+                            loadAllData();
+                            loadNotifications();
+                            applyAllWebsiteDesigns();
+                        }
+                    });
+                }
+            } else {
+                document.getElementById('auth-page').style.display = 'flex';
+                document.getElementById('main-app').style.display = 'none';
+                document.getElementById('fire-canvas').style.display = 'block';
+            }
+        });
+        
+        // ========== ওয়েবসাইট ডিজাইন লোড ও প্রয়োগ ==========
+        function loadWebsiteDesigns() {
+            db.ref('website_designs').once('value', (snap) => {
+                let designs = snap.val() || {};
+                for (let part in designs) {
+                    if (websiteDesigns.hasOwnProperty(part)) {
+                        websiteDesigns[part] = designs[part];
+                    }
+                }
+                applyAllWebsiteDesigns();
+            });
+        }
+        
+        function applyAllWebsiteDesigns() {
+            // গ্লোবাল CSS প্রয়োগ
+            if (websiteDesigns.global.css) {
+                let styleTag = document.createElement('style');
+                styleTag.id = 'global-design-css';
+                styleTag.innerHTML = websiteDesigns.global.css;
+                document.head.appendChild(styleTag);
+            }
+            
+            // হেডার HTML প্রয়োগ
+            if (websiteDesigns.header.html) {
+                document.getElementById('main-header').innerHTML = websiteDesigns.header.html;
+            }
+            
+            // হেডার CSS প্রয়োগ
+            if (websiteDesigns.header.css) {
+                let styleTag = document.createElement('style');
+                styleTag.id = 'header-design-css';
+                styleTag.innerHTML = websiteDesigns.header.css;
+                document.head.appendChild(styleTag);
+            }
+            
+            // ম্যাচ কার্ড CSS প্রয়োগ
+            if (websiteDesigns['match-cards'].css) {
+                let styleTag = document.createElement('style');
+                styleTag.id = 'match-cards-design-css';
+                styleTag.innerHTML = websiteDesigns['match-cards'].css;
+                document.head.appendChild(styleTag);
+            }
+            
+            // প্রোফাইল CSS প্রয়োগ
+            if (websiteDesigns.profile.css) {
+                let styleTag = document.createElement('style');
+                styleTag.id = 'profile-design-css';
+                styleTag.innerHTML = websiteDesigns.profile.css;
+                document.head.appendChild(styleTag);
+            }
+            
+            // বাটন CSS প্রয়োগ
+            if (websiteDesigns.buttons.css) {
+                let styleTag = document.createElement('style');
+                styleTag.id = 'buttons-design-css';
+                styleTag.innerHTML = websiteDesigns.buttons.css;
+                document.head.appendChild(styleTag);
+            }
+            
+            // ফর্ম CSS প্রয়োগ
+            if (websiteDesigns.forms.css) {
+                let styleTag = document.createElement('style');
+                styleTag.id = 'forms-design-css';
+                styleTag.innerHTML = websiteDesigns.forms.css;
+                document.head.appendChild(styleTag);
+            }
+            
+            // মডাল CSS প্রয়োগ
+            if (websiteDesigns.modals.css) {
+                let styleTag = document.createElement('style');
+                styleTag.id = 'modals-design-css';
+                styleTag.innerHTML = websiteDesigns.modals.css;
+                document.head.appendChild(styleTag);
+            }
+            
+            // ফুটার CSS প্রয়োগ (bottom-nav)
+            if (websiteDesigns.footer.css) {
+                let styleTag = document.createElement('style');
+                styleTag.id = 'footer-design-css';
+                styleTag.innerHTML = websiteDesigns.footer.css;
+                document.head.appendChild(styleTag);
+            }
+            
+            // JavaScript প্রয়োগ (সাবধানতার সাথে)
+            if (websiteDesigns.global.js) {
+                try {
+                    eval(websiteDesigns.global.js);
+                } catch(e) {
+                    console.log('Global JS Error:', e);
+                }
+            }
+        }
+        
+        // ========== নোটিশ ডিজাইন লোড ==========
+        function loadNoticeDesign() {
+            db.ref('settings/notice_design').once('value', (snap) => {
+                let design = snap.val() || {};
+                applyNoticeDesignToPage(design);
+            });
+        }
+        
+        function applyNoticeDesignToPage(design) {
+            let styleTag = document.createElement('style');
+            styleTag.id = 'notice-design';
+            styleTag.innerHTML = `
+                .main-notice, .registration-notice, #depositNotice, #withdrawNotice, #supportNotice {
+                    ${design.customCSS ? design.customCSS : ''}
+                }
+                ${design.rainbowText ? '.main-notice, .registration-notice, #depositNotice, #withdrawNotice, #supportNotice { background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }' : ''}
+            `;
+            document.head.appendChild(styleTag);
+        }
+        
+        // ========== অন্যান্য ফাংশন (পুরোনো সব) ==========
+        function toggleSettingsPanel() {
+            document.getElementById('settingsPanel').classList.toggle('active');
+        }
+        
+        function toggleRain() {
+            rainEnabled = document.getElementById('rain-toggle').checked;
+            if(rainEnabled) createRain(); else clearRain();
+            localStorage.setItem('rainEnabled', rainEnabled);
+            db.ref('settings/animation/rain').set(rainEnabled);
+        }
+        
+        function toggleStars() {
+            starsEnabled = document.getElementById('star-toggle').checked;
+            if(starsEnabled) createStars(); else clearStars();
+            localStorage.setItem('starsEnabled', starsEnabled);
+            db.ref('settings/animation/stars').set(starsEnabled);
+        }
+        
+        function toggleTouch() {
+            touchEnabled = document.getElementById('touch-toggle').checked;
+            localStorage.setItem('touchEnabled', touchEnabled);
+            db.ref('settings/animation/touch').set(touchEnabled);
+        }
+        
+        function toggleBioluminescent() {
+            bioluminescentEnabled = document.getElementById('bioluminescent-toggle').checked;
+            document.getElementById('bioluminescentCanvas').style.display = bioluminescentEnabled ? 'block' : 'none';
+            localStorage.setItem('bioluminescentEnabled', bioluminescentEnabled);
+            db.ref('settings/animation/bioluminescent').set(bioluminescentEnabled);
+            if (bioluminescentEnabled && typeof initBioluminescent === 'function') initBioluminescent();
+        }
+        
+        function toggleMagicDust() {
+            magicdustEnabled = document.getElementById('magicdust-toggle').checked;
+            document.getElementById('magicdustCanvas').style.display = magicdustEnabled ? 'block' : 'none';
+            localStorage.setItem('magicdustEnabled', magicdustEnabled);
+            db.ref('settings/animation/magicdust').set(magicdustEnabled);
+            if (magicdustEnabled && typeof initMagicDust === 'function') initMagicDust();
+        }
+        
+        function toggleNeonSlide() {
+            neonslideEnabled = document.getElementById('neonslide-toggle').checked;
+            document.getElementById('neonslideCanvas').style.display = neonslideEnabled ? 'block' : 'none';
+            localStorage.setItem('neonslideEnabled', neonslideEnabled);
+            db.ref('settings/animation/neonslide').set(neonslideEnabled);
+            if (neonslideEnabled && typeof initNeonSlide === 'function') initNeonSlide();
+        }
+        
+        function setAnimationSpeed(speed) {
+            animationSpeed = speed;
+            document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
+            document.getElementById('speed-' + speed).classList.add('active');
+            localStorage.setItem('animationSpeed', speed);
+            db.ref('settings/animation/speed').set(speed);
+            if(rainEnabled) createRain();
+            if(starsEnabled) createStars();
+        }
+        
+        function setAnimationSize(size) {
+            animationSize = size;
+            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
+            document.getElementById('size-' + size).classList.add('active');
+            localStorage.setItem('animationSize', size);
+            db.ref('settings/animation/size').set(size);
+            if(rainEnabled) createRain();
+            if(starsEnabled) createStars();
+        }
+        
         function createRain() {
             const c = document.getElementById('rainContainer');
             if(!c || !rainEnabled) { if(c) c.innerHTML = ''; return; }
             c.innerHTML = '';
-            
-            let speedMultiplier = 1;
-            if (animationSpeed === 'slow') speedMultiplier = 2;
-            else if (animationSpeed === 'fast') speedMultiplier = 0.6;
-            
-            let sizeMultiplier = 1;
-            if (animationSize === 'small') sizeMultiplier = 0.7;
-            else if (animationSize === 'large') sizeMultiplier = 1.5;
-            
+            let speedMultiplier = animationSpeed === 'slow' ? 2 : animationSpeed === 'fast' ? 0.6 : 1;
+            let sizeMultiplier = animationSize === 'small' ? 0.7 : animationSize === 'large' ? 1.5 : 1;
             let count = animationSize === 'small' ? 20 : animationSize === 'large' ? 40 : 30;
-            
             for(let i=0; i<count; i++) { 
                 let r = document.createElement('div'); 
                 r.className = 'rain-drop'; 
@@ -1837,17 +2785,9 @@
             const starField = document.getElementById('starField');
             if(!starField || !starsEnabled) { if(starField) starField.innerHTML = ''; return; }
             starField.innerHTML = '';
-            
-            let speedMultiplier = 1;
-            if (animationSpeed === 'slow') speedMultiplier = 2;
-            else if (animationSpeed === 'fast') speedMultiplier = 0.6;
-            
-            let sizeMultiplier = 1;
-            if (animationSize === 'small') sizeMultiplier = 0.7;
-            else if (animationSize === 'large') sizeMultiplier = 1.5;
-            
+            let speedMultiplier = animationSpeed === 'slow' ? 2 : animationSpeed === 'fast' ? 0.6 : 1;
+            let sizeMultiplier = animationSize === 'small' ? 0.7 : animationSize === 'large' ? 1.5 : 1;
             let count = animationSize === 'small' ? 15 : animationSize === 'large' ? 30 : 20;
-            
             for(let i=0; i<count; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
@@ -1862,19 +2802,14 @@
         
         function clearStars() { const starField = document.getElementById('starField'); if(starField) starField.innerHTML = ''; }
         
-        // টাচ এনিমেশন ফিরিয়ে দেওয়া হয়েছে
         document.addEventListener('touchstart', e => {
             if(!touchEnabled) return;
             for(let i=0; i<Math.min(e.touches.length,3); i++) {
                 let t = e.touches[i], s = document.createElement('div');
                 s.className = 'touch-star'; s.style.left = t.clientX-15+'px'; s.style.top = t.clientY-15+'px';
-                
-                let sizeMultiplier = 1;
-                if (animationSize === 'small') sizeMultiplier = 0.7;
-                else if (animationSize === 'large') sizeMultiplier = 1.5;
+                let sizeMultiplier = animationSize === 'small' ? 0.7 : animationSize === 'large' ? 1.5 : 1;
                 s.style.width = (30 * sizeMultiplier) + 'px';
                 s.style.height = (30 * sizeMultiplier) + 'px';
-                
                 document.body.appendChild(s); 
                 setTimeout(()=>s.remove(), 800 * (animationSpeed === 'slow' ? 1.5 : animationSpeed === 'fast' ? 0.6 : 1));
             }
@@ -1885,64 +2820,16 @@
             for(let i=0; i<Math.min(e.touches.length,2); i++) {
                 let t = e.touches[i], s = document.createElement('div');
                 s.className = 'touch-star'; s.style.left = t.clientX-15+'px'; s.style.top = t.clientY-15+'px';
-                
-                let sizeMultiplier = 1;
-                if (animationSize === 'small') sizeMultiplier = 0.7;
-                else if (animationSize === 'large') sizeMultiplier = 1.5;
+                let sizeMultiplier = animationSize === 'small' ? 0.7 : animationSize === 'large' ? 1.5 : 1;
                 s.style.width = (30 * sizeMultiplier) + 'px';
                 s.style.height = (30 * sizeMultiplier) + 'px';
-                
                 document.body.appendChild(s); 
                 setTimeout(()=>s.remove(), 600 * (animationSpeed === 'slow' ? 1.5 : animationSpeed === 'fast' ? 0.6 : 1));
             }
         }, {passive:true});
         
-        // ========== সেটিংস প্যানেল ফাংশন ==========
-        function toggleSettingsPanel() {
-            document.getElementById('settingsPanel').classList.toggle('active');
-        }
-        
-        function toggleRain() {
-            rainEnabled = document.getElementById('rain-toggle').checked;
-            if(rainEnabled) createRain(); else clearRain();
-            localStorage.setItem('rainEnabled', rainEnabled);
-        }
-        
-        function toggleStars() {
-            starsEnabled = document.getElementById('star-toggle').checked;
-            if(starsEnabled) createStars(); else clearStars();
-            localStorage.setItem('starsEnabled', starsEnabled);
-        }
-        
-        function toggleTouch() {
-            touchEnabled = document.getElementById('touch-toggle').checked;
-            localStorage.setItem('touchEnabled', touchEnabled);
-        }
-        
-        // নতুন: স্পিড কন্ট্রোল
-        function setAnimationSpeed(speed) {
-            animationSpeed = speed;
-            document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
-            document.getElementById('speed-' + speed).classList.add('active');
-            localStorage.setItem('animationSpeed', speed);
-            if(rainEnabled) createRain();
-            if(starsEnabled) createStars();
-        }
-        
-        // নতুন: সাইজ কন্ট্রোল
-        function setAnimationSize(size) {
-            animationSize = size;
-            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
-            document.getElementById('size-' + size).classList.add('active');
-            localStorage.setItem('animationSize', size);
-            if(rainEnabled) createRain();
-            if(starsEnabled) createStars();
-        }
-        
-        // ========== থিম কন্ট্রোল (পুরো সাইটের জন্য) ==========
         function applyPresetTheme(theme) {
             const root = document.documentElement;
-            
             const themes = {
                 default: { primary: '#FF416C', secondary: '#FF4B2B', accent: '#FFD700', bgStart: '#1a0f1f', bgEnd: '#0a0612' },
                 dark: { primary: '#1a1e2c', secondary: '#0a0f1a', accent: '#ffda44', bgStart: '#000000', bgEnd: '#121212' },
@@ -1951,51 +2838,37 @@
                 ocean: { primary: '#00c6fb', secondary: '#005bea', accent: '#00FFFF', bgStart: '#0a1a2a', bgEnd: '#1a2a3a' },
                 forest: { primary: '#11998e', secondary: '#38ef7d', accent: '#FFD700', bgStart: '#0a1a0a', bgEnd: '#1a2a1a' }
             };
-            
             let t = themes[theme];
-            
             root.style.setProperty('--primary-color', t.primary);
             root.style.setProperty('--secondary-color', t.secondary);
             root.style.setProperty('--accent-color', t.accent);
             root.style.setProperty('--bg-start', t.bgStart);
             root.style.setProperty('--bg-end', t.bgEnd);
-            
-            // কালার পিকার আপডেট
             document.getElementById('primary-color').value = t.primary;
             document.getElementById('secondary-color').value = t.secondary;
             document.getElementById('accent-color').value = t.accent;
             document.getElementById('bg-start').value = t.bgStart;
             document.getElementById('bg-end').value = t.bgEnd;
-            
             localStorage.setItem('theme', theme);
             toggleSettingsPanel();
         }
         
         function applyCustomColors() {
             const root = document.documentElement;
-            
             let primary = document.getElementById('primary-color').value;
             let secondary = document.getElementById('secondary-color').value;
             let accent = document.getElementById('accent-color').value;
             let bgStart = document.getElementById('bg-start').value;
             let bgEnd = document.getElementById('bg-end').value;
-            
             root.style.setProperty('--primary-color', primary);
             root.style.setProperty('--secondary-color', secondary);
             root.style.setProperty('--accent-color', accent);
             root.style.setProperty('--bg-start', bgStart);
             root.style.setProperty('--bg-end', bgEnd);
-            
             localStorage.setItem('customColors', JSON.stringify({primary, secondary, accent, bgStart, bgEnd}));
             toggleSettingsPanel();
         }
         
-        function selectTheme(theme) {
-            // পুরনো ফাংশন, নতুন ফাংশন applyPresetTheme ব্যবহার করুন
-            applyPresetTheme(theme);
-        }
-        
-        // ========== হেডার কন্ট্রোল (অ্যাডমিন থেকে) ==========
         function loadHeaderSettings() {
             db.ref('settings/header').on('value', snap => {
                 let h = snap.val();
@@ -2012,11 +2885,10 @@
             });
         }
         
-        // ========== নোটিশ লোড ==========
         function loadMainNotice() {
             db.ref('notices/Main').on('value', snap => {
                 let n = snap.val();
-                document.getElementById('mainNotice').innerHTML = '📢 ' + (n || 'স্বাগতম! সব ম্যাচ চালু আছে।') + ' <span class="notice-got-it" onclick="event.stopPropagation(); minimizeNotice()">Got it</span>';
+                document.getElementById('mainNotice').innerHTML = '📢 ' + linkify(n || 'স্বাগতম! সব ম্যাচ চালু আছে।') + ' <span class="notice-got-it" onclick="event.stopPropagation(); minimizeNotice()">Got it</span>';
             });
         }
         
@@ -2026,7 +2898,11 @@
             });
         }
         
-        // ========== সাপোর্ট লোড ==========
+        function linkify(text) {
+            let urlRegex = /(https?:\/\/[^\s]+)/g;
+            return text.replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: #00ffcc; text-decoration: underline; cursor: pointer;">${url}</a>`);
+        }
+        
         function loadSupportLinks() {
             db.ref('default_support').on('value', snap => {
                 let s = snap.val() || {};
@@ -2059,7 +2935,7 @@
                 for(let key in supports) {
                     let s = supports[key];
                     html += `
-                        <a href="${s.value}" class="support-link" target="_blank" style="background: ${s.color}20;">
+                        <a href="${s.value}" class="support-link" target="_blank" rel="noopener noreferrer" style="background: ${s.color}20;">
                             <div style="background: ${s.color}; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">${s.icon}</div>
                             <div><p style="color: var(--accent-color);">${s.name}</p><p style="color: #00ffcc;">${s.value}</p></div>
                         </a>
@@ -2069,97 +2945,11 @@
             });
         }
         
-        // ========== কপি টেক্সট ==========
         window.copyText = function(elementId) {
             let text = document.getElementById(elementId).innerText;
             navigator.clipboard.writeText(text).then(() => alert('✅ নম্বর কপি হয়েছে!'));
         };
         
-        // ========== অথ ==========
-        window.toggleAuth = ()=>{
-            let l=document.getElementById('login-box'), s=document.getElementById('signup-box');
-            l.style.display = l.style.display==='none'?'block':'none';
-            s.style.display = s.style.display==='none'?'block':'none';
-        };
-        
-        // ========== সাইনআপ (শুধু ফোন নম্বর, UID নেই) ==========
-        window.signupUser = ()=>{
-            let n = document.getElementById('reg-user-name').value;
-            let p = document.getElementById('reg-user-phone').value;
-            let ps = document.getElementById('reg-user-pass').value;
-            
-            if(!n||!p||!ps) return alert('❌ সব তথ্য দিন!');
-            if(p.length!==11||!p.startsWith('01')) return alert('❌ সঠিক নম্বর দিন!');
-            
-            let email = p + "@tnm.app";
-            
-            auth.createUserWithEmailAndPassword(email, ps)
-                .then((userCredential) => {
-                    // UID সংরক্ষণ করছি না, শুধু ফোন নম্বর দিয়ে ডাটা সেভ করছি
-                    let userData = {
-                        name: n,
-                        phone: p,
-                        balance: 0,
-                        wins: 0,
-                        matches: 0,
-                        kills: 0,
-                        totalWinnings: 0,
-                        joinDate: new Date().toLocaleString('bn-BD')
-                    };
-                    
-                    // ফোন নম্বর দিয়ে ডাটাবেসে সংরক্ষণ
-                    db.ref('users/' + p).set(userData).then(() => {
-                        localStorage.setItem('user', JSON.stringify(userData));
-                        currentUser = userData;
-                        document.getElementById('auth-page').style.display='none';
-                        document.getElementById('main-app').style.display='block';
-                        loadAllData();
-                        alert('✅ একাউন্ট তৈরি হয়েছে!');
-                    });
-                })
-                .catch((error) => {
-                    alert('❌ সমস্যা: ' + error.message);
-                });
-        };
-        
-        // ========== লগইন (শুধু ফোন নম্বর) ==========
-        window.loginUser = ()=>{
-            let p = document.getElementById('login-phone').value;
-            let ps = document.getElementById('login-pass').value;
-            
-            if(!p||!ps) return alert('❌ তথ্য দিন!');
-            
-            let email = p + "@tnm.app";
-            
-            auth.signInWithEmailAndPassword(email, ps)
-                .then(() => {
-                    // ফোন নম্বর দিয়ে সরাসরি ডাটাবেস থেকে ইউজার তথ্য আনুন
-                    db.ref('users/' + p).once('value', (snap) => {
-                        let userData = snap.val();
-                        if(userData) {
-                            localStorage.setItem('user', JSON.stringify(userData));
-                            currentUser = userData;
-                            document.getElementById('auth-page').style.display='none';
-                            document.getElementById('main-app').style.display='block';
-                            updateProfileUI(); 
-                            loadAllData();
-                            alert('✅ লগইন সফল!');
-                        }
-                    });
-                })
-                .catch((error) => {
-                    alert('❌ ভুল তথ্য! ' + error.message);
-                });
-        };
-        
-        window.logoutUser = ()=>{ 
-            auth.signOut().then(() => {
-                localStorage.removeItem('user'); 
-                location.reload();
-            });
-        };
-        
-        // ========== উইথড্র পিন ==========
         window.changeWithdrawPin = function() {
             let current = document.getElementById('current-pin').value;
             let newPin = document.getElementById('new-pin').value;
@@ -2175,168 +2965,448 @@
             alert('✅ উইথড্র পিন পরিবর্তন হয়েছে!');
         };
         
-        // ========== এনিমেশন সেটিংস লোড ==========
-        function loadAnimationSettings() {
-            db.ref('settings/animation').on('value', (snap) => {
-                let settings = snap.val() || {};
-                
-                rainEnabled = settings.rain !== false;
-                starsEnabled = settings.stars !== false;
-                touchEnabled = settings.touch !== false;
-                
-                localStorage.setItem('rainEnabled', rainEnabled);
-                localStorage.setItem('starsEnabled', starsEnabled);
-                localStorage.setItem('touchEnabled', touchEnabled);
-                
-                if(rainEnabled) createRain(); else clearRain();
-                if(starsEnabled) createStars(); else clearStars();
+        function loadNotifications() {
+            if (!currentUser) return;
+            db.ref('notifications/' + currentUser.phone).on('value', (snap) => {
+                let notifs = snap.val() || {};
+                let count = 0;
+                let html = '';
+                for (let key in notifs) {
+                    let n = notifs[key];
+                    if (!n.read) count++;
+                    html += `<div class="notification-item" onclick="window.location.href='tnmapp://notification/${key}'"><p>${n.text}</p><p style="color:#aaa; font-size:10px; margin-top:5px;">🕐 ${n.time}</p></div>`;
+                }
+                document.getElementById('notificationList').innerHTML = html || '<p style="color:#888; text-align:center;">কোনো নোটিফিকেশন নেই</p>';
+                if (count > 0) {
+                    document.getElementById('notificationBadge').style.display = 'flex';
+                    document.getElementById('notificationBadge').innerText = count;
+                } else {
+                    document.getElementById('notificationBadge').style.display = 'none';
+                }
             });
         }
         
-        function loadLocalSettings() {
-            rainEnabled = localStorage.getItem('rainEnabled') !== 'false';
-            starsEnabled = localStorage.getItem('starsEnabled') !== 'false';
-            touchEnabled = localStorage.getItem('touchEnabled') !== 'false';
-            animationSpeed = localStorage.getItem('animationSpeed') || 'normal';
-            animationSize = localStorage.getItem('animationSize') || 'medium';
-            
-            document.getElementById('rain-toggle').checked = rainEnabled;
-            document.getElementById('star-toggle').checked = starsEnabled;
-            document.getElementById('touch-toggle').checked = touchEnabled;
-            
-            // স্পিড ও সাইজ অ্যাক্টিভেট
-            document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
-            document.getElementById('speed-' + animationSpeed).classList.add('active');
-            
-            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
-            document.getElementById('size-' + animationSize).classList.add('active');
-            
-            if(rainEnabled) createRain(); else clearRain();
-            if(starsEnabled) createStars(); else clearStars();
-            
-            noticeMinimized = localStorage.getItem('noticeMinimized') === 'true';
-            if (noticeMinimized) {
-                document.getElementById('mainNotice').style.display = 'none';
-                document.getElementById('minimizedNotice').classList.add('active');
-            } else {
-                document.getElementById('mainNotice').style.display = 'block';
-                document.getElementById('minimizedNotice').classList.remove('active');
+        window.openNotifications = function() {
+            document.getElementById('notificationModal').style.display = 'block';
+            if (currentUser) {
+                db.ref('notifications/' + currentUser.phone).once('value', (snap) => {
+                    snap.forEach((child) => {
+                        db.ref('notifications/' + currentUser.phone + '/' + child.key + '/read').set(true);
+                    });
+                });
             }
-            
-            // থিম লোড
-            let savedTheme = localStorage.getItem('theme');
-            if(savedTheme) applyPresetTheme(savedTheme);
-            
-            let savedColors = localStorage.getItem('customColors');
-            if(savedColors) {
-                let colors = JSON.parse(savedColors);
-                document.getElementById('primary-color').value = colors.primary;
-                document.getElementById('secondary-color').value = colors.secondary;
-                document.getElementById('accent-color').value = colors.accent;
-                document.getElementById('bg-start').value = colors.bgStart;
-                document.getElementById('bg-end').value = colors.bgEnd;
-            }
-        }
-        
-        // ========== সেকশন ==========
-        window.showSection = (id)=>{
-            document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-            let items = document.querySelectorAll('.nav-item');
-            if(id==='home') items[0].classList.add('active');
-            if(id==='leaderboard') items[1].classList.add('active');
-            if(id==='deposit') items[2].classList.add('active');
-            if(id==='withdraw') items[3].classList.add('active');
-            if(id==='profile') items[4].classList.add('active');
-            if(id==='support') items[5].classList.add('active');
-            if(id==='profile' && currentUser) updateProfileUI();
-            if(id==='leaderboard') loadLeaderboard();
         };
         
-        // ========== ডাটা লোড ==========
-        function loadAllData() {
-            loadRegistrationStatus(); loadLeaderboard(); loadUserMatchHistory();
-            loadPaymentMethods(); startAllTimers(); updateMatchNumbers();
-            loadLiveStatus(); loadMatchSettings();
-            loadMainNotice(); loadSupportNotice(); loadSupportLinks();
-            loadAppDownloadLink();
-            loadHeaderSettings();
-            loadNotifications();
+        window.closeNotificationModal = function() {
+            document.getElementById('notificationModal').style.display = 'none';
+            document.getElementById('notificationBadge').style.display = 'none';
+        };
+        
+        function requestNotificationPermission() {
+            if (!("Notification" in window)) return;
+            if (Notification.permission === "granted") return;
+            if (Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
         }
         
-        function loadHeaderSettings() {
-            db.ref('settings/header').on('value', snap => {
-                let h = snap.val();
-                if(h) {
-                    document.getElementById('header-title').innerText = h.title || '🎮 TNM RIYAD 2026';
-                    document.getElementById('header-subtitle').innerText = h.subtitle || '🏆 বাংলাদেশের #১ ট্রাস্টেড টুর্নামেন্ট';
-                }
-            });
-        }
-        
-        function loadAppDownloadLink() {
-            db.ref('settings/app_download').on('value', snap => {
-                document.getElementById('app-download-link').href = snap.val() || 'https://www.mediafire.com/file/qcnpve9mykukmfo/TNM_FF.apk/file';
-            });
-        }
-        
-        function loadMainNotice() {
-            db.ref('notices/Main').on('value', snap => {
-                let n = snap.val();
-                document.getElementById('mainNotice').innerHTML = '📢 ' + (n || 'স্বাগতম! সব ম্যাচ চালু আছে।') + ' <span class="notice-got-it" onclick="event.stopPropagation(); minimizeNotice()">Got it</span>';
-            });
-        }
-        
-        function loadSupportNotice() {
-            db.ref('notices/Support').on('value', snap => {
-                document.getElementById('support-notice').innerHTML = snap.val() || 'উইথড্র চার্জ: ৫ টাকা';
-            });
-        }
-        
-        function loadSupportLinks() {
-            db.ref('default_support').on('value', snap => {
-                let s = snap.val() || {};
-                if(s.email) {
-                    document.getElementById('support-email').innerText = s.email;
-                    document.getElementById('support-email-link').href = 'mailto:' + s.email;
-                }
-                if(s.whatsapp) {
-                    document.getElementById('support-whatsapp').innerText = s.whatsapp;
-                    document.getElementById('support-whatsapp-link').href = 'https://wa.me/' + s.whatsapp.replace(/[^0-9]/g, '');
-                }
-                if(s.whatsappGroup) {
-                    document.getElementById('support-whatsapp-group').innerText = s.whatsappGroup;
-                    document.getElementById('support-whatsapp-group-link').href = s.whatsappGroup;
-                }
-                if(s.telegram) {
-                    document.getElementById('support-telegram').innerText = s.telegram;
-                    document.getElementById('support-telegram-link').href = s.telegram;
-                }
-                if(s.youtube) {
-                    document.getElementById('support-youtube').innerText = s.youtube;
-                    document.getElementById('support-youtube-link').href = s.youtube;
-                }
-            });
+        function initNebula() {
+            const nebulaCanvas = document.getElementById('nebulaCanvas');
+            if (!nebulaCanvas) return;
+            nebulaCanvas.width = window.innerWidth;
+            nebulaCanvas.height = window.innerHeight;
+            const nebulaCtx = nebulaCanvas.getContext('2d');
+            let nebulaParticles = [];
+            let nebulaHue = 0;
             
-            db.ref('supports').on('value', snap => {
-                let supports = snap.val() || {};
-                let container = document.getElementById('dynamic-support-links');
-                let html = '';
-                for(let key in supports) {
-                    let s = supports[key];
-                    html += `
-                        <a href="${s.value}" class="support-link" target="_blank" style="background: ${s.color}20;">
-                            <div style="background: ${s.color}; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">${s.icon}</div>
-                            <div><p style="color: var(--accent-color);">${s.name}</p><p style="color: #00ffcc;">${s.value}</p></div>
-                        </a>
-                    `;
+            for (let i=0; i<300; i++) {
+                nebulaParticles.push({
+                    x: Math.random() * nebulaCanvas.width,
+                    y: Math.random() * nebulaCanvas.height,
+                    size: Math.random() * 2 + 0.5,
+                    color: Math.floor(180 + Math.random() * 60),
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                });
+            }
+            
+            function animateNebula() {
+                if (nebulaCanvas.style.display !== 'block') return;
+                nebulaCtx.fillStyle = 'rgba(5,5,5,0.2)';
+                nebulaCtx.fillRect(0, 0, nebulaCanvas.width, nebulaCanvas.height);
+                
+                nebulaHue += 0.5;
+                
+                nebulaParticles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > nebulaCanvas.width) p.vx *= -1;
+                    if (p.y < 0 || p.y > nebulaCanvas.height) p.vy *= -1;
+                    
+                    let hue = (p.color + nebulaHue) % 360;
+                    nebulaCtx.fillStyle = `hsl(${hue}, 100%, 60%)`;
+                    nebulaCtx.beginPath();
+                    nebulaCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    nebulaCtx.fill();
+                });
+                
+                requestAnimationFrame(animateNebula);
+            }
+            animateNebula();
+        }
+        
+        function initBioluminescent() {
+            const bioCanvas = document.getElementById('bioluminescentCanvas');
+            if (!bioCanvas) return;
+            bioCanvas.width = window.innerWidth;
+            bioCanvas.height = window.innerHeight;
+            const bioCtx = bioCanvas.getContext('2d');
+            let bioSwarm = [];
+            let bioTick = 0;
+            let bioMouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
+            
+            class BioSwimmer {
+                constructor() {
+                    this.reset(true);
                 }
-                container.innerHTML = html;
+                reset(randomStart) {
+                    this.x = randomStart ? Math.random() * bioCanvas.width : bioMouse.x;
+                    this.y = randomStart ? Math.random() * bioCanvas.height : bioMouse.y;
+                    this.vx = (Math.random() - 0.5) * 2;
+                    this.vy = (Math.random() - 0.5) * 2;
+                    this.history = [];
+                    this.offset = Math.random() * Math.PI * 2;
+                    this.colorOffset = Math.random() * 50;
+                }
+                update() {
+                    let dx = bioMouse.x - this.x;
+                    let dy = bioMouse.y - this.y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    let angle = Math.atan2(dy, dx);
+                    
+                    let force = 0.2;
+                    if (dist < 100) {
+                        this.vx += Math.cos(angle + Math.PI/2) * 0.5;
+                        this.vy += Math.sin(angle + Math.PI/2) * 0.5;
+                        force = 0.05;
+                    }
+                    this.vx += Math.cos(angle) * force;
+                    this.vy += Math.sin(angle) * force;
+                    
+                    this.vx += (Math.random() - 0.5) * 0.5;
+                    this.vy += (Math.random() - 0.5) * 0.5;
+                    
+                    let speed = Math.sqrt(this.vx*this.vx + this.vy*this.vy);
+                    let maxSpeed = 4 * (animationSpeed === 'slow' ? 0.5 : animationSpeed === 'fast' ? 1.5 : 1);
+                    if (speed > maxSpeed) {
+                        this.vx = (this.vx / speed) * maxSpeed;
+                        this.vy = (this.vy / speed) * maxSpeed;
+                    }
+                    
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    
+                    this.history.push({x:this.x, y:this.y});
+                    if (this.history.length > 12) this.history.shift();
+                }
+                draw() {
+                    let hue = (bioTick + this.colorOffset) % 360;
+                    bioCtx.strokeStyle = `hsla(${hue}, 100%, 60%, 0.8)`;
+                    bioCtx.fillStyle = `hsla(${hue}, 100%, 80%, 1)`;
+                    bioCtx.lineWidth = 2 * (animationSize === 'small' ? 0.7 : animationSize === 'large' ? 1.5 : 1);
+                    
+                    bioCtx.beginPath();
+                    for (let i=0; i<this.history.length; i++) {
+                        let p = this.history[i];
+                        let wiggle = Math.sin(bioTick*0.2 + this.offset + i) * (i*0.3);
+                        if (i===0) bioCtx.moveTo(p.x+wiggle, p.y+wiggle);
+                        else bioCtx.lineTo(p.x+wiggle, p.y+wiggle);
+                    }
+                    bioCtx.stroke();
+                    
+                    bioCtx.beginPath();
+                    bioCtx.arc(this.x, this.y, 2.5, 0, Math.PI*2);
+                    bioCtx.fill();
+                }
+            }
+            
+            for (let i=0; i<300; i++) bioSwarm.push(new BioSwimmer());
+            
+            function animateBio() {
+                if (!bioluminescentEnabled || bioCanvas.style.display !== 'block') return;
+                bioTick++;
+                
+                bioCtx.globalCompositeOperation = 'source-over';
+                bioCtx.fillStyle = 'rgba(2,2,5,0.2)';
+                bioCtx.fillRect(0,0,bioCanvas.width,bioCanvas.height);
+                bioCtx.globalCompositeOperation = 'lighter';
+                
+                let pulse = Math.sin(bioTick*0.1)*5;
+                let coreHue = (bioTick*0.5)%360;
+                let grad = bioCtx.createRadialGradient(bioMouse.x, bioMouse.y,10, bioMouse.x,bioMouse.y,150);
+                grad.addColorStop(0, `hsla(${coreHue},100%,50%,0.5)`);
+                grad.addColorStop(1,'rgba(0,0,0,0)');
+                bioCtx.fillStyle = grad;
+                bioCtx.beginPath();
+                bioCtx.arc(bioMouse.x,bioMouse.y,150,0,Math.PI*2);
+                bioCtx.fill();
+                
+                bioCtx.fillStyle = '#fff';
+                bioCtx.beginPath();
+                bioCtx.arc(bioMouse.x,bioMouse.y,10+pulse*0.2,0,Math.PI*2);
+                bioCtx.fill();
+                
+                bioSwarm.forEach(s => { s.update(); s.draw(); });
+                
+                requestAnimationFrame(animateBio);
+            }
+            animateBio();
+            
+            window.addEventListener('mousemove', (e) => {
+                bioMouse.x = e.x;
+                bioMouse.y = e.y;
+            });
+            window.addEventListener('touchmove', (e) => {
+                bioMouse.x = e.touches[0].clientX;
+                bioMouse.y = e.touches[0].clientY;
             });
         }
         
-        // ========== ম্যাচ সেটিংস ==========
+        function initMagicDust() {
+            const magicCanvas = document.getElementById('magicdustCanvas');
+            if (!magicCanvas) return;
+            magicCanvas.width = window.innerWidth;
+            magicCanvas.height = window.innerHeight;
+            const magicCtx = magicCanvas.getContext('2d');
+            let magicParticles = [];
+            let magicHue = 0;
+            
+            class MagicParticle {
+                constructor(x,y) {
+                    this.x = x; this.y = y;
+                    this.size = Math.random()*6+2;
+                    this.speedX = Math.random()*5-2.5;
+                    this.speedY = Math.random()*5-2.5;
+                    this.color = `hsl(${magicHue},100%,50%)`;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.size *= 0.92;
+                }
+                draw() {
+                    magicCtx.fillStyle = this.color;
+                    magicCtx.shadowBlur = 18;
+                    magicCtx.shadowColor = this.color;
+                    magicCtx.beginPath();
+                    magicCtx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+                    magicCtx.fill();
+                }
+            }
+            
+            function animateMagic() {
+                if (!magicdustEnabled || magicCanvas.style.display !== 'block') return;
+                magicCtx.clearRect(0,0,magicCanvas.width,magicCanvas.height);
+                magicHue += 3;
+                for (let i=magicParticles.length-1; i>=0; i--) {
+                    magicParticles[i].update();
+                    magicParticles[i].draw();
+                    if (magicParticles[i].size <= 0.3) magicParticles.splice(i,1);
+                }
+                requestAnimationFrame(animateMagic);
+            }
+            animateMagic();
+            
+            window.addEventListener('mousemove', (e) => {
+                if (!magicdustEnabled) return;
+                for (let i=0; i<5; i++) magicParticles.push(new MagicParticle(e.x, e.y));
+            });
+            window.addEventListener('touchmove', (e) => {
+                if (!magicdustEnabled) return;
+                e.preventDefault();
+                for (let t=0; t<e.touches.length; t++) {
+                    for (let i=0; i<3; i++) magicParticles.push(new MagicParticle(e.touches[t].clientX, e.touches[t].clientY));
+                }
+            }, {passive: false});
+        }
+        
+        function initNeonSlide() {
+            const neonCanvas = document.getElementById('neonslideCanvas');
+            if (!neonCanvas) return;
+            neonCanvas.width = window.innerWidth;
+            neonCanvas.height = window.innerHeight;
+            const neonCtx = neonCanvas.getContext('2d');
+            let neonParticles = [];
+            let neonHue = 0;
+            
+            class NeonParticle {
+                constructor(x,y) {
+                    this.x = x; this.y = y;
+                    this.size = Math.random()*10+2;
+                    this.speedX = Math.random()*6-3;
+                    this.speedY = Math.random()*6-3;
+                    this.color = `hsl(${neonHue},100%,50%)`;
+                    this.gravity = 0.5;
+                    this.friction = 0.95;
+                    this.isCircle = Math.random() > 0.5;
+                    this.angle = Math.random()*360;
+                    this.spinSpeed = Math.random()*0.2-0.1;
+                }
+                update() {
+                    this.speedY += this.gravity;
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.angle += this.spinSpeed;
+                    if (this.y+this.size > neonCanvas.height) {
+                        this.y = neonCanvas.height - this.size;
+                        this.speedY *= -0.6;
+                    }
+                    if (this.x+this.size > neonCanvas.width || this.x-this.size < 0) {
+                        this.speedX *= -1;
+                    }
+                    this.speedX *= this.friction;
+                    this.speedY *= this.friction;
+                    this.size *= 0.96;
+                }
+                draw() {
+                    neonCtx.save();
+                    neonCtx.translate(this.x, this.y);
+                    neonCtx.rotate(this.angle * Math.PI/180);
+                    neonCtx.fillStyle = this.color;
+                    neonCtx.shadowBlur = 10;
+                    neonCtx.shadowColor = this.color;
+                    neonCtx.beginPath();
+                    if (this.isCircle) {
+                        neonCtx.arc(0,0,this.size,0,Math.PI*2);
+                    } else {
+                        neonCtx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
+                    }
+                    neonCtx.fill();
+                    neonCtx.restore();
+                }
+            }
+            
+            function animateNeon() {
+                if (!neonslideEnabled || neonCanvas.style.display !== 'block') return;
+                neonCtx.fillStyle = 'rgba(0,0,0,0.1)';
+                neonCtx.fillRect(0,0,neonCanvas.width,neonCanvas.height);
+                neonHue += 2;
+                for (let i=neonParticles.length-1; i>=0; i--) {
+                    neonParticles[i].update();
+                    neonParticles[i].draw();
+                    if (neonParticles[i].size <= 0.3) neonParticles.splice(i,1);
+                }
+                requestAnimationFrame(animateNeon);
+            }
+            animateNeon();
+            
+            window.addEventListener('mousemove', (e) => {
+                if (!neonslideEnabled) return;
+                for (let i=0; i<3; i++) neonParticles.push(new NeonParticle(e.x, e.y));
+            });
+            window.addEventListener('touchmove', (e) => {
+                if (!neonslideEnabled) return;
+                e.preventDefault();
+                for (let t=0; t<e.touches.length; t++) {
+                    for (let i=0; i<3; i++) neonParticles.push(new NeonParticle(e.touches[t].clientX, e.touches[t].clientY));
+                }
+            }, {passive: false});
+        }
+        
+        function loadMatchImages() {
+            db.ref('match_images').on('value', (snap) => {
+                let imgs = snap.val() || {};
+                let matches = ['SoloBermuda', 'DuoMatch1', 'DuoMatch2', 'CS4vs4', 'CS2vs2', 'CS1vs1', 'FreeSolo'];
+                matches.forEach((m, idx) => {
+                    let data = imgs[m] || {};
+                    let imgEl = document.getElementById(`match${idx+1}-img`);
+                    let linkEl = document.getElementById(`match${idx+1}-link`);
+                    if (imgEl) imgEl.src = data.imageUrl || imgEl.src;
+                    if (linkEl) linkEl.href = data.link || '#';
+                    
+                    // লিংক এলিমেন্টে ক্লিক ইভেন্ট যোগ করুন
+                    if (linkEl && data.link && data.link !== '#') {
+                        linkEl.onclick = function(e) {
+                            e.preventDefault();
+                            window.open(data.link, '_blank', 'noopener,noreferrer');
+                            return false;
+                        };
+                    }
+                });
+            });
+        }
+        
+        function loadSlideshow() {
+            db.ref('slideshow').on('value', (snap) => {
+                let slides = snap.val() || [];
+                let container = document.getElementById('slideshowContainer');
+                if (!slides.length) {
+                    container.style.display = 'none';
+                    return;
+                }
+                container.style.display = 'block';
+                container.innerHTML = '';
+                slides.forEach((slide, index) => {
+                    let div = document.createElement('div');
+                    div.className = 'slideshow-slide' + (index === 0 ? ' active' : '');
+                    div.style.backgroundImage = `url('${slide.image}')`;
+                    div.onclick = function() {
+                        if (slide.link && slide.link !== '#') {
+                            window.open(slide.link, '_blank', 'noopener,noreferrer');
+                        }
+                    };
+                    container.appendChild(div);
+                });
+                let current = 0;
+                setInterval(() => {
+                    let slidesDivs = container.children;
+                    if (slidesDivs.length <= 1) return;
+                    slidesDivs[current].classList.remove('active');
+                    current = (current + 1) % slidesDivs.length;
+                    slidesDivs[current].classList.add('active');
+                }, 5000);
+            });
+        }
+        
+        function loadDepositWithdrawSupportNotices() {
+            db.ref('notices').on('value', (snap) => {
+                let notices = snap.val() || {};
+                if (document.getElementById('depositNotice')) {
+                    document.getElementById('depositNotice').innerHTML = notices.Deposit ? linkify(notices.Deposit) : '';
+                }
+                if (document.getElementById('withdrawNotice')) {
+                    document.getElementById('withdrawNotice').innerHTML = notices.Withdraw ? linkify(notices.Withdraw) : '';
+                }
+                if (document.getElementById('supportNotice')) {
+                    document.getElementById('supportNotice').innerHTML = notices.Support ? linkify(notices.Support) : '';
+                }
+            });
+        }
+        
+        function loadMatchRegistrationNotices() {
+            db.ref('notices').on('value', (snap) => {
+                let notices = snap.val() || {};
+                let matchNotices = {
+                    'সোলো বারমুডা': notices.SoloBermuda,
+                    'ডুও ১': notices.DuoMatch1,
+                    'ডুও ২': notices.DuoMatch2,
+                    '৪vs৪ ক্ল্যাশ': notices.CS4vs4,
+                    '২vs২ কাস্টম': notices.CS2vs2,
+                    '১vs১ নকআউট': notices.CS1vs1,
+                    'ফ্রি সোলো': notices.FreeSolo
+                };
+                
+                window.showMatchRegistrationNotice = function(matchName) {
+                    let noticeDiv = document.getElementById('matchNoticeContainer');
+                    if (matchNotices[matchName]) {
+                        noticeDiv.innerHTML = linkify(matchNotices[matchName]);
+                    } else {
+                        noticeDiv.innerHTML = '⚠️ কাস্টম ম্যাচে অবৈধ আইটেম ব্যবহার নিষেধ';
+                    }
+                };
+            });
+        }
+        
         function loadMatchSettings() {
             db.ref('match_settings').on('value', (snap) => {
                 let settings = snap.val() || {};
@@ -2364,17 +3434,6 @@
                         el.innerText = current + '/' + slots[key];
                     }
                 }
-            });
-            
-            db.ref('match_icons').on('value', (snap) => {
-                let icons = snap.val() || {};
-                document.getElementById('match1-icon').src = icons.SoloBermuda || 'https://i.ibb.co.com/Gv57Crmh/free-fire-characters.jpg';
-                document.getElementById('match2-icon').src = icons.DuoMatch1 || 'https://i.ibb.co.com/rDgKsWm/duo-image.jpg';
-                document.getElementById('match3-icon').src = icons.DuoMatch2 || 'https://i.ibb.co.com/rDgKsWm/duo-image.jpg';
-                document.getElementById('match4-icon').src = icons.CS4vs4 || 'https://i.ibb.co.com/C57vzBfL/maxresdefault.jpg';
-                document.getElementById('match5-icon').src = icons.CS2vs2 || 'https://i.ibb.co.com/nqdgm6jw/free-fire-735x400.jpg';
-                document.getElementById('match6-icon').src = icons.CS1vs1 || 'https://i.ibb.co.com/JW1Qh62T/screenshot.jpg';
-                document.getElementById('match7-icon').src = icons.FreeSolo || 'https://i.ibb.co.com/jPbw04PT/wp12125274.jpg';
             });
         }
         
@@ -2421,7 +3480,6 @@
             });
         }
         
-        // ========== লিডারবোর্ড (টাকা অনুযায়ী) ==========
         function loadLeaderboard() {
             db.ref('users').once('value', (snap) => {
                 let users = [];
@@ -2531,7 +3589,6 @@
             });
         }
         
-        // ========== রেজিস্ট্রেশন ==========
         window.openRegistration = (match, fee, type)=>{
             if(!currentUser) return alert('❌ আগে লগইন করুন!');
             
@@ -2539,6 +3596,11 @@
             
             showSection('register-page');
             document.getElementById('reg-title').innerText = match;
+            
+            if (window.showMatchRegistrationNotice) {
+                window.showMatchRegistrationNotice(match);
+            }
+            
             baseFee = fee;
             let mode = document.getElementById('reg-mode');
             mode.innerHTML = '';
@@ -2624,7 +3686,6 @@
             }
         };
         
-        // ========== ম্যাচ ডিটেইলস - শুধু রেজিস্ট্রেশন করা ইউজার দেখতে পাবে ==========
         window.showMatchDetails = (match)=>{
             if(!currentUser) return alert('❌ আগে লগইন করুন!');
             
@@ -2652,14 +3713,13 @@
                         }
                     });
                 } else {
-                    alert('❌ আপনি এই ম্যাচে রেজিস্ট্রেশন করেননি! শুধুমাত্র রেজিস্ট্রেশন করা প্লেয়াররা রুম ডিটেইলস দেখতে পারবেন۔');
+                    alert('❌ আপনি এই ম্যাচে রেজিস্ট্রেশন করেননি! শুধুমাত্র রেজিস্ট্রেশন করা প্লেয়াররা রুম ডিটেইলস দেখতে পারবেন।');
                 }
             });
         };
         
         window.closeRoomModal = ()=> document.getElementById('roomModal').classList.remove('active');
         
-        // ========== প্রোফাইল আপডেট (ফোন নম্বর ভিত্তিক) ==========
         function updateProfileUI() {
             if(!currentUser) return;
             
@@ -2694,7 +3754,6 @@
             }
         };
         
-        // ========== ডিপোজিট ==========
         window.submitDeposit = ()=>{
             if(!currentUser) return alert('❌ লগইন করুন!');
             let m = document.getElementById('depositMethod').value;
@@ -2720,7 +3779,6 @@
             });
         };
         
-        // ========== উইথড্র ==========
         window.submitWithdraw = ()=>{
             if(!currentUser) return alert('❌ লগইন করুন!');
             let m = document.getElementById('withdrawMethod').value;
@@ -2762,76 +3820,168 @@
             });
         };
         
-        // ========== নোটিফিকেশন ==========
-        function loadNotifications() {
-            if (!currentUser) return;
-            db.ref('notifications/' + currentUser.phone).on('value', (snap) => {
-                let notifs = snap.val() || {};
-                let count = 0;
-                let html = '';
-                for (let key in notifs) {
-                    let n = notifs[key];
-                    if (!n.read) count++;
-                    html += `<div class="notification-item" onclick="window.location.href='tnmapp://notification/${key}'"><p>${n.text}</p><p style="color:#aaa; font-size:10px; margin-top:5px;">🕐 ${n.time}</p></div>`;
-                }
-                document.getElementById('notificationList').innerHTML = html || '<p style="color:#888; text-align:center;">কোনো নোটিফিকেশন নেই</p>';
-                if (count > 0) {
-                    document.getElementById('notificationBadge').style.display = 'flex';
-                    document.getElementById('notificationBadge').innerText = count;
-                } else {
-                    document.getElementById('notificationBadge').style.display = 'none';
-                }
-            });
+        function minimizeNotice() {
+            document.getElementById('mainNotice').style.display = 'none';
+            document.getElementById('minimizedNotice').classList.add('active');
+            noticeMinimized = true;
+            localStorage.setItem('noticeMinimized', 'true');
         }
         
-        window.openNotifications = function() {
-            document.getElementById('notificationModal').style.display = 'block';
-            if (currentUser) {
-                db.ref('notifications/' + currentUser.phone).once('value', (snap) => {
-                    snap.forEach((child) => {
-                        db.ref('notifications/' + currentUser.phone + '/' + child.key + '/read').set(true);
-                    });
-                });
-            }
+        function expandNotice() {
+            document.getElementById('mainNotice').style.display = 'block';
+            document.getElementById('minimizedNotice').classList.remove('active');
+            noticeMinimized = false;
+            localStorage.setItem('noticeMinimized', 'false');
+        }
+        
+        window.showSection = (id)=>{
+            document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+            let items = document.querySelectorAll('.nav-item');
+            if(id==='home') items[0].classList.add('active');
+            if(id==='leaderboard') items[1].classList.add('active');
+            if(id==='deposit') items[2].classList.add('active');
+            if(id==='withdraw') items[3].classList.add('active');
+            if(id==='profile') items[4].classList.add('active');
+            if(id==='support') items[5].classList.add('active');
+            if(id==='profile' && currentUser) updateProfileUI();
+            if(id==='leaderboard') loadLeaderboard();
         };
         
-        window.closeNotificationModal = function() {
-            document.getElementById('notificationModal').style.display = 'none';
-            document.getElementById('notificationBadge').style.display = 'none';
-        };
+        function loadAllData() {
+            loadRegistrationStatus(); 
+            loadLeaderboard(); 
+            loadUserMatchHistory();
+            loadPaymentMethods(); 
+            startAllTimers(); 
+            updateMatchNumbers();
+            loadLiveStatus(); 
+            loadMatchSettings();
+            loadMainNotice(); 
+            loadSupportNotice(); 
+            loadSupportLinks();
+            loadAppDownloadLink();
+            loadHeaderSettings();
+            loadNotifications();
+            loadMatchImages();
+            loadSlideshow();
+            loadDepositWithdrawSupportNotices();
+            loadMatchRegistrationNotices();
+            loadWebsiteDesigns();
+            loadNoticeDesign();
+        }
         
-        // ========== অটো লগইন (শুধু ফোন নম্বর) ==========
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                let email = user.email;
-                let phone = email ? email.replace('@tnm.app', '') : null;
-                
-                if (phone) {
-                    db.ref('users/' + phone).once('value', (snap) => {
-                        let userData = snap.val();
-                        if (userData) {
-                            localStorage.setItem('user', JSON.stringify(userData));
-                            currentUser = userData;
-                            document.getElementById('auth-page').style.display = 'none';
-                            document.getElementById('main-app').style.display = 'block';
-                            updateProfileUI(); 
-                            loadAllData();
-                            loadNotifications();
-                        } else {
-                            console.log('ইউজার ডাটা নেই');
-                        }
-                    });
-                }
+        function loadLocalSettings() {
+            rainEnabled = localStorage.getItem('rainEnabled') !== 'false';
+            starsEnabled = localStorage.getItem('starsEnabled') !== 'false';
+            touchEnabled = localStorage.getItem('touchEnabled') !== 'false';
+            bioluminescentEnabled = localStorage.getItem('bioluminescentEnabled') === 'true';
+            magicdustEnabled = localStorage.getItem('magicdustEnabled') === 'true';
+            neonslideEnabled = localStorage.getItem('neonslideEnabled') === 'true';
+            animationSpeed = localStorage.getItem('animationSpeed') || 'normal';
+            animationSize = localStorage.getItem('animationSize') || 'medium';
+            
+            document.getElementById('rain-toggle').checked = rainEnabled;
+            document.getElementById('star-toggle').checked = starsEnabled;
+            document.getElementById('touch-toggle').checked = touchEnabled;
+            document.getElementById('bioluminescent-toggle').checked = bioluminescentEnabled;
+            document.getElementById('magicdust-toggle').checked = magicdustEnabled;
+            document.getElementById('neonslide-toggle').checked = neonslideEnabled;
+            
+            document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
+            document.getElementById('speed-' + animationSpeed).classList.add('active');
+            
+            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
+            document.getElementById('size-' + animationSize).classList.add('active');
+            
+            if(rainEnabled) createRain(); else clearRain();
+            if(starsEnabled) createStars(); else clearStars();
+            
+            document.getElementById('bioluminescentCanvas').style.display = bioluminescentEnabled ? 'block' : 'none';
+            document.getElementById('magicdustCanvas').style.display = magicdustEnabled ? 'block' : 'none';
+            document.getElementById('neonslideCanvas').style.display = neonslideEnabled ? 'block' : 'none';
+            
+            noticeMinimized = localStorage.getItem('noticeMinimized') === 'true';
+            if (noticeMinimized) {
+                document.getElementById('mainNotice').style.display = 'none';
+                document.getElementById('minimizedNotice').classList.add('active');
             } else {
-                document.getElementById('auth-page').style.display = 'block';
-                document.getElementById('main-app').style.display = 'none';
+                document.getElementById('mainNotice').style.display = 'block';
+                document.getElementById('minimizedNotice').classList.remove('active');
             }
-        });
+            
+            let savedTheme = localStorage.getItem('theme');
+            if(savedTheme) applyPresetTheme(savedTheme);
+            
+            let savedColors = localStorage.getItem('customColors');
+            if(savedColors) {
+                let colors = JSON.parse(savedColors);
+                document.getElementById('primary-color').value = colors.primary;
+                document.getElementById('secondary-color').value = colors.secondary;
+                document.getElementById('accent-color').value = colors.accent;
+                document.getElementById('bg-start').value = colors.bgStart;
+                document.getElementById('bg-end').value = colors.bgEnd;
+            }
+        }
+        
+        function loadAnimationSettings() {
+            db.ref('settings/animation').on('value', (snap) => {
+                let settings = snap.val() || {};
+                
+                rainEnabled = settings.rain !== false;
+                starsEnabled = settings.stars !== false;
+                touchEnabled = settings.touch !== false;
+                bioluminescentEnabled = settings.bioluminescent === true;
+                magicdustEnabled = settings.magicdust === true;
+                neonslideEnabled = settings.neonslide === true;
+                animationSpeed = settings.speed || 'normal';
+                animationSize = settings.size || 'medium';
+                
+                localStorage.setItem('rainEnabled', rainEnabled);
+                localStorage.setItem('starsEnabled', starsEnabled);
+                localStorage.setItem('touchEnabled', touchEnabled);
+                localStorage.setItem('bioluminescentEnabled', bioluminescentEnabled);
+                localStorage.setItem('magicdustEnabled', magicdustEnabled);
+                localStorage.setItem('neonslideEnabled', neonslideEnabled);
+                localStorage.setItem('animationSpeed', animationSpeed);
+                localStorage.setItem('animationSize', animationSize);
+                
+                document.getElementById('rain-toggle').checked = rainEnabled;
+                document.getElementById('star-toggle').checked = starsEnabled;
+                document.getElementById('touch-toggle').checked = touchEnabled;
+                document.getElementById('bioluminescent-toggle').checked = bioluminescentEnabled;
+                document.getElementById('magicdust-toggle').checked = magicdustEnabled;
+                document.getElementById('neonslide-toggle').checked = neonslideEnabled;
+                
+                document.getElementById('bioluminescentCanvas').style.display = bioluminescentEnabled ? 'block' : 'none';
+                document.getElementById('magicdustCanvas').style.display = magicdustEnabled ? 'block' : 'none';
+                document.getElementById('neonslideCanvas').style.display = neonslideEnabled ? 'block' : 'none';
+                
+                document.querySelectorAll('.speed-option').forEach(opt => opt.classList.remove('active'));
+                document.getElementById('speed-' + animationSpeed).classList.add('active');
+                
+                document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
+                document.getElementById('size-' + animationSize).classList.add('active');
+                
+                if(rainEnabled) createRain(); else clearRain();
+                if(starsEnabled) createStars(); else clearStars();
+                
+                if (bioluminescentEnabled && typeof initBioluminescent === 'function') initBioluminescent();
+                if (magicdustEnabled && typeof initMagicDust === 'function') initMagicDust();
+                if (neonslideEnabled && typeof initNeonSlide === 'function') initNeonSlide();
+            });
+        }
         
         window.onload = ()=>{
             loadLocalSettings();
             loadAnimationSettings();
             createRain(); createStars();
+            initNebula();
+            document.getElementById('nebulaCanvas').style.display = 'none';
+            if (bioluminescentEnabled) initBioluminescent();
+            if (magicdustEnabled) initMagicDust();
+            if (neonslideEnabled) initNeonSlide();
         };
     </script>
 </body>
